@@ -225,7 +225,11 @@ def main():
         elif ks & {"cpi", "nfp", "fomc"}:
             kz = ["20:00", "24:00", "r", "Big news tomorrow, skip Asia"]
         open_txt = "Sunday Globex open, thin" if d.weekday() == 0 else "Globex reopen, thin"
-        out["asia"] = [["18:00", "20:00", "r", open_txt], kz, ["24:00", "26:00", "r", "Late Asia, skip"]]
+        if red830 or ks & {"cpi", "nfp", "fomc"}:
+            ldn = ["26:00", "29:00", "r", "No London before 8:30 news"]
+        else:
+            ldn = ["26:00", "29:00", "y", "London kill zone, risky"]
+        out["asia"] = [["18:00", "20:00", "r", open_txt], kz, ["24:00", "26:00", "r", "Late Asia, skip"], ldn]
 
         out.update(score=score, label=("Bank holiday" if h and h["type"] == "bank" else LABEL[score]),
                    segs=day.segs(), why=" ".join(dict.fromkeys(why)) or "Normal day: trade 9:30 to 12.",

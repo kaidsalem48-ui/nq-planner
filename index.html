@@ -352,7 +352,9 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       [/^Asia kill zone/, "Asia is low volume and your rulebook says to skip it. If you try it, size light."],
       [/^Post-FOMC Asia/, "After FOMC the market keeps repricing overnight, so Asia has real movement tonight."],
       [/^Big news tomorrow/, "Don't trade before big news. Moves the night before CPI, NFP or FOMC are mostly positioning."],
-      [/^Late Asia/, "After midnight Asia slows down before London starts."]
+      [/^Late Asia/, "After midnight Asia slows down before London starts."],
+      [/^No London before 8:30/, "There's 8:30 news today, and you don't trade anything before 8:30 news, London included."],
+      [/^London kill zone/, "London kill zone is 2–5 AM, with a macro at 3:15–3:45. Previous-day highs and lows work best in London. It isn't your main session, so trade light."]
     ];
     const hit = rules.find(([re]) => re.test(r));
     return hit ? hit[1] : r + ".";
@@ -509,7 +511,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   function dayBlocks(host, s){
     const dd = BY[s];
     const marks = (dd.marks || []).slice();
-    if (dd.holidayType !== "closed" && dd.segs.some(x => x[2] !== "r")) marks.push(["10:00","10am reversal","time"]);
+    if (dd.holidayType !== "closed" && dd.segs.some(x => x[2] !== "r")) { marks.push(["10:00","10am reversal","time"]); if (!dd.holiday) marks.push(["14:36","2:36 liquidity run","time"]); }
+    marks.sort((x, y) => toMin(x[0]) - toMin(y[0]));
     const firstNews = Math.min(...(dd.marks || []).map(m => toMin(m[0])), 9999);
     const S = firstNews < 510 ? Math.floor((firstNews - 10) / 5) * 5 : 510;
     const segs = dd.segs.filter(x => toMin(x[1]) > S).map(x => [fmtHM(Math.max(toMin(x[0]), S)), x[1], x[2], x[3]]);
@@ -517,7 +520,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     html += segs.map(([a,b,k,n]) => {
       const A = toMin(a), B = toMin(b);
       const ms = marks.filter(m => { const t = toMin(m[0]); return t >= A && t < B; })
-        .map(m => `<span class="chipm ${m[2]}">${esc(m[0])} ${esc(m[1])}</span>`).join("");
+        .map(m => `<span class="chipm ${m[2]}">${m[2] === "time" ? "" : esc(m[0]) + " "}${esc(m[1])}</span>`).join("");
       return blockRow(A, B, k, n, ms, s === NOW.date && NOW.min >= A && NOW.min < B, s);
     }).join("");
     const end = clock(toMin(segs.length ? segs[segs.length-1][1] : "16:00"));
@@ -527,10 +530,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     for (let i = 0; i < 4 && !BY[nd]; i++) nd = addDays(nd, 1);
     const ndd = BY[nd];
     if (ndd && ndd.asia && ndd.asia.length) {
-      html += `<div class="dsec">Asia · ${dow(addDays(nd,-1))} evening → ${dow(nd).slice(0,3)} ${short(nd)}</div>`;
-      html += ndd.asia.map(([a,b,k,n]) => blockRow(toMin(a), toMin(b), k, n, "", asiaNow(nd, toMin(a), toMin(b)), nd)).join("");
+      html += `<div class="dsec">Overnight · Asia &amp; London → ${dow(nd).slice(0,3)} ${short(nd)}</div>`;
+      html += ndd.asia.map(([a,b,k,n]) => blockRow(toMin(a), toMin(b), k, n, toMin(a) === 1560 ? `<span class="chipm time">3:15–3:45 macro</span>` : "", asiaNow(nd, toMin(a), toMin(b)), nd)).join("");
       const ae = clock(toMin(ndd.asia[ndd.asia.length-1][1]));
-      html += `<div class="drow dend"><span class="dtime">${ae.t}<small>${ae.ap}</small></span><span class="dendl">Asia session ends</span></div>`;
+      html += `<div class="drow dend"><span class="dtime">${ae.t}<small>${ae.ap}</small></span><span class="dendl">London kill zone ends</span></div>`;
     }
     host.innerHTML = `<div class="dlist">${html}</div>`;
     bindSegs(host);
