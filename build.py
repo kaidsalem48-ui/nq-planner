@@ -115,23 +115,28 @@ def main():
         day = Day()
         # Default: Asia/London off, pre-open light, 9:30+ is the main window.
         day.paint(T0, 480, "r", "Asia / London, skip")
-        day.paint(480, 560, "y", "Pre-open, light only")
-        day.paint(560, 570, "r", "Too close to 9:30 open")
-        day.paint(570, 720, "g", "NY AM, main window")
-        day.paint(720, 960, "y", "Only if AM was bad")
+        day.paint(480, 565, "y", "Pre-open, light only")
+        day.paint(565, 570, "r", "Too close to 9:30 open")
+        day.paint(570, 630, "g", "NY AM, main window")
+        day.paint(630, 720, "y", "Should be done by 10:30")
+        day.paint(720, 810, "y", "Lunch: only if AM was bad")
+        day.paint(810, 960, "y", "PM: only if AM was bad")
         score = 1
         red830 = any(mins(e["time"]) == 510 for e in reds)
 
         if red830:
             day.paint(480, 500, "r", "Nothing before 8:30 news")
             day.paint(500, 510, "r", "News in < 10 min")
-            day.paint(510, 560, "g", "Post-news volatility, data highs")
-            day.paint(560, 570, "y", "Close to open")
+            day.paint(510, 565, "g", "Post-news volatility, data highs")
             score = 2
             why.append("Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30.")
+        if reds:
+            day.paint(630, 720, "g", "NY AM, main window")
+            if d.weekday() == 0:
+                day.paint(720, 960, "y", "Monday w/ news: lunch/PM good if AM bad")
         if not reds:
             score = 1
-            why.append("No red folder: trade after 9:30 on good price action only, don't hold long.")
+            why.append("No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.")
 
         for e in es:
             t = mins(e["time"])
@@ -141,7 +146,7 @@ def main():
                 if t < 570:
                     day.paint(480, t - 10, "r", "Nothing before " + e["short"])
                     day.paint(t - 10, t, "r", e["short"] + " in < 10 min")
-                    day.paint(t, 560, "g", "Post-news volatility")
+                    day.paint(t, 565, "g", "Post-news volatility")
                     score = max(score, 2)
                 else:
                     day.paint(570 if t - 25 < 585 else t - 25, t - 10, "y", e["short"] + " at " + e["time"] + ", risky")
@@ -187,10 +192,12 @@ def main():
             notes.append("NFP tomorrow: if today's price action is good, tomorrow is likely bad.")
         if d.weekday() == 0 and not reds and "cpi" not in kinds(nxt):
             day.recolor("g", "y", "No-news Monday, light")
+            day.paint(570, 610, "g", "9:30-10:10 window")
+            day.paint(720, 960, "r", "Bad AM won't get better")
             score = min(score, -1)
-            why = ["No-news Monday: prefer not to trade; if AM is bad, PM won't be much better."]
+            why = ["No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better."]
             if red(nxt):
-                day.paint(480, 560, "g", "Pre-open setups OK")
+                day.paint(480, 565, "g", "Pre-open setups OK")
                 why.append("Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.")
         ph = hol.get(prv.isoformat())
         if ph and ph["type"] in ("bank", "closed"):

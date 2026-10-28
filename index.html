@@ -142,6 +142,20 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .nl::before{content:"";position:absolute;left:-3px;top:-5px;width:8px;height:8px;border-radius:50%;background:#b4abff}
 .pre{position:absolute;left:0;right:0;top:0;border-bottom:1px dashed var(--line)}
 
+.dlist{display:flex;flex-direction:column;gap:8px;padding:12px}
+.drow{display:grid;grid-template-columns:54px 1fr;gap:10px;align-items:stretch}
+.dtime{font-family:var(--f-mono);font-size:.92rem;font-weight:600;padding-top:12px;text-align:right;display:flex;flex-direction:column;gap:2px}
+.dtime small{font-size:.7rem;color:var(--muted);font-weight:500}
+.dbox{border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;border-left:4px solid}
+.dbox.g{background:var(--sg);border-color:var(--sg-line);color:var(--sg-fg)}
+.dbox.y{background:var(--sy);border-color:var(--sy-line);color:var(--sy-fg)}
+.dbox.r{background:var(--sr);border-color:var(--sr-line);color:var(--sr-fg)}
+.dbox.live{box-shadow:0 0 0 2px #b4abff}
+.dst{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.dre{font-size:1.15rem;font-weight:800;line-height:1.25}
+.dms{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.chipm{font-family:var(--f-mono);font-size:.72rem;font-weight:600;padding:3px 8px;border-radius:6px;background:#e9ecf2;color:#0b0d11}
+.chipm.minor{background:#9aa3b3}.chipm.time{background:var(--accent);color:#fff}
 .foot{font-size:.74rem;color:var(--faint);display:flex;flex-direction:column;gap:4px;padding:0 4px}
 .foot p{margin:0}
 .err{padding:18px;color:var(--r1-fg)}
@@ -201,7 +215,9 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   }
   let NOW = nyNow();
 
-  let DATA, BY = {}, view = "month", cursor = NOW.date, expanded = false;
+  let DATA, BY = {}, view = "month", cursor = NOW.date;
+  let expanded = false; try { expanded = localStorage.getItem("nq-expanded") === "1"; } catch (e) {}
+  const setExpanded = v => { expanded = v; try { localStorage.setItem("nq-expanded", v ? "1" : "0"); } catch (e) {} };
 
   function tileClass(day){
     if (!day) return "";
@@ -225,7 +241,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   }
   function writeHash(){ history.replaceState(null, "", "#" + view + "-" + cursor); }
 
-  function setView(v){ view = v; expanded = false; render(); }
+  function setView(v){ view = v; render(); }
   ["month","week","day"].forEach(v => $("v-" + v).onclick = () => setView(v));
   $("today").onclick = () => { cursor = NOW.date; render(); };
   $("prev").onclick = () => step(-1);
@@ -290,7 +306,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       <div class="grid5">${tiles}</div>
       <div class="legend"><span class="s2">Great</span><span class="s1">Good</span><span class="s0">OK</span><span class="s-1">Light</span><span class="s-2">Sit out</span><span class="shol">Bank holiday</span><span class="shalf">Half day</span></div>
     </section>`;
-    $("view").querySelectorAll(".tile[data-d]").forEach(b => b.onclick = () => { cursor = b.dataset.d; view = "day"; expanded = false; render(); });
+    $("view").querySelectorAll(".tile[data-d]").forEach(b => b.onclick = () => { cursor = b.dataset.d; view = "day"; render(); });
   }
 
   /* ---------- week ---------- */
@@ -313,8 +329,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     </section>
     <button class="expand" id="exp" aria-expanded="${expanded}">${expanded ? "Hide hours" : "Expand hours"} <span class="chev">&#9662;</span></button>
     <section class="panel tl" id="tl" ${expanded ? "" : "hidden"}></section>`;
-    $("view").querySelectorAll(".tile[data-d]").forEach(b => b.onclick = () => { cursor = b.dataset.d; view = "day"; expanded = false; render(); });
-    $("exp").onclick = () => { expanded = !expanded; renderWeek(); };
+    $("view").querySelectorAll(".tile[data-d]").forEach(b => b.onclick = () => { cursor = b.dataset.d; view = "day"; render(); });
+    $("exp").onclick = () => { setExpanded(!expanded); renderWeek(); };
     if (expanded) timeline($("tl"), ds.filter(s => BY[s]), 104);
   }
 
@@ -331,13 +347,32 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
         <p class="why">${esc(dd.why)}</p>
       </section>
       <section class="panel"><ul class="windows"><li style="grid-template-columns:1fr;font-weight:800;font-size:.8rem;letter-spacing:.1em;color:var(--muted)">NEWS</li>${news.replace(/<li>/g,'<li style="grid-template-columns:auto auto 1fr;display:grid">')}</ul></section>
-      <section class="panel"><ul class="windows"><li style="grid-template-columns:1fr;font-weight:800;font-size:.8rem;letter-spacing:.1em;color:var(--muted)">WHEN TO TRADE</li>${wins}</ul></section>
+      ${expanded ? "" : `<section class="panel"><ul class="windows"><li style="grid-template-columns:1fr;font-weight:800;font-size:.8rem;letter-spacing:.1em;color:var(--muted)">WHEN TO TRADE</li>${wins}</ul></section>`}
       ${dd.notes && dd.notes.length ? `<p class="notes">${dd.notes.map(esc).join(" · ")}</p>` : ""}
       <button class="expand" id="exp" aria-expanded="${expanded}">${expanded ? "Hide hours" : "Expand hours"} <span class="chev">&#9662;</span></button>
       <section class="panel tl" id="tl" ${expanded ? "" : "hidden"}></section>`;
     $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px";
-    $("exp").onclick = () => { expanded = !expanded; renderDay(); };
-    if (expanded) timeline($("tl"), [s], 200);
+    $("exp").onclick = () => { setExpanded(!expanded); renderDay(); };
+    if (expanded) dayBlocks($("tl"), s);
+  }
+
+  /* ---------- day: compact hour blocks ---------- */
+  function dayBlocks(host, s){
+    const dd = BY[s];
+    const marks = (dd.marks || []).slice();
+    if (dd.holidayType !== "closed" && dd.segs.some(x => x[2] !== "r")) marks.push(["10:00","10am reversal","time"]);
+    const rows = dd.segs.map(([a,b,k,n]) => {
+      const A = toMin(a), B = toMin(b);
+      const ms = marks.filter(m => { const t = toMin(m[0]); return t >= A && t < B; })
+        .map(m => `<span class="chipm ${m[2]}">${esc(m[0])} ${esc(m[1])}</span>`).join("");
+      const h = Math.round(Math.min(150, Math.max(70, (B - A) * 0.75)));
+      const nowIn = s === NOW.date && NOW.min >= A && NOW.min < B;
+      return `<div class="drow"><span class="dtime">${fmt(A)}<small>${fmt(B)}</small></span>
+        <div class="dbox ${k}${nowIn ? " live" : ""}" style="min-height:${h}px">
+          <span class="dst">${k === "g" ? "Trade" : k === "y" ? "Risky" : "No trade"}${nowIn ? " · now" : ""}</span>
+          <span class="dre">${esc(n)}</span>${ms ? `<span class="dms">${ms}</span>` : ""}</div></div>`;
+    }).join("");
+    host.innerHTML = `<div class="dlist">${rows}</div>`;
   }
 
   /* ---------- vertical hour timeline ---------- */
