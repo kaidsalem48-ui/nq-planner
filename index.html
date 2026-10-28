@@ -513,12 +513,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const firstNews = Math.min(...(dd.marks || []).map(m => toMin(m[0])), 9999);
     const S = firstNews < 510 ? Math.floor((firstNews - 10) / 5) * 5 : 510;
     const segs = dd.segs.filter(x => toMin(x[1]) > S).map(x => [fmtHM(Math.max(toMin(x[0]), S)), x[1], x[2], x[3]]);
-    let html = "";
-    if (dd.asia && dd.asia.length) {
-      html += `<div class="dsec">Asia · ${dow(addDays(s,-1))} evening</div>`;
-      html += dd.asia.map(([a,b,k,n]) => blockRow(toMin(a), toMin(b), k, n, "", asiaNow(s, toMin(a), toMin(b)), s)).join("");
-      html += `<div class="dsec">New York · ${dow(s)} ${short(s)}</div>`;
-    }
+    let html = `<div class="dsec">New York · ${dow(s)} ${short(s)}</div>`;
     html += segs.map(([a,b,k,n]) => {
       const A = toMin(a), B = toMin(b);
       const ms = marks.filter(m => { const t = toMin(m[0]); return t >= A && t < B; })
@@ -526,7 +521,18 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       return blockRow(A, B, k, n, ms, s === NOW.date && NOW.min >= A && NOW.min < B, s);
     }).join("");
     const end = clock(toMin(segs.length ? segs[segs.length-1][1] : "16:00"));
-    host.innerHTML = `<div class="dlist">${html}<div class="drow dend"><span class="dtime">${end.t}<small>${end.ap}</small></span><span class="dendl">Day's schedule ends</span></div></div>`;
+    html += `<div class="drow dend"><span class="dtime">${end.t}<small>${end.ap}</small></span><span class="dendl">New York session ends</span></div>`;
+    // Asia session that follows this day (belongs to the next trading day)
+    let nd = addDays(s, 1);
+    for (let i = 0; i < 4 && !BY[nd]; i++) nd = addDays(nd, 1);
+    const ndd = BY[nd];
+    if (ndd && ndd.asia && ndd.asia.length) {
+      html += `<div class="dsec">Asia · ${dow(addDays(nd,-1))} evening → ${dow(nd).slice(0,3)} ${short(nd)}</div>`;
+      html += ndd.asia.map(([a,b,k,n]) => blockRow(toMin(a), toMin(b), k, n, "", asiaNow(nd, toMin(a), toMin(b)), nd)).join("");
+      const ae = clock(toMin(ndd.asia[ndd.asia.length-1][1]));
+      html += `<div class="drow dend"><span class="dtime">${ae.t}<small>${ae.ap}</small></span><span class="dendl">Asia session ends</span></div>`;
+    }
+    host.innerHTML = `<div class="dlist">${html}</div>`;
     bindSegs(host);
   }
 
