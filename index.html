@@ -157,6 +157,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .dbox.g{background:var(--sg);border-color:var(--sg-line);color:var(--sg-fg)}
 .dbox.y{background:var(--sy);border-color:var(--sy-line);color:var(--sy-fg)}
 .dbox.r{background:var(--sr);border-color:var(--sr-line);color:var(--sr-fg)}
+.dbox,.sg{cursor:pointer}
+.dbox:active{transform:scale(.99)}
 .dbox.live{box-shadow:0 0 0 2px #b4abff}
 .dst{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
 .dre{font-size:1.02rem;font-weight:700;line-height:1.3}
@@ -314,6 +316,65 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     return a && a[2] === "g" ? `<span class="a8" title="8 PM Asia is good to trade">8</span>` : "";
   }
 
+  /* ---------- why each time window has its color ---------- */
+  function segWhy(reason, dd){
+    const r = reason;
+    const news = dd && dd.news.some(n => n.impact === "red");
+    const rules = [
+      [/^Asia \/ London/, "You don't trade Asia, and you never trade before 8:30 news. London isn't part of your New York plan."],
+      [/^Nothing before/, "The market builds liquidity before news, so you don't take trades before a red-folder release."],
+      [/in < 10 min$/, "Within 10 minutes of a red-folder release is too close to news. Even 6 minutes counts as close."],
+      [/^Post-news volatility/, "Red-folder data makes price volatile, which gives better price action. The 1-min wick of the 8:30 candle (the data high or low) is the strongest level to trade off."],
+      [/^Too close to 9:30/, "Your rule is not to trade too close to the 9:30 open. Wait for the open candle."],
+      [/^Pre-open, light/, "There's no red folder at 8:30, so pre-market is slower. On days like this you normally wait for 9:30."],
+      [/^Pre-open setups OK/, "It's a no-news Monday with red folder tomorrow, so before 9:30 is the best spot today if a setup forms."],
+      [/^NY AM, main window/, news ? "9:30 onward is your best window, with the 10am reversal at 9:55–10:15. It's a news day, so the move can run until the 12:00 cutoff." : "9:30 onward is your best window, with the 10am reversal at 9:55–10:15. With no red folder, the move is usually done by 10:30."],
+      [/^Should be done by 10:30/, "With no red folder today, the AM move is usually finished by 10:30. After that, setups get sloppier."],
+      [/^Lunch: only if AM/, "After a good AM you stop by 12. Lunch is only worth it if the AM didn't give you a trade."],
+      [/^PM: only if AM/, "A big AM move usually means a smaller PM. If no 10am model formed, it may be a trend day into the 1:30 session. 2:36 is a good time for price to run liquidity."],
+      [/^Monday w\/ news/, "On a Monday with news, if the AM price action isn't good, lunch and PM are when it gets good."],
+      [/^9:30-10:10 window/, "It's a no-news Monday, so only the open through the 10am reversal is worth trading."],
+      [/^No-news Monday, light/, "No-news Mondays are usually slow. You prefer not to trade them past the first move."],
+      [/^Bad AM won't get better/, "On a no-news Monday, if the AM is bad, lunch and PM usually won't be much better."],
+      [/at \d+:\d+, risky$/, "Red-folder news is coming. Trading before news is risky unless price action is already good and volatile."],
+      [/\(orange\)$/, "Medium-impact news that can still move price, so trade lighter around it."],
+      [/^Fed speaker/, "A Fed speaker can spike price, so trade light around it."],
+      [/^Fed Chair speaking/, "Your rule is never to trade while the Fed Chair is speaking."],
+      [/^No trades before FOMC/, "Your rule: no trades before FOMC news. The market builds liquidity ahead of the decision."],
+      [/^FOMC \+ Chair/, "The FOMC decision, then the Chair's press conference. You don't trade the FOMC afternoon."],
+      [/^Minutes at 2pm/, "FOMC minutes are at 2pm. The AM session is fine, but be done by 11."],
+      [/^Day before CPI/, "The day before CPI is sloppy, so small scalps only, on the eval account rather than live."],
+      [/^Day after holiday/, "Days after bank holidays usually have bad price action."],
+      [/^Bank holiday/, "Banks and bonds are closed. Futures still trade, but volume is thin."],
+      [/^Half day/, "Half days can be hit or miss, and the market closes early."],
+      [/^Market closed/, "CME equity futures are closed."],
+      [/Globex (re)?open/, "The session just reopened and volume is thin."],
+      [/^Asia kill zone/, "Asia is low volume and your rulebook says to skip it. If you try it, size light."],
+      [/^Post-FOMC Asia/, "After FOMC the market keeps repricing overnight, so Asia has real movement tonight."],
+      [/^Big news tomorrow/, "Don't trade before big news. Moves the night before CPI, NFP or FOMC are mostly positioning."],
+      [/^Late Asia/, "After midnight Asia slows down before London starts."]
+    ];
+    const hit = rules.find(([re]) => re.test(r));
+    return hit ? hit[1] : r + ".";
+  }
+  function explainSeg(s, A, B, k, reason){
+    const dd = BY[s]; const sh = $("sheet");
+    const st = k === "g" ? "Good to trade" : k === "y" ? "Risky / light size" : "Don't trade";
+    const cls = k === "g" ? "s2" : k === "y" ? "s-1" : "s-2";
+    sh.innerHTML = `<div class="shc ${cls}"><div class="shh"><b>${st}</b><span>${rangeLong(A, B).replace(/<\/?small>/g, "")}</span></div>
+      <p><b>${esc(reason)}</b></p><p>${esc(segWhy(reason, dd))}</p>
+      <div class="shb"><button class="btn" id="sh-close">Close</button></div></div>`;
+    sh.hidden = false;
+    $("sh-close").onclick = () => sh.hidden = true;
+    sh.onclick = e => { if (e.target === sh) sh.hidden = true; };
+  }
+  function bindSegs(root){
+    root.querySelectorAll("[data-seg]").forEach(el => el.onclick = () => {
+      const [s, A, B, k] = el.dataset.seg.split("|");
+      explainSeg(s, +A, +B, k, el.dataset.reason);
+    });
+  }
+
   /* ---------- long-press explainer ---------- */
   function explain(s){
     const dd = BY[s]; if (!dd) return;
@@ -413,7 +474,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     if (!dd) { $("view").innerHTML = `<section class="panel err">No schedule for this day yet. New weeks are added every Sunday.</section>`; return; }
     const lb = dd.holiday ? (dd.holidayType === "half" ? dd.holiday : "Bank holiday · " + dd.holiday) : dd.label;
     const news = dd.news.length ? dd.news.map(n => `<li><span class="t">${esc(n.time)}</span><span class="ip" style="background:${n.impact === "red" ? "#ef5b61" : "#e7ac36"}"></span><span>${esc(n.name)}</span></li>`).join("") : `<li>No scheduled news</li>`;
-    const wins = dd.segs.filter(x => !(x[2] === "r" && toMin(x[1]) <= T8)).map(([a,b,k,n]) => `<li><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span></li>`).join("");
+    const wins = dd.segs.filter(x => !(x[2] === "r" && toMin(x[1]) <= T8)).map(([a,b,k,n]) => `<li data-seg="${s}|${toMin(a)}|${toMin(b)}|${k}" data-reason="${esc(n)}" style="cursor:pointer"><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span></li>`).join("");
     $("view").innerHTML = `<section class="daybox ${tileClass(dd)}${s === NOW.date ? " today" : ""}">
         <div class="row1"><h3>${esc(lb)}</h3><span class="dt">${dow(s)} ${D(s).getUTCDate()}</span></div>
         <p class="why">${esc(dd.why)}</p>
@@ -425,6 +486,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       <section class="panel tl" id="tl" ${expanded ? "" : "hidden"}></section>`;
     $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px";
     $("exp").onclick = () => { setExpanded(!expanded); renderDay(); };
+    bindSegs($("view"));
     if (expanded) dayBlocks($("tl"), s);
   }
 
@@ -437,10 +499,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     if (NOW.date === s) return NOW.min + 1440 >= A && NOW.min + 1440 < B;
     return false;
   }
-  function blockRow(A, B, k, n, ms, nowIn){
+  function blockRow(A, B, k, n, ms, nowIn, s){
     const h = Math.round(Math.min(170, Math.max(0, (B - A) * 0.9)));
     const c = clock(A);
-    return `<div class="drow"><span class="dtime">${c.t}<small>${c.ap}</small></span><div class="dbox ${k}${nowIn ? " live" : ""}" style="min-height:${h}px">
+    return `<div class="drow"><span class="dtime">${c.t}<small>${c.ap}</small></span><div class="dbox ${k}${nowIn ? " live" : ""}" role="button" tabindex="0" data-seg="${s}|${A}|${B}|${k}" data-reason="${esc(n)}" style="min-height:${h}px">
         <div class="dtop"><span class="drng">${rangeLong(A, B)}</span><span class="dst">${k === "g" ? "Trade" : k === "y" ? "Risky" : "No trade"}${nowIn ? " · now" : ""}</span></div>
         <span class="dre">${esc(n)}</span>${ms ? `<span class="dms">${ms}</span>` : ""}</div></div>`;
   }
@@ -454,17 +516,18 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     let html = "";
     if (dd.asia && dd.asia.length) {
       html += `<div class="dsec">Asia · ${dow(addDays(s,-1))} evening</div>`;
-      html += dd.asia.map(([a,b,k,n]) => blockRow(toMin(a), toMin(b), k, n, "", asiaNow(s, toMin(a), toMin(b)))).join("");
+      html += dd.asia.map(([a,b,k,n]) => blockRow(toMin(a), toMin(b), k, n, "", asiaNow(s, toMin(a), toMin(b)), s)).join("");
       html += `<div class="dsec">New York · ${dow(s)} ${short(s)}</div>`;
     }
     html += segs.map(([a,b,k,n]) => {
       const A = toMin(a), B = toMin(b);
       const ms = marks.filter(m => { const t = toMin(m[0]); return t >= A && t < B; })
         .map(m => `<span class="chipm ${m[2]}">${esc(m[0])} ${esc(m[1])}</span>`).join("");
-      return blockRow(A, B, k, n, ms, s === NOW.date && NOW.min >= A && NOW.min < B);
+      return blockRow(A, B, k, n, ms, s === NOW.date && NOW.min >= A && NOW.min < B, s);
     }).join("");
     const end = clock(toMin(segs.length ? segs[segs.length-1][1] : "16:00"));
     host.innerHTML = `<div class="dlist">${html}<div class="drow dend"><span class="dtime">${end.t}<small>${end.ap}</small></span><span class="dendl">Day's schedule ends</span></div></div>`;
+    bindSegs(host);
   }
 
   /* ---------- vertical hour timeline ---------- */
@@ -489,17 +552,18 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       c.insertAdjacentHTML("beforeend", `<div class="hl o" style="top:${y(570)}px"></div>`);
       dd.segs.forEach(([a,b,k,n]) => {
         const A = toMin(a), B = toMin(b), top = y(A), ht = y(B) - top;
-        c.insertAdjacentHTML("beforeend", `<div class="sg ${k}${ht < 32 ? " tiny" : ""}${ht < 13 ? " micro" : ""}" style="top:${top+1}px;height:${Math.max(ht-2,3)}px" title="${fmtR(A,B)} · ${esc(n)}"><span class="st">${fmtR(A,B)}</span><span class="sn">${esc(n)}</span></div>`);
+        c.insertAdjacentHTML("beforeend", `<div data-seg="${s}|${A}|${B}|${k}" data-reason="${esc(n)}" class="sg ${k}${ht < 32 ? " tiny" : ""}${ht < 13 ? " micro" : ""}" style="top:${top+1}px;height:${Math.max(ht-2,3)}px" title="${fmtR(A,B)} · ${esc(n)}"><span class="st">${fmtR(A,B)}</span><span class="sn">${esc(n)}</span></div>`);
       });
       (dd.marks || []).forEach(([t,l,k]) => c.insertAdjacentHTML("beforeend", `<div class="mk ${k === "minor" ? "minor" : ""}" style="top:${y(toMin(t))}px"><b>${esc(l)}</b></div>`));
       if (dd.holidayType !== "closed" && !dd.segs.every(x => x[2] === "r")) c.insertAdjacentHTML("beforeend", `<div class="mk time" style="top:${y(600)}px"><b>10am rev</b></div>`);
       if (s === NOW.date && NOW.min >= T0 && NOW.min <= T1) c.insertAdjacentHTML("beforeend", `<div class="nl" style="top:${y(NOW.min)}px"></div>`);
       g.appendChild(c);
     });
-    host.innerHTML = ""; host.appendChild(g);
+    host.innerHTML = ""; host.appendChild(g); bindSegs(host);
   }
 
   function render(){
+    $("sheet").hidden = true;
     ["month","week","day"].forEach(v => $("v-" + v).setAttribute("aria-pressed", String(v === view)));
     $("view").removeAttribute("style");
     if (view === "month") renderMonth(); else if (view === "week") renderWeek(); else renderDay();
