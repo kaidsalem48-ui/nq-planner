@@ -166,6 +166,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .chipm{font-family:var(--f-mono);font-size:.72rem;font-weight:600;padding:3px 8px;border-radius:6px;background:#e9ecf2;color:#0b0d11}
 .chipm.minor{background:#9aa3b3}.chipm.time{background:var(--accent);color:#fff}
 .tile{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.tile:has(.a8) .lb{padding-right:16px}
 .a8{position:absolute;right:6px;bottom:6px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:.66rem;font-weight:800;background:#26c48d;color:#03140d;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
 .sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:0 max(10px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
 .shc{width:100%;max-width:520px;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
@@ -178,16 +179,124 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .err{padding:18px;color:var(--r1-fg)}
 @media (min-width:640px){.tile{height:92px}.tile .lb,.tile .lb.small{font-size:1rem}.tile .tag{font-size:.64rem;top:8px;left:8px;max-width:calc(100% - 40px)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== layout shell: mobile keeps the single column ===== */
+.side,.mainp{display:contents}
+.mini,.brk,.win,.dk-only{display:none}
+
+/* ===== desktop ===== */
+@media (min-width:1100px){
+  body{height:100vh;overflow:hidden}
+  .wrap{max-width:none;height:100vh;display:grid;grid-template-columns:330px minmax(0,1fr);gap:16px;padding:16px;margin:0}
+  .side{display:flex;flex-direction:column;gap:14px;min-height:0;overflow-y:auto;padding-right:2px}
+  .mainp{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px 20px 12px}
+  .top{padding:4px 6px 0}
+  .mini,.brk{display:flex;flex-direction:column;gap:10px;padding:16px}
+  .win{display:block}
+  .dk-only{display:block}
+
+  /* header row: title left, view switch center, nav right */
+  .ctl{flex-direction:row;align-items:center;gap:16px;padding:0;background:none;border:0}
+  .ctl .seg3{width:330px;order:1;margin:0 auto}
+  .navrow{display:contents}
+  .title{order:0;border:0;padding:0;margin:0;font-size:1.7rem;font-weight:800;min-width:260px}
+  #today{order:3}#prev{order:2}#next{order:4}
+  #view{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:12px}
+  .foot{font-size:.7rem;flex-direction:row;gap:14px;flex-wrap:wrap}
+
+  /* month fills the panel */
+  .cal{flex:1;display:flex;flex-direction:column;min-height:0;background:none;border:0;padding:0}
+  .cal .grid5{flex:1;grid-auto-rows:minmax(96px,1fr);gap:10px}
+  .cal .tile{height:auto;padding:12px 14px}
+  .cal .tile .dn{font-size:1.05rem}
+  .cal .tile .tag{top:12px;left:14px;font-size:.7rem;max-width:calc(100% - 60px)}
+  .cal .tile .lb,.cal .tile .lb.small{font-size:1.25rem}
+  .cal .tile .win{font-size:.74rem;font-weight:600;opacity:.85;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cal .tile .a8{right:12px;bottom:12px;width:22px;height:22px;font-size:.78rem}
+  .calhead{display:none}
+  .dow{gap:10px}
+
+  /* desktop sheet = popover */
+  .sheet.pop{background:rgba(0,0,0,.25);display:block;padding:0}
+  .sheet.pop .shc{position:absolute;width:380px;max-width:none}
+}
+
+/* ===== desktop schedule grid ===== */
+.wg{flex:1;display:flex;flex-direction:column;min-height:0;min-width:0}
+.wg-head{display:grid;grid-template-columns:64px repeat(var(--cols),minmax(0,1fr));gap:8px;padding-bottom:10px}
+.wg-dh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:12px;background:var(--panel-2);border:1px solid transparent;text-align:left;min-width:0}
+.wg-dh .d1{font-weight:800;font-size:1.05rem;white-space:nowrap}
+.wg-dh .d1 small{font-size:.72rem;font-weight:700;color:var(--muted);margin-left:6px;letter-spacing:.06em}
+.wg-dh.today{border-color:var(--fg)}
+.wg-dh .gp{font-size:.66rem;font-weight:800;letter-spacing:.04em;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.wg-tz{font-family:var(--f-mono);font-size:.68rem;color:var(--muted);align-self:center}
+.wg-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden}
+.wg-grid{display:grid;grid-template-columns:64px repeat(var(--cols),minmax(0,1fr));gap:8px;position:relative}
+.wg-ax{position:relative}
+.wg-ax span{position:absolute;left:0;transform:translateY(-50%);font-size:.8rem;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.wg-ax span.o{color:var(--fg)}
+.wg-col{position:relative;border-radius:12px}
+.wg-line{position:absolute;left:-8px;right:-8px;border-top:1px solid var(--line-2)}
+.wg-line.o{border-top:1px dashed #4a5262}
+.wb{position:absolute;left:0;right:0;border-radius:12px;padding:8px 11px;overflow:hidden;display:flex;flex-direction:column;gap:3px;cursor:pointer;border:1px solid transparent;transition:filter .12s,transform .12s}
+.wb:hover{filter:brightness(1.15)}
+.wb:active{transform:scale(.99)}
+.wb.g{background:var(--sg);color:var(--sg-fg);border-color:rgba(38,196,141,.35)}
+.wb.y{background:var(--sy);color:var(--sy-fg);border-color:rgba(231,172,54,.35)}
+.wb.r{background:var(--sr);color:var(--sr-fg);border-color:rgba(239,91,97,.3)}
+.wb .wt{font-size:.74rem;font-weight:700;opacity:.9;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wb .wr{font-size:.9rem;font-weight:800;line-height:1.2}
+.wb .wc{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto}
+.wb.sm{padding:3px 11px;flex-direction:row;align-items:center;gap:8px}
+.wb.sm .wr{font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wb.xs{padding:0 11px}.wb.xs .wr{display:none}.wb.xs .wt{font-size:.66rem}
+.wb .chipm{font-size:.66rem;padding:2px 6px}
+.wg-now{position:absolute;left:-6px;right:0;z-index:3;border-top:2px solid #b4abff;pointer-events:none}
+.wg-now::before{content:"";position:absolute;left:-4px;top:-5px;width:9px;height:9px;border-radius:50%;background:#b4abff}
+
+/* desktop day: schedule + side info */
+.dd-wrap{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;min-height:0}
+.dd-side{display:flex;flex-direction:column;gap:12px;overflow-y:auto;min-height:0}
+.ov{display:flex;flex-direction:column;gap:6px;padding:14px}
+.ov h4{margin:0 0 4px;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ovr{display:grid;grid-template-columns:118px 1fr;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:.86rem;font-weight:700}
+.ovr.g{background:var(--sg);color:var(--sg-fg)}.ovr.y{background:var(--sy);color:var(--sy-fg)}.ovr.r{background:var(--sr);color:var(--sr-fg)}
+.ovr .t{font-variant-numeric:tabular-nums;font-size:.8rem}
+
+/* sidebar mini calendar + breakdown */
+.mini h3,.brk h3{margin:0;font-size:1.05rem;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.mgrid .h{font-size:.7rem;font-weight:700;color:var(--muted);padding:4px 0}
+.mgrid .h.we{color:#ef5b61}
+.md{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:.86rem;font-weight:700;position:relative}
+.md.out{color:var(--faint)}
+.md.we{color:#ef5b61;opacity:.6}
+.md.sel{background:var(--fg);color:var(--bg)}
+.md.today{box-shadow:inset 0 0 0 2px var(--accent)}
+.md i{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%}
+.md.click{cursor:pointer}.md.click:hover{background:var(--panel-2)}
+.md.sel.click:hover{background:var(--fg)}
+.brow{display:grid;grid-template-columns:14px 74px 1fr 22px;gap:8px;align-items:center;font-size:.86rem;font-weight:600}
+.brow .bd{width:8px;height:8px;border-radius:50%}
+.brow .bt{height:5px;border-radius:5px;background:var(--panel-2);overflow:hidden}
+.brow .bt b{display:block;height:100%;border-radius:5px}
+.brow .bn{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="wrap">
+ <aside class="side">
   <div class="top">
     <div class="brand"><img src="icon.png" alt="">NQ Planner</div>
     <div class="upd" id="upd"></div>
   </div>
 
   <section class="panel now" id="now" aria-live="polite"></section>
+  <section class="panel mini" id="mini"></section>
+  <section class="panel brk" id="brk"></section>
+  <section class="panel brk" id="upn"></section>
+ </aside>
+ <section class="mainp">
 
   <section class="panel ctl">
     <div class="seg3" role="group" aria-label="View">
@@ -207,6 +316,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   <div class="sheet" id="sheet" hidden></div>
 
   <footer class="foot" id="foot"></footer>
+ </section>
 </div>
 
 <script>
@@ -371,10 +481,21 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     sh.onclick = e => { if (e.target === sh) sh.hidden = true; };
   }
   function bindSegs(root){
-    root.querySelectorAll("[data-seg]").forEach(el => el.onclick = () => {
+    root.querySelectorAll("[data-seg]").forEach(el => el.onclick = e => {
       const [s, A, B, k] = el.dataset.seg.split("|");
       explainSeg(s, +A, +B, k, el.dataset.reason);
+      placePop(el.getBoundingClientRect());
     });
+  }
+  function placePop(r){
+    const sh = $("sheet");
+    sh.classList.toggle("pop", DESK());
+    if (!DESK()) return;
+    const card = sh.querySelector(".shc"); if (!card) return;
+    const w = 380, h = card.offsetHeight, vw = innerWidth, vh = innerHeight;
+    let x = r.right + 12; if (x + w > vw - 12) x = r.left - w - 12; if (x < 12) x = Math.min(vw - w - 12, Math.max(12, r.left));
+    let y = r.top; if (y + h > vh - 12) y = vh - h - 12; if (y < 12) y = 12;
+    card.style.left = x + "px"; card.style.top = y + "px";
   }
 
   /* ---------- long-press explainer ---------- */
@@ -393,6 +514,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       ${dd.notes && dd.notes.length ? `<p>${esc(dd.notes.join(" · "))}</p>` : ""}
       <div class="shb"><button class="btn" id="sh-open">Open day</button><button class="btn" id="sh-close">Close</button></div></div>`;
     sh.hidden = false;
+    const tileEl = document.querySelector(`.tile[data-d="${s}"]`); if (tileEl) placePop(tileEl.getBoundingClientRect());
     $("sh-close").onclick = () => sh.hidden = true;
     $("sh-open").onclick = () => { sh.hidden = true; cursor = s; view = "day"; render(); };
     sh.onclick = e => { if (e.target === sh) sh.hidden = true; };
@@ -432,7 +554,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       const past = s < NOW.date ? " past" : "", today = s === NOW.date ? " today" : "";
       const tag = topTag(dd);
       const lb = dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label;
-      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(lb)}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span>${asiaBadge(s)}</button>`;
+      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(lb)}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span><span class="win">${esc(winText(dd))}</span></span>${asiaBadge(s)}</button>`;
     }).join("");
     $("view").innerHTML = `<section class="panel cal">
       <div class="calhead"><h2>${MON[m]}</h2><div class="counts">${counts}</div></div>
@@ -571,12 +693,128 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     host.innerHTML = ""; host.appendChild(g); bindSegs(host);
   }
 
+  /* ================= desktop ================= */
+  const DESK = () => window.matchMedia("(min-width:1100px)").matches;
+  const C = { g: "var(--go-c)", y: "var(--warn-c)", r: "var(--stop-c)" };
+  function winText(dd){
+    if (dd.holidayType === "closed") return "Market closed";
+    const g = dd.segs.filter(x => x[2] === "g").map(x => fmtR(toMin(x[0]), toMin(x[1])));
+    return g.length ? "Trade " + g.join(", ") : "No green window";
+  }
+  const hr12 = m => { const h = Math.floor(m/60) % 24; return (h % 12 || 12) + (h >= 12 ? " PM" : " AM"); };
+
+  function deskGrid(host, dates){
+    const firstNews = Math.min(9999, ...dates.map(s => Math.min(9999, ...(BY[s]?.marks || []).map(m => toMin(m[0])))));
+    const S0 = firstNews < 510 ? Math.floor((firstNews - 10) / 5) * 5 : 510, S1 = 960;
+    const head = `<div class="wg-head" style="--cols:${dates.length}"><span class="wg-tz">New York</span>${dates.map(s => {
+      const dd = BY[s]; const lb = dd ? (dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label) : "No data";
+      return `<button class="wg-dh${s === NOW.date ? " today" : ""}" data-day="${s}"><span class="d1">${D(s).getUTCDate()}<small>${dow(s)}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(lb)}</span>` : ""}</button>`;
+    }).join("")}</div>`;
+    host.innerHTML = `<div class="wg">${head}<div class="wg-body"><div class="wg-grid" style="--cols:${dates.length}"></div></div></div>`;
+    const body = host.querySelector(".wg-body"), grid = host.querySelector(".wg-grid");
+    const avail = Math.max(420, body.clientHeight - 4);
+    const PX = Math.max(1.05, avail / (S1 - S0));
+    const H = (S1 - S0) * PX, Y = m => (m - S0) * PX;
+    let ax = `<div class="wg-ax" style="height:${H}px">`;
+    for (let m = Math.ceil(S0/60)*60; m <= S1; m += 60) ax += `<span style="top:${Math.min(Math.max(Y(m),8),H-8)}px">${hr12(m)}</span>`;
+    if (S0 % 60) ax += `<span style="top:8px">${fmtR(S0,S0).split("–")[0].replace("a"," AM")}</span>`;
+    ax += `<span class="o" style="top:${Y(570)}px">9:30</span></div>`;
+    let cols = "";
+    dates.forEach(s => {
+      const dd = BY[s];
+      let c = `<div class="wg-col" style="height:${H}px">`;
+      for (let m = Math.ceil(S0/60)*60; m <= S1; m += 60) c += `<div class="wg-line" style="top:${Y(m)}px"></div>`;
+      c += `<div class="wg-line o" style="top:${Y(570)}px"></div>`;
+      if (dd) {
+        const marks = (dd.marks || []).slice();
+        if (dd.holidayType !== "closed" && dd.segs.some(x => x[2] !== "r")) { marks.push(["10:00","10am reversal","time"]); if (!dd.holiday) marks.push(["14:36","2:36 liquidity run","time"]); }
+        dd.segs.forEach(([a,b,k,n]) => {
+          const A = Math.max(toMin(a), S0), B = Math.min(toMin(b), S1); if (B <= A) return;
+          const top = Y(A) + 2, h = Y(B) - Y(A) - 4;
+          const size = h < 26 ? " xs" : h < 50 ? " sm" : "";
+          const ms = h >= 74 ? marks.filter(m => { const t = toMin(m[0]); return t >= A && t < B; }).map(m => `<span class="chipm ${m[2]}">${m[2] === "time" ? "" : esc(m[0]) + " "}${esc(m[1])}</span>`).join("") : "";
+          c += `<div class="wb ${k}${size}" style="top:${top}px;height:${Math.max(h,6)}px" data-seg="${s}|${A}|${B}|${k}" data-reason="${esc(n)}" title="${fmtR(A,B)} · ${esc(n)}">
+            <span class="wt">${fmtR(A,B)}</span><span class="wr">${esc(n)}</span>${ms ? `<span class="wc">${ms}</span>` : ""}</div>`;
+        });
+        if (s === NOW.date && NOW.min >= S0 && NOW.min <= S1) c += `<div class="wg-now" style="top:${Y(NOW.min)}px"></div>`;
+      }
+      cols += c + "</div>";
+    });
+    grid.innerHTML = ax + cols;
+    host.querySelectorAll(".wg-dh[data-day]").forEach(b => b.onclick = () => { cursor = b.dataset.day; view = "day"; render(); });
+    bindSegs(host);
+  }
+
+  function renderWeekDesk(){
+    const mon = monday(cursor);
+    const ds = [0,1,2,3,4].map(i => addDays(mon, i));
+    $("title").textContent = MON[D(ds[0]).getUTCMonth()] + ", " + D(ds[0]).getUTCFullYear() + " · " + short(ds[0]) + " – " + short(ds[4]);
+    $("view").innerHTML = ""; deskGrid($("view"), ds);
+  }
+
+  function renderDayDesk(){
+    const s = cursor, dd = BY[s];
+    $("title").textContent = dow(s).slice(0,3) + ", " + short(s) + " " + D(s).getUTCFullYear();
+    if (!dd) { $("view").innerHTML = `<section class="panel err">No schedule for this day yet. New weeks are added every Sunday.</section>`; return; }
+    const lb = dd.holiday ? (dd.holidayType === "half" ? dd.holiday : "Bank holiday · " + dd.holiday) : dd.label;
+    let nd = addDays(s, 1); for (let i = 0; i < 4 && !BY[nd]; i++) nd = addDays(nd, 1);
+    const ov = (BY[nd]?.asia || []).map(([a,b,k,n]) => `<div class="ovr ${k}" data-seg="${nd}|${toMin(a)}|${toMin(b)}|${k}" data-reason="${esc(n)}"><span class="t">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span></div>`).join("");
+    const news = dd.news.length ? dd.news.map(n => `<li style="display:grid;grid-template-columns:auto auto 1fr"><span class="t">${esc(n.time)}</span><span class="ip" style="background:${n.impact === "red" ? "#ef5b61" : "#e7ac36"}"></span><span>${esc(n.name)}</span></li>`).join("") : `<li>No scheduled news</li>`;
+    $("view").innerHTML = `<div class="dd-wrap"><div id="ddg" style="display:flex;min-height:0;min-width:0"></div>
+      <div class="dd-side">
+        <section class="daybox ${tileClass(dd)}"><div class="row1"><h3>${esc(lb)}</h3><span class="dt">${dow(s)} ${D(s).getUTCDate()}</span></div><p class="why">${esc(dd.why)}</p></section>
+        <section class="panel"><ul class="windows"><li style="grid-template-columns:1fr;font-weight:800;font-size:.8rem;letter-spacing:.1em;color:var(--muted)">NEWS</li>${news}</ul></section>
+        ${ov ? `<section class="panel ov"><h4>Overnight · Asia &amp; London → ${dow(nd).slice(0,3)} ${short(nd)}</h4>${ov}</section>` : ""}
+        ${dd.notes && dd.notes.length ? `<p class="notes">${dd.notes.map(esc).join(" · ")}</p>` : ""}
+      </div></div>`;
+    deskGrid($("ddg"), [s]);
+    bindSegs($("view").querySelector(".dd-side"));
+  }
+
+  function renderMini(){
+    const d = D(cursor); const y = d.getUTCFullYear(), m = d.getUTCMonth();
+    const first = new Date(Date.UTC(y, m, 1, 12)); const start = addDays(iso(first), -((first.getUTCDay() + 6) % 7));
+    let cells = ["M","T","W","T","F","S","S"].map((h,i) => `<span class="h${i > 4 ? " we" : ""}">${h}</span>`).join("");
+    for (let i = 0; i < 42; i++) {
+      const s = addDays(start, i), dd = BY[s], wd = D(s).getUTCDay(), inM = D(s).getUTCMonth() === m;
+      if (i >= 35 && !inM) break;
+      const dot = dd && inM ? `<i style="background:${dd.holidayType && dd.holidayType !== "half" ? "#7b6cf6" : dd.score >= 1 ? "#26c48d" : dd.score === 0 ? "#8cc4b0" : dd.score === -1 ? "#e7ac36" : "#ef5b61"}"></i>` : "";
+      const cls = ["md", !inM ? "out" : "", (wd === 0 || wd === 6) ? "we" : "", s === cursor ? "sel" : "", s === NOW.date ? "today" : "", dd ? "click" : ""].filter(Boolean).join(" ");
+      cells += `<span class="${cls}" ${dd ? `data-d="${s}" role="button" tabindex="0"` : ""}>${D(s).getUTCDate()}${dot}</span>`;
+    }
+    $("mini").innerHTML = `<h3>${MON[m]} ${y}</h3><div class="mgrid">${cells}</div>`;
+    $("mini").querySelectorAll("[data-d]").forEach(e => e.onclick = () => { cursor = e.dataset.d; view = "day"; render(); });
+  }
+
+  function renderBrk(){
+    const d = D(cursor); const m = d.getUTCMonth(), y = d.getUTCFullYear();
+    const days = Object.values(BY).filter(x => { const t = D(x.date); return t.getUTCMonth() === m && t.getUTCFullYear() === y; });
+    const k = x => x.holiday && x.holidayType !== "half" ? "Holiday" : x.label;
+    const rows = [["Great","#12a77f"],["Good","#26c48d"],["OK","#8cc4b0"],["Light","#e7ac36"],["Sit out","#ef5b61"],["Holiday","#7b6cf6"]];
+    const n = days.length || 1;
+    $("brk").innerHTML = `<h3>${MON[m]} breakdown</h3>` + rows.map(([lab, col]) => {
+      const c = days.filter(x => k(x) === lab).length;
+      return `<div class="brow"><span class="bd" style="background:${col}"></span><span>${lab}</span><span class="bt"><b style="width:${c / n * 100}%;background:${col}"></b></span><span class="bn">${c}</span></div>`;
+    }).join("");
+  }
+
+  function renderUpcoming(){
+    const out = [];
+    Object.values(BY).filter(x => x.date >= NOW.date).sort((a,b) => a.date < b.date ? -1 : 1).forEach(x => {
+      x.news.filter(n => n.impact === "red").forEach(n => { if (out.length < 6 && !(x.date === NOW.date && toMin(n.time) < NOW.min)) out.push([x.date, n]); });
+    });
+    $("upn").innerHTML = `<h3>Upcoming red folder</h3>` + (out.length ? out.map(([d, n]) => `<div class="brow" style="grid-template-columns:14px 118px 1fr;cursor:pointer" data-d="${d}"><span class="bd" style="background:#ef5b61"></span><span style="color:var(--muted);white-space:nowrap">${dow(d).slice(0,1)}${dow(d).slice(1,3).toLowerCase()} ${short(d).split(" ")[1]} · ${fmt(toMin(n.time))}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.name)}</span></div>`).join("") : `<p class="notes">Nothing scheduled.</p>`);
+    $("upn").querySelectorAll("[data-d]").forEach(e => e.onclick = () => { cursor = e.dataset.d; view = "day"; render(); });
+  }
+
   function render(){
     $("sheet").hidden = true;
     ["month","week","day"].forEach(v => $("v-" + v).setAttribute("aria-pressed", String(v === view)));
     $("view").removeAttribute("style");
-    if (view === "month") renderMonth(); else if (view === "week") renderWeek(); else renderDay();
-    if (view !== "day") { $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px"; }
+    const dk = DESK();
+    if (view === "month") renderMonth(); else if (view === "week") (dk ? renderWeekDesk : renderWeek)(); else (dk ? renderDayDesk : renderDay)();
+    if (dk) { renderMini(); renderBrk(); renderUpcoming(); if (view === "month") $("title").textContent = MON[D(cursor).getUTCMonth()] + ", " + D(cursor).getUTCFullYear(); }
+    if (!dk && view !== "day") { $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px"; }
     renderNow(); writeHash();
   }
 
@@ -588,6 +826,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     setInterval(() => { NOW = nyNow(); renderNow(); }, 60000);
   }).catch(() => { $("view").innerHTML = `<section class="panel err">Couldn't load the schedule. Check your connection and reload.</section>`; });
   window.addEventListener("hashchange", () => { readHash(); render(); });
+  let rz, lastW = innerWidth; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (DATA && (innerWidth !== lastW || DESK())) { lastW = innerWidth; render(); } }, 150); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") $("sheet").hidden = true; else if (e.key === "ArrowLeft" && !e.target.closest("input")) step(-1); else if (e.key === "ArrowRight" && !e.target.closest("input")) step(1); });
 })();
 </script>
 </body>
