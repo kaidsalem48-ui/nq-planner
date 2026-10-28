@@ -1,0 +1,3676 @@
+{
+ "updated": "2026-10-28",
+ "sources": [
+  "fedratecalc.com US economic calendar (BLS/BEA/Census/Fed dates)",
+  "BLS CPI release schedule",
+  "ISM PMI release calendar",
+  "Kiplinger weekly economic calendar",
+  "Dorman Trading November 2026 calendar"
+ ],
+ "days": [
+  {
+   "date": "2026-10-01",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "ISM Manufacturing PMI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "ISM",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "ISM at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "ISM in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "ISM at 10:00: stay out the 10 min before it.",
+   "notes": [
+    "NFP tomorrow: if today's price action is good, tomorrow is likely bad."
+   ]
+  },
+  {
+   "date": "2026-10-02",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Non-Farm Payrolls",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "NFP",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30. NFP: if yesterday's price action was good, today is likely bad. Check yesterday first.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-05",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "ISM Services PMI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "ISM",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "ISM at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "ISM in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "ISM at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-06",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-07",
+   "news": [
+    {
+     "time": "14:00",
+     "name": "FOMC Minutes",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "14:00",
+     "Minutes",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 0,
+   "label": "OK",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "11:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "11:00",
+     "16:00",
+     "r",
+     "Minutes at 2pm, done by 11"
+    ]
+   ],
+   "why": "FOMC minutes at 2pm: AM is fine, be done by 11.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-08",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-09",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "UMich Sentiment (prelim)",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "UMich",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "UMich at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "UMich in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "UMich at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-12",
+   "news": [],
+   "marks": [],
+   "holiday": "Columbus Day",
+   "holidayType": "bank",
+   "score": -1,
+   "label": "Bank holiday",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Columbus Day: bonds/banks closed, futures open with thin volume. No-news Monday: prefer not to trade; if AM is bad, PM won't be much better.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-13",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "Day before CPI, small scalps"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long. Day before CPI is sloppy: small scalps only, eval account. Days after bank holidays usually have bad price action.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-14",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "CPI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "CPI",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30. CPI: never before the release. Low volatility if at all-time highs.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-15",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Retail Sales + PPI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "PPI",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-16",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-19",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No-news Monday: prefer not to trade; if AM is bad, PM won't be much better.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-20",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-21",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-22",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-23",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "UMich Sentiment (final) (est.)",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "UMich",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "UMich at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "UMich in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "UMich at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-26",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "g",
+     "Pre-open setups OK"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No-news Monday: prefer not to trade; if AM is bad, PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-27",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Durable Goods",
+     "impact": "orange"
+    },
+    {
+     "time": "10:00",
+     "name": "Consumer Confidence",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "Durables",
+     "minor"
+    ],
+    [
+     "10:00",
+     "Conf.",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 0,
+   "label": "OK",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "Conf. at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "Conf. in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Conf. at 10:00: stay out the 10 min before it. Day before FOMC: less volatile, won't run every liquidity. Take more off TP1.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-28",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Trade Balance",
+     "impact": "orange"
+    },
+    {
+     "time": "14:00",
+     "name": "FOMC Rate Decision",
+     "impact": "red"
+    },
+    {
+     "time": "14:30",
+     "name": "Fed Chair Press Conference",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "Trade",
+     "minor"
+    ],
+    [
+     "14:00",
+     "FOMC",
+     "news"
+    ],
+    [
+     "14:30",
+     "Presser",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": -2,
+   "label": "Sit out",
+   "segs": [
+    [
+     "2:00",
+     "14:00",
+     "r",
+     "No trades before FOMC"
+    ],
+    [
+     "14:00",
+     "16:00",
+     "r",
+     "FOMC + Chair speaking"
+    ]
+   ],
+   "why": "FOMC day: no trades before the decision, none while the Chair speaks, none in the FOMC afternoon.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-29",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "GDP Q3 + Core PCE",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "GDP\u00b7PCE",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30.",
+   "notes": []
+  },
+  {
+   "date": "2026-10-30",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Employment Cost Index",
+     "impact": "orange"
+    },
+    {
+     "time": "9:45",
+     "name": "Chicago PMI",
+     "impact": "orange"
+    },
+    {
+     "time": "12:00",
+     "name": "Fed's Daly speaks",
+     "impact": "orange"
+    },
+    {
+     "time": "12:30",
+     "name": "Fed's Musalem speaks",
+     "impact": "orange"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "ECI",
+     "minor"
+    ],
+    [
+     "9:45",
+     "Chi PMI",
+     "minor"
+    ],
+    [
+     "12:00",
+     "Fed spk",
+     "minor"
+    ],
+    [
+     "12:30",
+     "Fed spk",
+     "minor"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "Chi PMI (orange)"
+    ],
+    [
+     "9:50",
+     "11:50",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "11:50",
+     "13:00",
+     "y",
+     "Fed speaker"
+    ],
+    [
+     "13:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-02",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "ISM Manufacturing PMI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "ISM",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "ISM at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "ISM in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "ISM at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-03",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "JOLTS Job Openings",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "JOLTS",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "JOLTS at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "JOLTS in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "JOLTS at 10:00: stay out the 10 min before it.",
+   "notes": [
+    "Midterm Election Day"
+   ]
+  },
+  {
+   "date": "2026-11-04",
+   "news": [
+    {
+     "time": "8:15",
+     "name": "ADP Employment (est.)",
+     "impact": "red"
+    },
+    {
+     "time": "10:00",
+     "name": "ISM Services PMI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:15",
+     "ADP",
+     "news"
+    ],
+    [
+     "10:00",
+     "ISM",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:05",
+     "r",
+     "Nothing before ADP"
+    ],
+    [
+     "8:05",
+     "8:15",
+     "r",
+     "ADP in < 10 min"
+    ],
+    [
+     "8:15",
+     "9:20",
+     "g",
+     "Post-news volatility"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "ISM at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "ISM in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "ISM at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-05",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Jobless Claims + Trade Balance (est.)",
+     "impact": "orange"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "Claims",
+     "minor"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": [
+    "NFP tomorrow: if today's price action is good, tomorrow is likely bad."
+   ]
+  },
+  {
+   "date": "2026-11-06",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Non-Farm Payrolls",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "NFP",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30. NFP: if yesterday's price action was good, today is likely bad. Check yesterday first.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-09",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "Day before CPI, small scalps"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long. Day before CPI is sloppy: small scalps only, eval account.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-10",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "CPI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "CPI",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30. CPI: never before the release. Low volatility if at all-time highs.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-11",
+   "news": [],
+   "marks": [],
+   "holiday": "Veterans Day",
+   "holidayType": "bank",
+   "score": -1,
+   "label": "Bank holiday",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "Bank holiday, thin volume"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Veterans Day: bonds/banks closed, futures open with thin volume. No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-12",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Jobless Claims (est.)",
+     "impact": "orange"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "Claims",
+     "minor"
+    ]
+   ],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "Day after holiday, sloppy"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long. Days after bank holidays usually have bad price action.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-13",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "PPI",
+     "impact": "red"
+    },
+    {
+     "time": "10:00",
+     "name": "UMich Sentiment (prelim) (est.)",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "PPI",
+     "news"
+    ],
+    [
+     "10:00",
+     "UMich",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "UMich at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "UMich in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30. UMich at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-16",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "g",
+     "Pre-open setups OK"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No-news Monday: prefer not to trade; if AM is bad, PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-17",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Retail Sales",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "Retail",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-18",
+   "news": [
+    {
+     "time": "14:00",
+     "name": "FOMC Minutes",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "14:00",
+     "Minutes",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 0,
+   "label": "OK",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "11:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "11:00",
+     "16:00",
+     "r",
+     "Minutes at 2pm, done by 11"
+    ]
+   ],
+   "why": "FOMC minutes at 2pm: AM is fine, be done by 11.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-19",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Philly Fed + Jobless Claims (est.)",
+     "impact": "orange"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "Philly",
+     "minor"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-20",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-23",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "g",
+     "Pre-open setups OK"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No-news Monday: prefer not to trade; if AM is bad, PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-24",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "Consumer Confidence (est.)",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "Conf.",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "Conf. at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "Conf. in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Conf. at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-25",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "GDP (2nd) + Core PCE + Durables",
+     "impact": "red"
+    },
+    {
+     "time": "10:00",
+     "name": "UMich Sentiment (final) (est.)",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "GDP\u00b7PCE",
+     "news"
+    ],
+    [
+     "10:00",
+     "UMich",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "UMich at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "UMich in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30. UMich at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-26",
+   "news": [],
+   "marks": [],
+   "holiday": "Thanksgiving",
+   "holidayType": "closed",
+   "score": null,
+   "label": "Bank holiday",
+   "segs": [
+    [
+     "2:00",
+     "16:00",
+     "r",
+     "Market closed"
+    ]
+   ],
+   "why": "Market closed for Thanksgiving.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-27",
+   "news": [],
+   "marks": [],
+   "holiday": "Day after Thanksgiving (half day)",
+   "holidayType": "half",
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "Day after holiday, sloppy"
+    ],
+    [
+     "12:00",
+     "13:15",
+     "y",
+     "Only if AM was bad"
+    ],
+    [
+     "13:15",
+     "16:00",
+     "r",
+     "Market closed early"
+    ]
+   ],
+   "why": "Day after Thanksgiving: early close at 13:15. Half days are hit or miss. No red folder: trade after 9:30 on good price action only, don't hold long. Days after bank holidays usually have bad price action.",
+   "notes": []
+  },
+  {
+   "date": "2026-11-30",
+   "news": [
+    {
+     "time": "9:45",
+     "name": "Chicago PMI",
+     "impact": "orange"
+    }
+   ],
+   "marks": [
+    [
+     "9:45",
+     "Chi PMI",
+     "minor"
+    ]
+   ],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "g",
+     "Pre-open setups OK"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "Chi PMI (orange)"
+    ],
+    [
+     "9:50",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No-news Monday: prefer not to trade; if AM is bad, PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-01",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "ISM Manufacturing + JOLTS",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "ISM",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "ISM at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "ISM in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "ISM at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-02",
+   "news": [
+    {
+     "time": "8:15",
+     "name": "ADP Employment (est.)",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:15",
+     "ADP",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:05",
+     "r",
+     "Nothing before ADP"
+    ],
+    [
+     "8:05",
+     "8:15",
+     "r",
+     "ADP in < 10 min"
+    ],
+    [
+     "8:15",
+     "9:20",
+     "g",
+     "Post-news volatility"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Normal day: trade 9:30 to 12.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-03",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "ISM Services PMI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "ISM",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "ISM at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "ISM in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "ISM at 10:00: stay out the 10 min before it.",
+   "notes": [
+    "NFP tomorrow: if today's price action is good, tomorrow is likely bad."
+   ]
+  },
+  {
+   "date": "2026-12-04",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Non-Farm Payrolls",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "NFP",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30. NFP: if yesterday's price action was good, today is likely bad. Check yesterday first.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-07",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No-news Monday: prefer not to trade; if AM is bad, PM won't be much better.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-08",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 0,
+   "label": "OK",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long. Day before FOMC: less volatile, won't run every liquidity. Take more off TP1.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-09",
+   "news": [
+    {
+     "time": "14:00",
+     "name": "FOMC Rate Decision",
+     "impact": "red"
+    },
+    {
+     "time": "14:30",
+     "name": "Fed Chair Press Conference",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "14:00",
+     "FOMC",
+     "news"
+    ],
+    [
+     "14:30",
+     "Presser",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": -2,
+   "label": "Sit out",
+   "segs": [
+    [
+     "2:00",
+     "14:00",
+     "r",
+     "No trades before FOMC"
+    ],
+    [
+     "14:00",
+     "16:00",
+     "r",
+     "FOMC + Chair speaking"
+    ]
+   ],
+   "why": "FOMC day: no trades before the decision, none while the Chair speaks, none in the FOMC afternoon.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-10",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "CPI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "CPI",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30. CPI: never before the release. Low volatility if at all-time highs.",
+   "notes": [
+    "NQ rollover week, 30-sec plays fail more"
+   ]
+  },
+  {
+   "date": "2026-12-11",
+   "news": [
+    {
+     "time": "10:00",
+     "name": "UMich Sentiment (prelim) (est.)",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "10:00",
+     "UMich",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "UMich at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "UMich in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "UMich at 10:00: stay out the 10 min before it.",
+   "notes": [
+    "NQ rollover week, 30-sec plays fail more"
+   ]
+  },
+  {
+   "date": "2026-12-14",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "g",
+     "Pre-open setups OK"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No-news Monday: prefer not to trade; if AM is bad, PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-15",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "PPI",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "PPI",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-16",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Retail Sales",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "Retail",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-17",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-18",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": [
+    "Quad witching / Dec NQ expiration"
+   ]
+  },
+  {
+   "date": "2026-12-21",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No-news Monday: prefer not to trade; if AM is bad, PM won't be much better.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-22",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-23",
+   "news": [
+    {
+     "time": "8:30",
+     "name": "GDP (3rd) + Core PCE",
+     "impact": "red"
+    },
+    {
+     "time": "10:00",
+     "name": "UMich Sentiment (final) (est.)",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "GDP\u00b7PCE",
+     "news"
+    ],
+    [
+     "10:00",
+     "UMich",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 2,
+   "label": "Great",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "8:20",
+     "r",
+     "Nothing before 8:30 news"
+    ],
+    [
+     "8:20",
+     "8:30",
+     "r",
+     "News in < 10 min"
+    ],
+    [
+     "8:30",
+     "9:20",
+     "g",
+     "Post-news volatility, data highs"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "y",
+     "Close to open"
+    ],
+    [
+     "9:30",
+     "9:50",
+     "y",
+     "UMich at 10:00, risky"
+    ],
+    [
+     "9:50",
+     "10:00",
+     "r",
+     "UMich in < 10 min"
+    ],
+    [
+     "10:00",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30. UMich at 10:00: stay out the 10 min before it.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-24",
+   "news": [],
+   "marks": [],
+   "holiday": "Christmas Eve (half day)",
+   "holidayType": "half",
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "Half day, hit or miss"
+    ],
+    [
+     "12:00",
+     "13:15",
+     "y",
+     "Only if AM was bad"
+    ],
+    [
+     "13:15",
+     "16:00",
+     "r",
+     "Market closed early"
+    ]
+   ],
+   "why": "Christmas Eve: early close at 13:15. Half days are hit or miss. No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-25",
+   "news": [],
+   "marks": [],
+   "holiday": "Christmas",
+   "holidayType": "closed",
+   "score": null,
+   "label": "Bank holiday",
+   "segs": [
+    [
+     "2:00",
+     "16:00",
+     "r",
+     "Market closed"
+    ]
+   ],
+   "why": "Market closed for Christmas.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-28",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": -1,
+   "label": "Light",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "y",
+     "No-news Monday, light"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No-news Monday: prefer not to trade; if AM is bad, PM won't be much better. Days after bank holidays usually have bad price action.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-29",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-30",
+   "news": [
+    {
+     "time": "14:00",
+     "name": "FOMC Minutes (est.)",
+     "impact": "red"
+    }
+   ],
+   "marks": [
+    [
+     "14:00",
+     "Minutes",
+     "news"
+    ]
+   ],
+   "holiday": null,
+   "score": 0,
+   "label": "OK",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "11:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "11:00",
+     "16:00",
+     "r",
+     "Minutes at 2pm, done by 11"
+    ]
+   ],
+   "why": "FOMC minutes at 2pm: AM is fine, be done by 11.",
+   "notes": []
+  },
+  {
+   "date": "2026-12-31",
+   "news": [],
+   "marks": [],
+   "holiday": null,
+   "score": 1,
+   "label": "Good",
+   "segs": [
+    [
+     "2:00",
+     "8:00",
+     "r",
+     "Asia / London, skip"
+    ],
+    [
+     "8:00",
+     "9:20",
+     "y",
+     "Pre-open, light only"
+    ],
+    [
+     "9:20",
+     "9:30",
+     "r",
+     "Too close to 9:30 open"
+    ],
+    [
+     "9:30",
+     "12:00",
+     "g",
+     "NY AM, main window"
+    ],
+    [
+     "12:00",
+     "16:00",
+     "y",
+     "Only if AM was bad"
+    ]
+   ],
+   "why": "No red folder: trade after 9:30 on good price action only, don't hold long.",
+   "notes": []
+  }
+ ]
+}

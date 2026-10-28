@@ -1,0 +1,226 @@
+#!/usr/bin/env python3
+"""Turn events.json into data.json using Kaid's NQ trading rules.
+
+Run:  python3 build.py
+Edit events.json (dates, times, holidays), never data.json by hand.
+"""
+import json
+from datetime import date, timedelta
+from pathlib import Path
+
+HERE = Path(__file__).parent
+T0, T1 = 2 * 60, 16 * 60  # schedule covers 2:00am-4:00pm New York time
+
+
+def mins(s):
+    h, m = s.split(":")
+    return int(h) * 60 + int(m)
+
+
+def hm(m):
+    return f"{m // 60}:{m % 60:02d}"
+
+
+class Day:
+    def __init__(self):
+        self.st = ["r"] * (T1 - T0)
+        self.why = [""] * (T1 - T0)
+
+    def paint(self, a, b, s, why):
+        for m in range(max(a, T0), min(b, T1)):
+            self.st[m - T0] = s
+            self.why[m - T0] = why
+
+    def recolor(self, frm, to, why):
+        for i, s in enumerate(self.st):
+            if s == frm:
+                self.st[i] = to
+                self.why[i] = why
+
+    def segs(self):
+        out, start = [], 0
+        for i in range(1, len(self.st) + 1):
+            if i == len(self.st) or self.st[i] != self.st[start] or self.why[i] != self.why[start]:
+                out.append([hm(start + T0), hm(i + T0), self.st[start], self.why[start]])
+                start = i
+        return out
+
+
+LABEL = {2: "Great", 1: "Good", 0: "OK", -1: "Light", -2: "Sit out"}
+
+
+def main():
+    src = json.loads((HERE / "events.json").read_text())
+    hol = src["holidays"]
+    notes_in = src.get("notes", {})
+    by_date = {}
+    for e in src["events"]:
+        by_date.setdefault(e["date"], []).append(e)
+    for v in by_date.values():
+        v.sort(key=lambda e: mins(e["time"]))
+
+    d0 = date.fromisoformat(src["range"][0])
+    d1 = date.fromisoformat(src["range"][1])
+
+    def ev(d):
+        return by_date.get(d.isoformat(), [])
+
+    def red(d):
+        return [e for e in ev(d) if e["impact"] == "red"]
+
+    def kinds(d):
+        return {e["kind"] for e in ev(d)}
+
+    def prev_wd(d):
+        d -= timedelta(days=1)
+        while d.weekday() > 4:
+            d -= timedelta(days=1)
+        return d
+
+    def next_wd(d):
+        d += timedelta(days=1)
+        while d.weekday() > 4:
+            d += timedelta(days=1)
+        return d
+
+    days = []
+    d = d0
+    while d <= d1:
+        if d.weekday() > 4:
+            d += timedelta(days=1)
+            continue
+        iso = d.isoformat()
+        h = hol.get(iso)
+        es = ev(d)
+        reds = red(d)
+        ks = kinds(d)
+        why = []
+        notes = [notes_in[iso]] if iso in notes_in else []
+        out = {"date": iso, "news": [], "marks": [], "holiday": None}
+
+        for e in es:
+            tag = " (est.)" if e.get("est") else ""
+            out["news"].append({"time": e["time"], "name": e["name"] + tag, "impact": e["impact"]})
+            out["marks"].append([e["time"], e["short"], "news" if e["impact"] == "red" else "minor"])
+
+        if h and h["type"] == "closed":
+            day = Day()
+            day.paint(T0, T1, "r", "Market closed")
+            out.update(holiday=h["name"], holidayType="closed", score=None, label="Bank holiday",
+                       segs=day.segs(), why="Market closed for " + h["name"] + ".", notes=notes)
+            days.append(out)
+            d += timedelta(days=1)
+            continue
+
+        day = Day()
+        # Default: Asia/London off, pre-open light, 9:30+ is the main window.
+        day.paint(T0, 480, "r", "Asia / London, skip")
+        day.paint(480, 560, "y", "Pre-open, light only")
+        day.paint(560, 570, "r", "Too close to 9:30 open")
+        day.paint(570, 720, "g", "NY AM, main window")
+        day.paint(720, 960, "y", "Only if AM was bad")
+        score = 1
+        red830 = any(mins(e["time"]) == 510 for e in reds)
+
+        if red830:
+            day.paint(480, 500, "r", "Nothing before 8:30 news")
+            day.paint(500, 510, "r", "News in < 10 min")
+            day.paint(510, 560, "g", "Post-news volatility, data highs")
+            day.paint(560, 570, "y", "Close to open")
+            score = 2
+            why.append("Red folder at 8:30 makes the morning volatile: trade off the 8:30 data highs or wait for 9:30.")
+        if not reds:
+            score = 1
+            why.append("No red folder: trade after 9:30 on good price action only, don't hold long.")
+
+        for e in es:
+            t = mins(e["time"])
+            if e["kind"] in ("fomc", "minutes", "chair"):
+                continue
+            if e["impact"] == "red" and t != 510:
+                if t < 570:
+                    day.paint(480, t - 10, "r", "Nothing before " + e["short"])
+                    day.paint(t - 10, t, "r", e["short"] + " in < 10 min")
+                    day.paint(t, 560, "g", "Post-news volatility")
+                    score = max(score, 2)
+                else:
+                    day.paint(570 if t - 25 < 585 else t - 25, t - 10, "y", e["short"] + " at " + e["time"] + ", risky")
+                    day.paint(t - 10, t, "r", e["short"] + " in < 10 min")
+                    why.append(f"{e['short']} at {e['time']}: stay out the 10 min before it.")
+            elif e["impact"] == "orange" and e["kind"] == "fed":
+                day.paint(t - 10, t + 30, "y", "Fed speaker")
+            elif e["impact"] == "orange" and t != 510:
+                day.paint(570 if t - 10 < 585 and t > 570 else t - 10, t + 5, "y", e["short"] + " (orange)")
+
+        if "fomc" in ks:
+            day.paint(T0, 14 * 60, "r", "No trades before FOMC")
+            day.paint(14 * 60, T1, "r", "FOMC + Chair speaking")
+            score = -2
+            why = ["FOMC day: no trades before the decision, none while the Chair speaks, none in the FOMC afternoon."]
+        elif "chair" in ks:
+            for e in es:
+                if e["kind"] == "chair":
+                    t = mins(e["time"])
+                    day.paint(t - 10, t + 60, "r", "Fed Chair speaking")
+            score = min(score, 0)
+            why.append("Don't trade while the Fed Chair speaks.")
+        if "minutes" in ks:
+            day.paint(660, T1, "r", "Minutes at 2pm, done by 11")
+            score = min(score, 0) if score < 2 else 1
+            why.append("FOMC minutes at 2pm: AM is fine, be done by 11.")
+        if "nfp" in ks:
+            score = min(score, 1)
+            why.append("NFP: if yesterday's price action was good, today is likely bad. Check yesterday first.")
+        if "cpi" in ks:
+            why.append("CPI: never before the release. Low volatility if at all-time highs.")
+
+        # Neighbour-day rules
+        nxt, prv = next_wd(d), prev_wd(d)
+        if "cpi" in kinds(nxt) and "fomc" not in ks:
+            day.recolor("g", "y", "Day before CPI, small scalps")
+            score = min(score, -1)
+            why.append("Day before CPI is sloppy: small scalps only, eval account.")
+        if "fomc" in kinds(nxt) and "fomc" not in ks:
+            score = min(score, 0)
+            why.append("Day before FOMC: less volatile, won't run every liquidity. Take more off TP1.")
+        if "nfp" in kinds(nxt):
+            notes.append("NFP tomorrow: if today's price action is good, tomorrow is likely bad.")
+        if d.weekday() == 0 and not reds and "cpi" not in kinds(nxt):
+            day.recolor("g", "y", "No-news Monday, light")
+            score = min(score, -1)
+            why = ["No-news Monday: prefer not to trade; if AM is bad, PM won't be much better."]
+            if red(nxt):
+                day.paint(480, 560, "g", "Pre-open setups OK")
+                why.append("Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.")
+        ph = hol.get(prv.isoformat())
+        if ph and ph["type"] in ("bank", "closed"):
+            day.recolor("g", "y", "Day after holiday, sloppy")
+            score = min(score, -1)
+            why.append("Days after bank holidays usually have bad price action.")
+
+        if h and h["type"] == "bank":
+            day.recolor("g", "y", "Bank holiday, thin volume")
+            out.update(holiday=h["name"], holidayType="bank")
+            why.insert(0, f"{h['name']}: bonds/banks closed, futures open with thin volume.")
+            score = min(score, -1)
+        if h and h["type"] == "half":
+            c = mins(h["close"])
+            day.paint(c, T1, "r", "Market closed early")
+            day.recolor("g", "y", "Half day, hit or miss")
+            out.update(holiday=h["name"] + " (half day)", holidayType="half")
+            score = min(score, -1)
+            why.insert(0, f"{h['name']}: early close at {h['close']}. Half days are hit or miss.")
+
+        out.update(score=score, label=("Bank holiday" if h and h["type"] == "bank" else LABEL[score]),
+                   segs=day.segs(), why=" ".join(dict.fromkeys(why)) or "Normal day: trade 9:30 to 12.",
+                   notes=notes)
+        days.append(out)
+        d += timedelta(days=1)
+
+    data = {"updated": src["updated"], "sources": src["sources"], "days": days}
+    (HERE / "data.json").write_text(json.dumps(data, indent=1))
+    print(f"wrote {len(days)} days")
+
+
+if __name__ == "__main__":
+    main()

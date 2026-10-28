@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NQ Planner</title>
+<meta name="description" content="Which days and hours to trade NQ, graded from the economic calendar.">
+<meta name="theme-color" content="#0b0d11">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NQ Planner">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Dark trading-journal look: black ground, rounded tiles, green/red grade shades, purple holidays */
+:root{
+  --bg:#0b0d11; --panel:#15181e; --panel-2:#1c2028; --tile:#1f232b; --line:#262b35;
+  --fg:#eef1f6; --muted:#8b93a3; --faint:#5d6574; --accent:#7b6cf6;
+  --g2:#12a77f; --g2-fg:#f2fff9; --g1:#0f4d3d; --g1-fg:#45d6a2; --g0:#18302a; --g0-fg:#8cc4b0;
+  --r1:#4a2024; --r1-fg:#ff9ca1; --r2:#e5484d; --r2-fg:#fff5f5;
+  --hol:#5b3fd6; --hol-fg:#f3efff; --half:#35296f; --half-fg:#cfc4ff;
+  --sg:#0f3b2f; --sg-line:#26c48d; --sg-fg:#9ff0cc;
+  --sy:#3a2e12; --sy-line:#e7ac36; --sy-fg:#f8d790;
+  --sr:#3b1a1d; --sr-line:#ef5b61; --sr-fg:#ffb2b5;
+  --f-ui:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg)}
+body{font-family:var(--f-ui);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;
+  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;padding-block:14px 48px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:.01em}
+.brand img{width:30px;height:30px;border-radius:8px}
+.upd{font-size:.72rem;color:var(--faint);text-align:right}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.now{padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.now .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.now .k{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.now .v{font-size:1.25rem;font-weight:800;min-width:0}
+.now .n{font-size:.86rem;color:var(--muted)}
+.pill{font-size:.78rem;font-weight:800;letter-spacing:.04em;padding:6px 11px;border-radius:10px;white-space:nowrap}
+.pill.g{background:var(--sg);color:var(--sg-fg)}.pill.y{background:var(--sy);color:var(--sy-fg)}.pill.r{background:var(--sr);color:var(--sr-fg)}.pill.n{background:var(--panel-2);color:var(--muted)}
+
+.ctl{padding:10px;display:flex;flex-direction:column;gap:10px}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);background:var(--bg);border-radius:12px;padding:4px;gap:4px}
+.seg3 button{padding:10px 0;border-radius:9px;font-weight:700;color:var(--muted);font-size:.98rem}
+.seg3 button[aria-pressed="true"]{background:var(--panel-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line)}
+.navrow{display:flex;align-items:center;gap:8px}
+.btn{border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-weight:700;background:var(--panel)}
+.arrow{width:38px;height:38px;border-radius:10px;font-size:1.3rem;color:var(--muted);display:grid;place-items:center}
+.arrow:hover{background:var(--panel-2)}
+.title{margin-left:auto;font-weight:700;font-size:1rem;border:1px solid var(--line);border-radius:10px;padding:8px 12px;white-space:nowrap}
+
+.cal{padding:16px 12px 14px}
+.calhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 4px 14px;flex-wrap:wrap}
+.calhead h2{margin:0;font-size:1.45rem;font-weight:800}
+.counts{display:flex;gap:6px;flex-wrap:wrap}
+.cnt{font-size:.74rem;font-weight:800;padding:4px 8px;border-radius:8px}
+.dow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:0 0 8px;text-align:center;font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--muted)}
+.grid5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.tile{min-width:0;position:relative;height:74px;border-radius:12px;background:var(--tile);padding:7px 8px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;overflow:hidden;transition:transform .12s}
+.tile:active{transform:scale(.97)}
+.tile .dn{align-self:flex-end;font-size:.85rem;font-weight:700;font-variant-numeric:tabular-nums}
+.tile .tag{position:absolute;top:28px;left:6px;font-family:var(--f-mono);font-size:.54rem;font-weight:600;padding:1px 3px;border-radius:4px;background:rgba(0,0,0,.28);max-width:calc(100% - 12px);white-space:nowrap;overflow:hidden;text-overflow:clip}
+.tile .lb.small{font-size:.74rem}
+.tile .lb{font-size:.86rem;font-weight:800;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.empty{background:transparent;border:1px dashed var(--line);color:var(--faint)}
+.tile.past{opacity:.45}
+.tile.today{box-shadow:0 0 0 2px var(--fg)}
+.s2{background:var(--g2);color:var(--g2-fg)}.s1{background:var(--g1);color:var(--g1-fg)}.s0{background:var(--g0);color:var(--g0-fg)}
+.s-1{background:var(--r1);color:var(--r1-fg)}.s-2{background:var(--r2);color:var(--r2-fg)}
+.shol{background:var(--hol);color:var(--hol-fg)}.shalf{background:var(--half);color:var(--half-fg)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;padding:12px 4px 0}
+.legend span{font-size:.72rem;font-weight:700;padding:4px 8px;border-radius:8px}
+
+/* week + day boxes */
+.wk .grid5{grid-template-columns:1fr;gap:8px}
+.wk .tile{aspect-ratio:auto;min-height:0;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;gap:2px 14px;align-items:center}
+.wk .tile .tag{position:static;grid-column:2;grid-row:1;justify-self:end;background:rgba(0,0,0,.28);max-width:none;font-size:.66rem}
+.wk .tile .dn{grid-column:1;grid-row:1/3;align-self:center;font-size:1rem;font-weight:800;text-align:center;line-height:1.1}
+.wk .tile .body{grid-column:2;grid-row:2;min-width:0}
+@media (min-width:700px){.wk .grid5{grid-template-columns:repeat(5,minmax(0,1fr))}.wk .tile{display:flex;flex-direction:column;min-height:130px}.wk .tile .tag{position:absolute}.wk .tile .dn{align-self:flex-end}}
+.wk .tile .lb{font-size:1.05rem;white-space:normal}
+.wk .tile .sub{font-size:.76rem;font-weight:600;opacity:.85;line-height:1.25;margin-top:2px}
+.daybox{border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.daybox .row1{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.daybox h3{margin:0;font-size:1.6rem;font-weight:800;line-height:1.1}
+.daybox .dt{font-weight:700;opacity:.85}
+.daybox .why{margin:0;font-size:.9rem;font-weight:600;opacity:.92}
+.newsl{display:flex;flex-direction:column;gap:4px;margin:0;padding:0;list-style:none}
+.newsl li{display:flex;gap:8px;font-size:.86rem;align-items:baseline}
+.newsl .t{font-family:var(--f-mono);font-size:.74rem;font-weight:600;min-width:40px}
+.newsl .ip{width:8px;height:8px;border-radius:2px;flex:none;transform:translateY(-1px)}
+.windows{display:flex;flex-direction:column;gap:6px;padding:14px;margin:0;list-style:none}
+.windows li{display:grid;grid-template-columns:112px 1fr;gap:10px;align-items:center;font-size:.88rem}
+.windows .t{font-family:var(--f-mono);font-size:.74rem;font-weight:600;padding:3px 7px;border-radius:6px;text-align:center;font-variant-numeric:tabular-nums}
+.t.g{background:var(--sg);color:var(--sg-fg)}.t.y{background:var(--sy);color:var(--sy-fg)}.t.r{background:var(--sr);color:var(--sr-fg)}
+.notes{font-size:.82rem;color:var(--muted);margin:0;padding:0 2px}
+
+.expand{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:14px;border:1px solid var(--line);background:var(--panel-2);font-weight:800;font-size:.95rem}
+.expand .chev{transition:transform .2s}
+.expand[aria-expanded="true"] .chev{transform:rotate(180deg)}
+
+/* hour timeline */
+.tl{padding:0 0 10px;overflow-x:auto}
+.tgrid{display:grid;grid-template-columns:42px repeat(var(--cols),minmax(var(--colmin),1fr))}
+.th{position:sticky;top:0;z-index:3;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 4px;text-align:center;font-weight:800;font-size:.9rem}
+.th small{display:block;font-family:var(--f-mono);font-size:.62rem;color:var(--muted);font-weight:500}
+.th.today{color:#b4abff}
+.axis{position:relative;border-right:1px solid var(--line)}
+.axis span{position:absolute;right:5px;transform:translateY(-50%);font-family:var(--f-mono);font-size:.62rem;color:var(--muted);white-space:nowrap}
+.axis span.o{color:var(--fg);font-weight:600}
+.colx{position:relative;border-right:1px solid var(--line)}
+.colx:last-child{border-right:0}
+.hl{position:absolute;left:0;right:0;border-top:1px solid #1f242d}
+.hl.o{border-top:1px dashed #4a5262}
+.sg{position:absolute;left:3px;right:3px;border-radius:6px;padding:3px 6px;overflow:hidden;border-left:3px solid;display:flex;flex-direction:column;gap:1px}
+.sg.g{background:var(--sg);border-color:var(--sg-line);color:var(--sg-fg)}
+.sg.y{background:var(--sy);border-color:var(--sy-line);color:var(--sy-fg)}
+.sg.r{background:var(--sr);border-color:var(--sr-line);color:var(--sr-fg)}
+.sg .st{font-family:var(--f-mono);font-size:.6rem;font-weight:600;white-space:nowrap}
+.sg .sn{font-size:.66rem;line-height:1.2;font-weight:600}
+.sg.tiny{padding:0 6px;justify-content:center}.sg.tiny .sn{display:none}.sg.micro .st{display:none}
+.mk{position:absolute;left:0;right:0;z-index:2;height:0;pointer-events:none}
+.mk::before{content:"";position:absolute;left:0;right:0;top:-1px;border-top:2px solid #e9ecf2}
+.mk.minor::before{border-top:2px dashed #9aa3b3}
+.mk.time::before{border-top:2px dotted var(--accent)}
+.mk b{position:absolute;right:3px;top:-9px;font-family:var(--f-mono);font-size:.56rem;font-weight:600;background:#e9ecf2;color:#0b0d11;padding:1px 4px;border-radius:4px;white-space:nowrap;max-width:calc(100% - 6px);overflow:hidden;text-overflow:ellipsis}
+.mk.minor b{background:#9aa3b3}.mk.time b{background:var(--accent);color:#fff}
+.nl{position:absolute;left:0;right:0;z-index:2;border-top:2px solid #b4abff}
+.nl::before{content:"";position:absolute;left:-3px;top:-5px;width:8px;height:8px;border-radius:50%;background:#b4abff}
+.pre{position:absolute;left:0;right:0;top:0;border-bottom:1px dashed var(--line)}
+
+.foot{font-size:.74rem;color:var(--faint);display:flex;flex-direction:column;gap:4px;padding:0 4px}
+.foot p{margin:0}
+.err{padding:18px;color:var(--r1-fg)}
+@media (min-width:640px){.tile{height:92px}.tile .lb,.tile .lb.small{font-size:1rem}.tile .tag{font-size:.64rem;top:8px;left:8px;max-width:calc(100% - 40px)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><img src="icon.png" alt="">NQ Planner</div>
+    <div class="upd" id="upd"></div>
+  </div>
+
+  <section class="panel now" id="now" aria-live="polite"></section>
+
+  <section class="panel ctl">
+    <div class="seg3" role="group" aria-label="View">
+      <button id="v-month" aria-pressed="true">Month</button>
+      <button id="v-week" aria-pressed="false">Week</button>
+      <button id="v-day" aria-pressed="false">Day</button>
+    </div>
+    <div class="navrow">
+      <button class="btn" id="today">Today</button>
+      <button class="arrow" id="prev" aria-label="Previous">&#8249;</button>
+      <button class="arrow" id="next" aria-label="Next">&#8250;</button>
+      <span class="title" id="title"></span>
+    </div>
+  </section>
+
+  <main id="view"></main>
+
+  <footer class="foot" id="foot"></footer>
+</div>
+
+<script>
+(() => {
+  const T0 = 120, T8 = 480, T1 = 960;
+  const LABEL_CLASS = s => s == null ? "shol" : "s" + s;
+  const DOW = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+  const MON = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+  const toMin = s => { const [h,m] = s.split(":").map(Number); return h*60+m; };
+  const fmt = m => { let h = Math.floor(m/60), mm = m%60; const ap = h >= 12 ? "p" : "a"; h = h%12 || 12; return h + (mm ? ":" + String(mm).padStart(2,"0") : "") + ap; };
+  const fmtR = (a,b) => fmt(a) + "–" + fmt(b);
+  const D = iso => new Date(iso + "T12:00:00Z");
+  const iso = d => d.toISOString().slice(0,10);
+  const addDays = (s, n) => { const d = D(s); d.setUTCDate(d.getUTCDate()+n); return iso(d); };
+  const monday = s => { const d = D(s); const w = d.getUTCDay(); d.setUTCDate(d.getUTCDate() - ((w+6)%7)); return iso(d); };
+  const short = s => { const d = D(s); return MON[d.getUTCMonth()].slice(0,3) + " " + d.getUTCDate(); };
+  const dow = s => DOW[D(s).getUTCDay()];
+
+  function nyNow(){
+    const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date()).map(x => [x.type,x.value]));
+    return { date: `${p.year}-${p.month}-${p.day}`, min: (Number(p.hour)%24)*60 + Number(p.minute) };
+  }
+  let NOW = nyNow();
+
+  let DATA, BY = {}, view = "month", cursor = NOW.date, expanded = false;
+
+  function tileClass(day){
+    if (!day) return "";
+    if (day.holidayType === "closed" || day.holidayType === "bank") return "shol";
+    if (day.holidayType === "half") return "shalf";
+    return LABEL_CLASS(day.score);
+  }
+  function topTag(day){
+    if (!day) return "";
+    if (day.holiday) return day.holidayType === "half" ? "Half" : "";
+    const reds = day.marks.filter(m => m[2] === "news");
+    const pri = ["FOMC","CPI","NFP","Minutes","PPI","GDP·PCE","Retail"];
+    const top = reds.find(m => pri.includes(m[1])) || reds[0];
+    return top ? top[1] : "";
+  }
+
+  /* ---------- routing ---------- */
+  function readHash(){
+    const m = location.hash.match(/^#(month|week|day)-(\d{4}-\d{2}-\d{2})$/);
+    if (m) { view = m[1]; cursor = m[2]; }
+  }
+  function writeHash(){ history.replaceState(null, "", "#" + view + "-" + cursor); }
+
+  function setView(v){ view = v; expanded = false; render(); }
+  ["month","week","day"].forEach(v => $("v-" + v).onclick = () => setView(v));
+  $("today").onclick = () => { cursor = NOW.date; render(); };
+  $("prev").onclick = () => step(-1);
+  $("next").onclick = () => step(1);
+  function step(n){
+    if (view === "month") { const d = D(cursor); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth()+n); cursor = iso(d); }
+    else if (view === "week") cursor = addDays(monday(cursor), 7*n);
+    else { let s = cursor; do { s = addDays(s, n); } while ([0,6].includes(D(s).getUTCDay())); cursor = s; }
+    render();
+  }
+
+  /* ---------- now card ---------- */
+  function renderNow(){
+    const el = $("now"), t = BY[NOW.date];
+    const STAT = {g:"Good to trade", y:"Risky", r:"Don't trade"};
+    if (t && t.holidayType !== "closed") {
+      const cur = t.segs.find(([a,b]) => NOW.min >= toMin(a) && NOW.min < toMin(b));
+      const nxt = t.segs.find(([a,,k]) => k === "g" && toMin(a) > NOW.min);
+      const st = cur ? cur[2] : "n";
+      el.innerHTML = `<span class="k">Right now · ${dow(t.date)} ${short(t.date)} · ${esc(t.label)} day</span>
+        <span class="row"><span class="v">${cur ? esc(cur[3]) : (NOW.min < T0 ? "Asia session" : "Session over")}</span>
+        <span class="pill ${st}">${cur ? STAT[cur[2]] : "Off"}</span></span>
+        <span class="n">${nxt ? "Next good window " + fmtR(toMin(nxt[0]), toMin(nxt[1])) : (t.segs.some(s => s[2] === "g") ? "No more good windows today." : "No good windows today.")}</span>`;
+    } else {
+      let s = NOW.date; for (let i = 0; i < 10 && !(BY[s] && BY[s].holidayType !== "closed" && s > NOW.date); i++) s = addDays(s,1);
+      const n = BY[s];
+      el.innerHTML = `<span class="k">${t ? esc(t.holiday) + " · market closed" : "Weekend"}</span>
+        <span class="row"><span class="v">${n ? "Next: " + dow(n.date) + " " + short(n.date) : "No data yet"}</span>
+        <span class="pill n">${n ? esc(n.label) : "—"}</span></span>
+        <span class="n">${n ? esc(n.news.filter(x => x.impact === "red").map(x => x.time + " " + x.name).join(" · ") || "No red-folder news") : ""}</span>`;
+    }
+  }
+
+  /* ---------- month ---------- */
+  function renderMonth(){
+    const d = D(cursor); const y = d.getUTCFullYear(), m = d.getUTCMonth();
+    $("title").textContent = MON[m] + " " + y;
+    const first = iso(new Date(Date.UTC(y, m, 1, 12)));
+    let start = monday(first);
+    const lastDay = new Date(Date.UTC(y, m+1, 0, 12));
+    const days = []; let cnt = {};
+    for (let s = start; D(s) <= lastDay || D(s).getUTCDay() !== 1; s = addDays(s,1)) {
+      const wd = D(s).getUTCDay(); if (wd === 0 || wd === 6) continue;
+      days.push(s);
+      const dd = BY[s]; if (dd && D(s).getUTCMonth() === m) { const k = dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label; cnt[k] = (cnt[k]||0)+1; }
+      if (days.length > 40) break;
+    }
+    const order = [["Great","s2"],["Good","s1"],["OK","s0"],["Light","s-1"],["Sit out","s-2"],["Holiday","shol"]];
+    const counts = order.filter(([k]) => cnt[k]).map(([k,c]) => `<span class="cnt ${c}">${cnt[k]} ${k}</span>`).join("");
+    const tiles = days.map(s => {
+      const dd = BY[s], inMonth = D(s).getUTCMonth() === m;
+      if (!inMonth) return `<div class="tile empty"><span class="dn">${D(s).getUTCDate()}</span><span></span></div>`;
+      if (!dd) return `<div class="tile"><span class="dn">${D(s).getUTCDate()}</span><span class="lb" style="color:var(--faint)">– –</span></div>`;
+      const past = s < NOW.date ? " past" : "", today = s === NOW.date ? " today" : "";
+      const tag = topTag(dd);
+      const lb = dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label;
+      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(lb)}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span></button>`;
+    }).join("");
+    $("view").innerHTML = `<section class="panel cal">
+      <div class="calhead"><h2>${MON[m]}</h2><div class="counts">${counts}</div></div>
+      <div class="dow"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span></div>
+      <div class="grid5">${tiles}</div>
+      <div class="legend"><span class="s2">Great</span><span class="s1">Good</span><span class="s0">OK</span><span class="s-1">Light</span><span class="s-2">Sit out</span><span class="shol">Bank holiday</span><span class="shalf">Half day</span></div>
+    </section>`;
+    $("view").querySelectorAll(".tile[data-d]").forEach(b => b.onclick = () => { cursor = b.dataset.d; view = "day"; expanded = false; render(); });
+  }
+
+  /* ---------- week ---------- */
+  function renderWeek(){
+    const mon = monday(cursor);
+    const ds = [0,1,2,3,4].map(i => addDays(mon, i));
+    $("title").textContent = short(ds[0]) + " – " + short(ds[4]);
+    const tiles = ds.map(s => {
+      const dd = BY[s];
+      if (!dd) return `<div class="tile"><span class="dn">${dow(s)} ${D(s).getUTCDate()}</span><span class="lb" style="color:var(--faint)">No data</span></div>`;
+      const past = s < NOW.date ? " past" : "", today = s === NOW.date ? " today" : "";
+      const tag = topTag(dd);
+      const best = dd.segs.filter(x => x[2] === "g").map(x => fmtR(toMin(x[0]), toMin(x[1]))).slice(0,2).join(", ");
+      const lb = dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label;
+      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${dow(s).slice(0,3)}<br>${D(s).getUTCDate()}</span><span class="body"><span class="lb">${esc(lb)}</span><span class="sub" style="display:block">${best ? "Trade " + esc(best) : (dd.holidayType === "closed" ? "Market closed" : "No green window")}</span></span></button>`;
+    }).join("");
+    $("view").innerHTML = `<section class="panel cal wk">
+      <div class="calhead"><h2>Week of ${short(ds[0])}</h2></div>
+      <div class="grid5">${tiles}</div>
+    </section>
+    <button class="expand" id="exp" aria-expanded="${expanded}">${expanded ? "Hide hours" : "Expand hours"} <span class="chev">&#9662;</span></button>
+    <section class="panel tl" id="tl" ${expanded ? "" : "hidden"}></section>`;
+    $("view").querySelectorAll(".tile[data-d]").forEach(b => b.onclick = () => { cursor = b.dataset.d; view = "day"; expanded = false; render(); });
+    $("exp").onclick = () => { expanded = !expanded; renderWeek(); };
+    if (expanded) timeline($("tl"), ds.filter(s => BY[s]), 104);
+  }
+
+  /* ---------- day ---------- */
+  function renderDay(){
+    const s = cursor, dd = BY[s];
+    $("title").textContent = dow(s).slice(0,3) + ", " + short(s) + " " + D(s).getUTCFullYear();
+    if (!dd) { $("view").innerHTML = `<section class="panel err">No schedule for this day yet. New weeks are added every Sunday.</section>`; return; }
+    const lb = dd.holiday ? (dd.holidayType === "half" ? dd.holiday : "Bank holiday · " + dd.holiday) : dd.label;
+    const news = dd.news.length ? dd.news.map(n => `<li><span class="t">${esc(n.time)}</span><span class="ip" style="background:${n.impact === "red" ? "#ef5b61" : "#e7ac36"}"></span><span>${esc(n.name)}</span></li>`).join("") : `<li>No scheduled news</li>`;
+    const wins = dd.segs.filter(x => !(x[2] === "r" && toMin(x[1]) <= T8)).map(([a,b,k,n]) => `<li><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span></li>`).join("");
+    $("view").innerHTML = `<section class="daybox ${tileClass(dd)}${s === NOW.date ? " today" : ""}">
+        <div class="row1"><h3>${esc(lb)}</h3><span class="dt">${dow(s)} ${D(s).getUTCDate()}</span></div>
+        <p class="why">${esc(dd.why)}</p>
+      </section>
+      <section class="panel"><ul class="windows"><li style="grid-template-columns:1fr;font-weight:800;font-size:.8rem;letter-spacing:.1em;color:var(--muted)">NEWS</li>${news.replace(/<li>/g,'<li style="grid-template-columns:auto auto 1fr;display:grid">')}</ul></section>
+      <section class="panel"><ul class="windows"><li style="grid-template-columns:1fr;font-weight:800;font-size:.8rem;letter-spacing:.1em;color:var(--muted)">WHEN TO TRADE</li>${wins}</ul></section>
+      ${dd.notes && dd.notes.length ? `<p class="notes">${dd.notes.map(esc).join(" · ")}</p>` : ""}
+      <button class="expand" id="exp" aria-expanded="${expanded}">${expanded ? "Hide hours" : "Expand hours"} <span class="chev">&#9662;</span></button>
+      <section class="panel tl" id="tl" ${expanded ? "" : "hidden"}></section>`;
+    $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px";
+    $("exp").onclick = () => { expanded = !expanded; renderDay(); };
+    if (expanded) timeline($("tl"), [s], 200);
+  }
+
+  /* ---------- vertical hour timeline ---------- */
+  function timeline(host, dates, colmin){
+    const PRE = 56, PX = 1.55;
+    const y = m => m <= T8 ? (m - T0) / (T8 - T0) * PRE : PRE + (m - T8) * PX;
+    const H = y(T1);
+    const g = document.createElement("div"); g.className = "tgrid";
+    g.style.setProperty("--cols", dates.length); g.style.setProperty("--colmin", colmin + "px");
+    g.appendChild(Object.assign(document.createElement("div"), {className:"th"}));
+    dates.forEach(s => { const h = document.createElement("div"); h.className = "th" + (s === NOW.date ? " today" : ""); h.innerHTML = `${dow(s).slice(0,3)}<small>${short(s)}</small>`; g.appendChild(h); });
+    const ax = document.createElement("div"); ax.className = "axis"; ax.style.height = H + "px";
+    const tick = (m, t, c) => { const e = document.createElement("span"); e.style.top = Math.min(Math.max(y(m),7),H-7) + "px"; e.textContent = t; if (c) e.className = c; ax.appendChild(e); };
+    tick(T0,"2a"); tick(300,"5a"); for (let m = T8; m <= T1; m += 60) tick(m, fmt(m)); tick(570,"9:30","o");
+    g.appendChild(ax);
+    dates.forEach(s => {
+      const dd = BY[s];
+      const c = document.createElement("div"); c.className = "colx"; c.style.height = H + "px";
+      c.insertAdjacentHTML("beforeend", `<div class="pre" style="height:${PRE}px"></div>`);
+      for (let m = T8+60; m < T1; m += 60) c.insertAdjacentHTML("beforeend", `<div class="hl" style="top:${y(m)}px"></div>`);
+      c.insertAdjacentHTML("beforeend", `<div class="hl o" style="top:${y(570)}px"></div>`);
+      dd.segs.forEach(([a,b,k,n]) => {
+        const A = toMin(a), B = toMin(b), top = y(A), ht = y(B) - top;
+        c.insertAdjacentHTML("beforeend", `<div class="sg ${k}${ht < 32 ? " tiny" : ""}${ht < 13 ? " micro" : ""}" style="top:${top+1}px;height:${Math.max(ht-2,3)}px" title="${fmtR(A,B)} · ${esc(n)}"><span class="st">${fmtR(A,B)}</span><span class="sn">${esc(n)}</span></div>`);
+      });
+      (dd.marks || []).forEach(([t,l,k]) => c.insertAdjacentHTML("beforeend", `<div class="mk ${k === "minor" ? "minor" : ""}" style="top:${y(toMin(t))}px"><b>${esc(l)}</b></div>`));
+      if (dd.holidayType !== "closed" && !dd.segs.every(x => x[2] === "r")) c.insertAdjacentHTML("beforeend", `<div class="mk time" style="top:${y(600)}px"><b>10am rev</b></div>`);
+      if (s === NOW.date && NOW.min >= T0 && NOW.min <= T1) c.insertAdjacentHTML("beforeend", `<div class="nl" style="top:${y(NOW.min)}px"></div>`);
+      g.appendChild(c);
+    });
+    host.innerHTML = ""; host.appendChild(g);
+  }
+
+  function render(){
+    ["month","week","day"].forEach(v => $("v-" + v).setAttribute("aria-pressed", String(v === view)));
+    $("view").removeAttribute("style");
+    if (view === "month") renderMonth(); else if (view === "week") renderWeek(); else renderDay();
+    if (view !== "day") { $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px"; }
+    renderNow(); writeHash();
+  }
+
+  fetch("data.json", {cache: "no-store"}).then(r => r.json()).then(d => {
+    DATA = d; d.days.forEach(x => BY[x.date] = x);
+    $("upd").textContent = "Updated " + short(d.updated);
+    $("foot").innerHTML = `<p>All times New York. Green = good to trade · yellow = risky / light size · red = don't trade.</p><p>Calendar sources: ${d.sources.map(esc).join(", ")}. Dates marked "est." are confirmed each Sunday.</p>`;
+    readHash(); render();
+    setInterval(() => { NOW = nyNow(); renderNow(); }, 60000);
+  }).catch(() => { $("view").innerHTML = `<section class="panel err">Couldn't load the schedule. Check your connection and reload.</section>`; });
+  window.addEventListener("hashchange", () => { readHash(); render(); });
+})();
+</script>
+</body>
+</html>
