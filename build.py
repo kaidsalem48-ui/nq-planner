@@ -107,7 +107,7 @@ def main():
             day = Day()
             day.paint(T0, T1, "r", "Market closed")
             out.update(holiday=h["name"], holidayType="closed", score=None, label="Bank holiday",
-                       segs=day.segs(), why="Market closed for " + h["name"] + ".", notes=notes)
+                       segs=day.segs(), why="Market closed for " + h["name"] + ".", notes=notes, asia=[])
             days.append(out)
             d += timedelta(days=1)
             continue
@@ -217,6 +217,15 @@ def main():
             out.update(holiday=h["name"] + " (half day)", holidayType="half")
             score = min(score, -1)
             why.insert(0, f"{h['name']}: early close at {h['close']}. Half days are hit or miss.")
+
+        # Asia session: the evening before this trading day (times past 24:00 are after midnight)
+        kz = ["20:00", "24:00", "y", "Asia kill zone, light size"]
+        if "fomc" in kinds(prv):
+            kz = ["20:00", "24:00", "g", "Post-FOMC Asia, fine to trade"]
+        elif ks & {"cpi", "nfp", "fomc"}:
+            kz = ["20:00", "24:00", "r", "Big news tomorrow, skip Asia"]
+        open_txt = "Sunday Globex open, thin" if d.weekday() == 0 else "Globex reopen, thin"
+        out["asia"] = [["18:00", "20:00", "r", open_txt], kz, ["24:00", "26:00", "r", "Late Asia, skip"]]
 
         out.update(score=score, label=("Bank holiday" if h and h["type"] == "bank" else LABEL[score]),
                    segs=day.segs(), why=" ".join(dict.fromkeys(why)) or "Normal day: trade 9:30 to 12.",

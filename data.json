@@ -25,6 +25,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -99,6 +119,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "r",
+     "Big news tomorrow, skip Asia"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -171,6 +211,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -225,6 +285,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -291,6 +371,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 0,
    "label": "OK",
    "segs": [
@@ -333,6 +433,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -399,6 +519,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -460,6 +600,26 @@
    "marks": [],
    "holiday": "Columbus Day",
    "holidayType": "bank",
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Bank holiday",
    "segs": [
@@ -514,6 +674,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -580,6 +760,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "r",
+     "Big news tomorrow, skip Asia"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -652,6 +852,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -712,6 +932,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -766,6 +1006,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -820,6 +1080,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -874,6 +1154,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -928,6 +1228,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -994,6 +1314,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -1054,6 +1394,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -1130,6 +1490,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 0,
    "label": "OK",
    "segs": [
@@ -1222,6 +1602,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "r",
+     "Big news tomorrow, skip Asia"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -2,
    "label": "Sit out",
    "segs": [
@@ -1258,6 +1658,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "g",
+     "Post-FOMC Asia, fine to trade"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -1360,6 +1780,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -1438,6 +1878,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -1504,6 +1964,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -1588,6 +2068,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -1672,6 +2172,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -1740,6 +2260,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "r",
+     "Big news tomorrow, skip Asia"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -1800,6 +2340,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -1866,6 +2426,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "r",
+     "Big news tomorrow, skip Asia"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -1927,6 +2507,26 @@
    "marks": [],
    "holiday": "Veterans Day",
    "holidayType": "bank",
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Bank holiday",
    "segs": [
@@ -1993,6 +2593,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -2069,6 +2689,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -2141,6 +2781,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -2207,6 +2867,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -2279,6 +2959,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 0,
    "label": "OK",
    "segs": [
@@ -2333,6 +3033,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -2387,6 +3107,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -2441,6 +3181,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -2507,6 +3267,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -2589,6 +3369,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -2673,7 +3473,8 @@
     ]
    ],
    "why": "Market closed for Thanksgiving.",
-   "notes": []
+   "notes": [],
+   "asia": []
   },
   {
    "date": "2026-11-27",
@@ -2681,6 +3482,26 @@
    "marks": [],
    "holiday": "Day after Thanksgiving (half day)",
    "holidayType": "half",
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -2747,6 +3568,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -2813,6 +3654,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -2885,6 +3746,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -2957,6 +3838,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -3031,6 +3932,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "r",
+     "Big news tomorrow, skip Asia"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -3091,6 +4012,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -3145,6 +4086,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 0,
    "label": "OK",
    "segs": [
@@ -3221,6 +4182,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "r",
+     "Big news tomorrow, skip Asia"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -2,
    "label": "Sit out",
    "segs": [
@@ -3257,6 +4238,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "g",
+     "Post-FOMC Asia, fine to trade"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -3331,6 +4332,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -3393,6 +4414,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -3459,6 +4500,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -3531,6 +4592,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -3591,6 +4672,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -3645,6 +4746,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -3701,6 +4822,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -3755,6 +4896,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -3831,6 +4992,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 2,
    "label": "Great",
    "segs": [
@@ -3904,6 +5085,26 @@
    "marks": [],
    "holiday": "Christmas Eve (half day)",
    "holidayType": "half",
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -3970,13 +5171,34 @@
     ]
    ],
    "why": "Market closed for Christmas.",
-   "notes": []
+   "notes": [],
+   "asia": []
   },
   {
    "date": "2026-12-28",
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Sunday Globex open, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": -1,
    "label": "Light",
    "segs": [
@@ -4031,6 +5253,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [
@@ -4097,6 +5339,26 @@
     ]
    ],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 0,
    "label": "OK",
    "segs": [
@@ -4139,6 +5401,26 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "asia": [
+    [
+     "18:00",
+     "20:00",
+     "r",
+     "Globex reopen, thin"
+    ],
+    [
+     "20:00",
+     "24:00",
+     "y",
+     "Asia kill zone, light size"
+    ],
+    [
+     "24:00",
+     "26:00",
+     "r",
+     "Late Asia, skip"
+    ]
+   ],
    "score": 1,
    "label": "Good",
    "segs": [

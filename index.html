@@ -31,6 +31,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;background:var(--bg);color:var(--fg)}
 body{font-family:var(--f-ui);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;
   padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
@@ -147,6 +148,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .drow::before{content:"";position:absolute;left:62px;right:0;top:0;border-top:1px dashed var(--line)}
 .dtime{font-size:1.05rem;font-weight:800;font-variant-numeric:tabular-nums;text-align:right;line-height:1.05;padding-top:4px;display:flex;flex-direction:column;align-items:flex-end}
 .dtime small{font-size:.66rem;font-weight:700;color:var(--muted);letter-spacing:.06em}
+.dsec{font-size:.74rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:8px 0 2px 68px}
 .dend{align-items:center}.dendl{font-size:.8rem;color:var(--faint);padding-top:4px}
 .dbox{min-width:0;margin-top:4px;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;border-left:5px solid}
 .dtop{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 10px}
@@ -161,6 +163,14 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .dms{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
 .chipm{font-family:var(--f-mono);font-size:.72rem;font-weight:600;padding:3px 8px;border-radius:6px;background:#e9ecf2;color:#0b0d11}
 .chipm.minor{background:#9aa3b3}.chipm.time{background:var(--accent);color:#fff}
+.tile{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.a8{position:absolute;right:6px;bottom:6px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:.66rem;font-weight:800;background:#26c48d;color:#03140d;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:0 max(10px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+.shc{width:100%;max-width:520px;border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.shc p{margin:0;font-size:.95rem;font-weight:600;line-height:1.45}
+.shh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.shh b{font-size:1.4rem;font-weight:800}.shh span{font-weight:700;opacity:.85}
+.shb{display:flex;gap:8px;margin-top:6px}.shb .btn{flex:1;background:rgba(0,0,0,.28);border-color:rgba(255,255,255,.15);color:inherit}
 .foot{font-size:.74rem;color:var(--faint);display:flex;flex-direction:column;gap:4px;padding:0 4px}
 .foot p{margin:0}
 .err{padding:18px;color:var(--r1-fg)}
@@ -192,6 +202,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   </section>
 
   <main id="view"></main>
+  <div class="sheet" id="sheet" hidden></div>
 
   <footer class="foot" id="foot"></footer>
 </div>
@@ -205,7 +216,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   const $ = id => document.getElementById(id);
   const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
   const toMin = s => { const [h,m] = s.split(":").map(Number); return h*60+m; };
-  const fmt = m => { let h = Math.floor(m/60), mm = m%60; const ap = h >= 12 ? "p" : "a"; h = h%12 || 12; return h + (mm ? ":" + String(mm).padStart(2,"0") : "") + ap; };
+  const fmt = m => { let h = Math.floor(m/60) % 24, mm = m%60; const ap = h >= 12 ? "p" : "a"; h = h%12 || 12; return h + (mm ? ":" + String(mm).padStart(2,"0") : "") + ap; };
   const fmtR = (a,b) => fmt(a) + "–" + fmt(b);
   const D = iso => new Date(iso + "T12:00:00Z");
   const iso = d => d.toISOString().slice(0,10);
@@ -262,6 +273,17 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   function renderNow(){
     const el = $("now"), t = BY[NOW.date];
     const STAT = {g:"Good to trade", y:"Risky", r:"Don't trade"};
+    const evening = NOW.min >= 18*60;
+    let asiaDay = null, am = NOW.min;
+    if (evening) { let n = addDays(NOW.date, 1); while (!BY[n] && n < addDays(NOW.date, 4)) n = addDays(n, 1); asiaDay = BY[n]; }
+    else if (NOW.min < 120) { asiaDay = t; am = NOW.min + 1440; }
+    const aseg = asiaDay && (asiaDay.asia || []).find(([a,b]) => am >= toMin(a) && am < toMin(b));
+    if (aseg) {
+      el.innerHTML = `<span class="k">Right now · Asia session (before ${dow(asiaDay.date)} ${short(asiaDay.date)})</span>
+        <span class="row"><span class="v">${esc(aseg[3])}</span><span class="pill ${aseg[2]}">${STAT[aseg[2]]}</span></span>
+        <span class="n">${dow(asiaDay.date)}: ${esc(asiaDay.label)} day${asiaDay.news.some(x => x.impact === "red") ? " · " + esc(asiaDay.news.filter(x => x.impact === "red").map(x => x.time + " " + x.name).join(" · ")) : ""}</span>`;
+      return;
+    }
     if (t && t.holidayType !== "closed") {
       const cur = t.segs.find(([a,b]) => NOW.min >= toMin(a) && NOW.min < toMin(b));
       const nxt = t.segs.find(([a,,k]) => k === "g" && toMin(a) > NOW.min);
@@ -278,6 +300,50 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
         <span class="pill n">${n ? esc(n.label) : "—"}</span></span>
         <span class="n">${n ? esc(n.news.filter(x => x.impact === "red").map(x => x.time + " " + x.name).join(" · ") || "No red-folder news") : ""}</span>`;
     }
+  }
+
+  /* Asia session after this day (the evening of date s) */
+  function eveningAsia(s){
+    let n = addDays(s, 1);
+    for (let i = 0; i < 4 && !BY[n]; i++) n = addDays(n, 1);
+    const nd = BY[n];
+    return nd && nd.asia ? nd.asia.find(x => x[0] === "20:00") : null;
+  }
+  function asiaBadge(s){
+    const a = eveningAsia(s);
+    return a && a[2] === "g" ? `<span class="a8" title="8 PM Asia is good to trade">8</span>` : "";
+  }
+
+  /* ---------- long-press explainer ---------- */
+  function explain(s){
+    const dd = BY[s]; if (!dd) return;
+    const lb = dd.holiday ? (dd.holidayType === "half" ? dd.holiday : "Bank holiday · " + dd.holiday) : dd.label;
+    const greens = dd.segs.filter(x => x[2] === "g").map(x => fmtR(toMin(x[0]), toMin(x[1])));
+    const reds = dd.news.filter(n => n.impact === "red").map(n => n.time + " " + n.name);
+    const a = eveningAsia(s);
+    const sh = $("sheet");
+    sh.innerHTML = `<div class="shc ${tileClass(dd)}"><div class="shh"><b>${esc(lb)}</b><span>${dow(s)} ${short(s)}</span></div>
+      <p>${esc(dd.why)}</p>
+      ${reds.length ? `<p><b>News:</b> ${esc(reds.join(" · "))}</p>` : ""}
+      <p><b>Trade:</b> ${greens.length ? esc(greens.join(", ")) : "No green window. Sit this one out."}</p>
+      ${a ? `<p><b>Asia tonight (8 PM–12 AM):</b> ${esc(a[3])}</p>` : ""}
+      ${dd.notes && dd.notes.length ? `<p>${esc(dd.notes.join(" · "))}</p>` : ""}
+      <div class="shb"><button class="btn" id="sh-open">Open day</button><button class="btn" id="sh-close">Close</button></div></div>`;
+    sh.hidden = false;
+    $("sh-close").onclick = () => sh.hidden = true;
+    $("sh-open").onclick = () => { sh.hidden = true; cursor = s; view = "day"; render(); };
+    sh.onclick = e => { if (e.target === sh) sh.hidden = true; };
+  }
+  function bindTiles(){
+    $("view").querySelectorAll(".tile[data-d]").forEach(b => {
+      let timer = null, long = false;
+      const start = () => { long = false; timer = setTimeout(() => { long = true; explain(b.dataset.d); }, 450); };
+      const stop = () => clearTimeout(timer);
+      b.addEventListener("pointerdown", start);
+      ["pointerup","pointerleave","pointercancel"].forEach(ev => b.addEventListener(ev, stop));
+      b.addEventListener("contextmenu", e => e.preventDefault());
+      b.onclick = e => { if (long) { e.preventDefault(); return; } cursor = b.dataset.d; view = "day"; render(); };
+    });
   }
 
   /* ---------- month ---------- */
@@ -303,15 +369,16 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       const past = s < NOW.date ? " past" : "", today = s === NOW.date ? " today" : "";
       const tag = topTag(dd);
       const lb = dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label;
-      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(lb)}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span></button>`;
+      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(lb)}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span>${asiaBadge(s)}</button>`;
     }).join("");
     $("view").innerHTML = `<section class="panel cal">
       <div class="calhead"><h2>${MON[m]}</h2><div class="counts">${counts}</div></div>
       <div class="dow"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span></div>
       <div class="grid5">${tiles}</div>
-      <div class="legend"><span class="s2">Great</span><span class="s1">Good</span><span class="s0">OK</span><span class="s-1">Light</span><span class="s-2">Sit out</span><span class="shol">Bank holiday</span><span class="shalf">Half day</span></div>
+      <div class="legend"><span class="s2">Great</span><span class="s1">Good</span><span class="s0">OK</span><span class="s-1">Light</span><span class="s-2">Sit out</span><span class="shol">Bank holiday</span><span class="shalf">Half day</span><span style="background:var(--panel-2);display:inline-flex;align-items:center;gap:6px"><i class="a8" style="position:static;box-shadow:none">8</i>8 PM Asia good</span></div>
+      <p class="notes" style="padding:10px 4px 0">Tap a day to open it. Press and hold for the reasoning.</p>
     </section>`;
-    $("view").querySelectorAll(".tile[data-d]").forEach(b => b.onclick = () => { cursor = b.dataset.d; view = "day"; render(); });
+    bindTiles();
   }
 
   /* ---------- week ---------- */
@@ -334,7 +401,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     </section>
     <button class="expand" id="exp" aria-expanded="${expanded}">${expanded ? "Hide hours" : "Expand hours"} <span class="chev">&#9662;</span></button>
     <section class="panel tl" id="tl" ${expanded ? "" : "hidden"}></section>`;
-    $("view").querySelectorAll(".tile[data-d]").forEach(b => b.onclick = () => { cursor = b.dataset.d; view = "day"; render(); });
+    bindTiles();
     $("exp").onclick = () => { setExpanded(!expanded); renderWeek(); };
     if (expanded) timeline($("tl"), ds.filter(s => BY[s]), 104);
   }
@@ -365,6 +432,18 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   const fmtHM = m => Math.floor(m/60) + ":" + String(m%60).padStart(2,"0");
   const clock = m => { let h = Math.floor(m/60) % 24; const mm = String(m%60).padStart(2,"0"); const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; return { t: h + ":" + mm, ap }; };
   const rangeLong = (A, B) => { const a = clock(A), b = clock(B); return a.ap === b.ap ? `${a.t} – ${b.t} <small>${b.ap}</small>` : `${a.t} <small>${a.ap}</small> – ${b.t} <small>${b.ap}</small>`; };
+  function asiaNow(s, A, B){
+    if (NOW.date === addDays(s, -1)) return NOW.min >= A && NOW.min < B;
+    if (NOW.date === s) return NOW.min + 1440 >= A && NOW.min + 1440 < B;
+    return false;
+  }
+  function blockRow(A, B, k, n, ms, nowIn){
+    const h = Math.round(Math.min(170, Math.max(0, (B - A) * 0.9)));
+    const c = clock(A);
+    return `<div class="drow"><span class="dtime">${c.t}<small>${c.ap}</small></span><div class="dbox ${k}${nowIn ? " live" : ""}" style="min-height:${h}px">
+        <div class="dtop"><span class="drng">${rangeLong(A, B)}</span><span class="dst">${k === "g" ? "Trade" : k === "y" ? "Risky" : "No trade"}${nowIn ? " · now" : ""}</span></div>
+        <span class="dre">${esc(n)}</span>${ms ? `<span class="dms">${ms}</span>` : ""}</div></div>`;
+  }
   function dayBlocks(host, s){
     const dd = BY[s];
     const marks = (dd.marks || []).slice();
@@ -372,19 +451,20 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const firstNews = Math.min(...(dd.marks || []).map(m => toMin(m[0])), 9999);
     const S = firstNews < 510 ? Math.floor((firstNews - 10) / 5) * 5 : 510;
     const segs = dd.segs.filter(x => toMin(x[1]) > S).map(x => [fmtHM(Math.max(toMin(x[0]), S)), x[1], x[2], x[3]]);
-    const rows = segs.map(([a,b,k,n]) => {
+    let html = "";
+    if (dd.asia && dd.asia.length) {
+      html += `<div class="dsec">Asia · ${dow(addDays(s,-1))} evening</div>`;
+      html += dd.asia.map(([a,b,k,n]) => blockRow(toMin(a), toMin(b), k, n, "", asiaNow(s, toMin(a), toMin(b)))).join("");
+      html += `<div class="dsec">New York · ${dow(s)} ${short(s)}</div>`;
+    }
+    html += segs.map(([a,b,k,n]) => {
       const A = toMin(a), B = toMin(b);
       const ms = marks.filter(m => { const t = toMin(m[0]); return t >= A && t < B; })
         .map(m => `<span class="chipm ${m[2]}">${esc(m[0])} ${esc(m[1])}</span>`).join("");
-      const h = Math.round(Math.min(170, Math.max(0, (B - A) * 0.9)));
-      const nowIn = s === NOW.date && NOW.min >= A && NOW.min < B;
-      const c = clock(A);
-      return `<div class="drow"><span class="dtime">${c.t}<small>${c.ap}</small></span><div class="dbox ${k}${nowIn ? " live" : ""}" style="min-height:${h}px">
-          <div class="dtop"><span class="drng">${rangeLong(A, B)}</span><span class="dst">${k === "g" ? "Trade" : k === "y" ? "Risky" : "No trade"}${nowIn ? " · now" : ""}</span></div>
-          <span class="dre">${esc(n)}</span>${ms ? `<span class="dms">${ms}</span>` : ""}</div></div>`;
+      return blockRow(A, B, k, n, ms, s === NOW.date && NOW.min >= A && NOW.min < B);
     }).join("");
     const end = clock(toMin(segs.length ? segs[segs.length-1][1] : "16:00"));
-    host.innerHTML = `<div class="dlist">${rows}<div class="drow dend"><span class="dtime">${end.t}<small>${end.ap}</small></span><span class="dendl">Day's schedule ends</span></div></div>`;
+    host.innerHTML = `<div class="dlist">${html}<div class="drow dend"><span class="dtime">${end.t}<small>${end.ap}</small></span><span class="dendl">Day's schedule ends</span></div></div>`;
   }
 
   /* ---------- vertical hour timeline ---------- */
