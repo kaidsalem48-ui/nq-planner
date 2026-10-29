@@ -152,10 +152,8 @@ def main():
                     day.paint(570 if t - 25 < 585 else t - 25, t - 10, "y", e["short"] + " at " + e["time"] + ", risky")
                     day.paint(t - 10, t, "r", e["short"] + " in < 10 min")
                     why.append(f"{e['short']} at {e['time']}: stay out the 10 min before it.")
-            elif e["impact"] == "orange" and e["kind"] == "fed":
-                day.paint(t - 10, t + 30, "y", "Fed speaker")
-            elif e["impact"] == "orange" and t != 510:
-                day.paint(570 if t - 10 < 585 and t > 570 else t - 10, t + 5, "y", e["short"] + " (orange)")
+            # Orange folder (incl. non-Chair Fed speakers) doesn't change the windows: he ignores it.
+            # It still shows as a marker on the timeline.
 
         if "fomc" in ks:
             day.paint(T0, 14 * 60, "r", "No trades before FOMC")
