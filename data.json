@@ -51,8 +51,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": 1,
-   "label": "Good",
+   "score": -1,
+   "label": "Light",
    "segs": [
     [
      "2:00",
@@ -87,8 +87,8 @@
     [
      "10:00",
      "12:00",
-     "g",
-     "NY AM, main window"
+     "y",
+     "Day before NFP, light"
     ],
     [
      "12:00",
@@ -103,7 +103,7 @@
      "PM: only if AM was bad"
     ]
    ],
-   "why": "ISM at 10:00: stay out the 10 min before it.",
+   "why": "ISM at 10:00: stay out the 10 min before it. Day before NFP: light only, the market waits on the jobs number.",
    "notes": [
     "NFP tomorrow: if today's price action is good, tomorrow is likely bad."
    ]
@@ -1773,7 +1773,7 @@
    "marks": [
     [
      "8:30",
-     "GDP\u00b7PCE",
+     "GDP\u00c2\u00b7PCE",
      "news"
     ]
    ],
@@ -2348,8 +2348,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": 1,
-   "label": "Good",
+   "score": -1,
+   "label": "Light",
    "segs": [
     [
      "2:00",
@@ -2372,8 +2372,8 @@
     [
      "9:30",
      "10:30",
-     "g",
-     "NY AM, main window"
+     "y",
+     "Day before NFP, light"
     ],
     [
      "10:30",
@@ -2394,7 +2394,7 @@
      "PM: only if AM was bad"
     ]
    ],
-   "why": "No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.",
+   "why": "No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long. Day before NFP: light only, the market waits on the jobs number.",
    "notes": [
     "NFP tomorrow: if today's price action is good, tomorrow is likely bad."
    ]
@@ -3593,7 +3593,7 @@
    "marks": [
     [
      "8:30",
-     "GDP\u00b7PCE",
+     "GDP\u00c2\u00b7PCE",
      "news"
     ],
     [
@@ -4128,8 +4128,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": 1,
-   "label": "Good",
+   "score": -1,
+   "label": "Light",
    "segs": [
     [
      "2:00",
@@ -4164,8 +4164,8 @@
     [
      "10:00",
      "12:00",
-     "g",
-     "NY AM, main window"
+     "y",
+     "Day before NFP, light"
     ],
     [
      "12:00",
@@ -4180,7 +4180,7 @@
      "PM: only if AM was bad"
     ]
    ],
-   "why": "ISM at 10:00: stay out the 10 min before it.",
+   "why": "ISM at 10:00: stay out the 10 min before it. Day before NFP: light only, the market waits on the jobs number.",
    "notes": [
     "NFP tomorrow: if today's price action is good, tomorrow is likely bad."
    ]
@@ -5330,7 +5330,7 @@
    "marks": [
     [
      "8:30",
-     "GDP\u00b7PCE",
+     "GDP\u00c2\u00b7PCE",
      "news"
     ],
     [

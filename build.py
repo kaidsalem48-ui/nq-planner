@@ -189,6 +189,9 @@ def main():
             score = min(score, 0)
             why.append("Day before FOMC: less volatile, won't run every liquidity. Take more off TP1.")
         if "nfp" in kinds(nxt):
+            day.recolor("g", "y", "Day before NFP, light")
+            score = min(score, -1)
+            why.append("Day before NFP: light only, the market waits on the jobs number.")
             notes.append("NFP tomorrow: if today's price action is good, tomorrow is likely bad.")
         if d.weekday() == 0 and not reds and "cpi" not in kinds(nxt):
             day.recolor("g", "y", "No-news Monday, light")
