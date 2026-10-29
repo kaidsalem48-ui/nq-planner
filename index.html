@@ -40,8 +40,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .wrap{max-width:860px;margin:0 auto;padding-block:14px 48px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
 
 .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:.01em}
-.brand img{width:30px;height:30px;border-radius:8px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:.01em;padding:4px 8px 4px 4px;margin:-4px 0 -4px -4px;border-radius:10px;transition:background .12s}
+.brand:hover{background:var(--panel-2)}
+.brand img{width:30px;height:30px;border-radius:8px;transition:transform .5s}
+.brand.spin img{transform:rotate(360deg)}
 .upd{font-size:.72rem;color:var(--faint);text-align:right}
 
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px}
@@ -177,6 +179,14 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .foot{font-size:.74rem;color:var(--faint);display:flex;flex-direction:column;gap:4px;padding:0 4px}
 .foot p{margin:0}
 .err{padding:18px;color:var(--r1-fg)}
+/* phones: long labels wrap onto two lines instead of running out of the tile */
+@media (max-width:639px){
+  .cal .tile .lb{white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .cal .tile .lb.small{font-size:.7rem;line-height:1.05}
+  .cal .tile .tag{text-overflow:ellipsis}
+  .cal .tile:has(.a8) .lb{padding-right:0}
+  .cal .tile .a8{right:auto;bottom:auto;left:6px;top:6px;width:16px;height:16px;font-size:.6rem}
+}
 @media (min-width:640px){.tile{height:92px}.tile .lb,.tile .lb.small{font-size:1rem}.tile .tag{font-size:.64rem;top:8px;left:8px;max-width:calc(100% - 40px)}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
@@ -218,7 +228,9 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
   /* desktop sheet = popover */
   .sheet.pop{background:rgba(0,0,0,.25);display:block;padding:0}
-  .sheet.pop .shc{position:absolute;width:380px;max-width:none}
+  .sheet.pop .shc{position:absolute;width:380px;max-width:none;cursor:grab;touch-action:none;user-select:none}
+  .sheet.pop .shc.drag{cursor:grabbing}
+  .sheet.pop .shc .btn{cursor:pointer}
 }
 
 /* ===== desktop schedule grid ===== */
@@ -276,18 +288,85 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .md i{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%}
 .md.click{cursor:pointer}.md.click:hover{background:var(--panel-2)}
 .md.sel.click:hover{background:var(--fg)}
-.brow{display:grid;grid-template-columns:14px 74px 1fr 22px;gap:8px;align-items:center;font-size:.86rem;font-weight:600}
+.brow{display:grid;grid-template-columns:14px 108px 1fr 22px;gap:8px;align-items:center;font-size:.86rem;font-weight:600}
 .brow .bd{width:8px;height:8px;border-radius:50%}
 .brow .bt{height:5px;border-radius:5px;background:var(--panel-2);overflow:hidden}
 .brow .bt b{display:block;height:100%;border-radius:5px}
 .brow .bn{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+
+/* mini calendar month arrows + week buttons */
+.mnav{display:flex;gap:4px}
+.mnav .arrow{width:28px;height:28px;border-radius:8px;font-size:1.1rem;line-height:1;display:grid;place-items:center;background:var(--panel-2);border:1px solid var(--line)}
+.mnav .arrow:hover{border-color:var(--muted)}
+.mgrid.wk{grid-template-columns:26px repeat(7,1fr)}
+.wkb{align-self:center;justify-self:center;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:.85rem;line-height:1;font-weight:800;color:var(--muted);background:var(--panel-2);border:1px solid var(--line)}
+.wkb:hover{color:var(--fg);border-color:var(--muted)}
+.wkb.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* red folder lists */
+.fold{width:16px;height:13px;flex:none;display:block}
+.fold.red{color:#ef5b61}.fold.orange{color:#e7ac36}
+.upl{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;margin:0 -6px;padding:0 6px 2px}
+.upw{display:flex;align-items:center;gap:8px;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:6px}
+.upw:first-child{padding-top:0}
+.upw::after{content:"";flex:1;border-top:1px solid var(--line)}
+/* one card per day; the left edge carries the day's grade colour */
+.upc{display:grid;grid-template-columns:62px 1fr;gap:10px;width:100%;text-align:left;padding:10px 12px 10px 10px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--faint);transition:border-color .12s,background .12s}
+.upc:hover{background:#222733}
+.upc.now{border-color:var(--muted)}
+.upc-d{display:flex;flex-direction:column;line-height:1.15;padding-top:1px}
+.upc-d b{font-size:1rem;font-weight:800;letter-spacing:.04em}
+.upc-d span{font-size:.74rem;font-weight:700;color:var(--muted)}
+.upc-d i{font-style:normal;font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#b4abff;margin-top:3px}
+.upc-l{display:flex;flex-direction:column;gap:6px;min-width:0}
+.upr{display:grid;grid-template-columns:16px 50px 1fr;gap:6px;align-items:start;font-size:.85rem;font-weight:600;line-height:1.3}
+.upr .fold{margin-top:2px}
+.upr .tm{font-family:var(--f-mono);font-size:.74rem;color:var(--sr-fg);padding-top:1px}
+.wkred{display:flex;flex-direction:column;gap:4px;padding:14px}
+.wkred h4{margin:0 0 4px;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.wkd{display:grid;grid-template-columns:64px 1fr;gap:10px;padding:8px 10px;border-radius:10px;background:var(--panel-2);border:1px solid transparent;cursor:pointer;text-align:left;width:100%}
+.wkd:hover{border-color:var(--line)}
+.wkd.cur{border-color:var(--muted)}
+.wkd .dl{font-weight:800;font-size:.84rem}.wkd .dl small{display:block;font-size:.7rem;color:var(--muted);font-weight:700}
+.wkd ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.wkd li{display:grid;grid-template-columns:16px 46px 1fr;gap:6px;align-items:start;font-size:.82rem;font-weight:600;line-height:1.3}
+.wkd li .fold{margin-top:2px}
+.wkd li .tm{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);padding-top:1px}
+.wkd .none{font-size:.8rem;color:var(--faint);font-weight:600}
+
+/* week news list (Forex Factory style) */
+.nlist{display:flex;flex-direction:column;gap:12px;overflow-y:auto;min-height:0}
+.nlday{flex:none;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.nlday.today{border-color:var(--muted)}
+.nlhead{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--panel-2);border-bottom:1px solid var(--line);cursor:pointer}
+.nlhead .dd{font-weight:800;font-size:1rem}.nlhead .dd small{font-size:.74rem;color:var(--muted);font-weight:700;margin-left:6px;letter-spacing:.04em}
+.nlhead .gp{font-size:.66rem;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.nlhead .tw{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nlrow{display:grid;grid-template-columns:78px 22px 1fr auto;gap:12px;align-items:center;padding:11px 16px;border-top:1px solid var(--line);font-size:.92rem;font-weight:600}
+.nlrow:first-of-type{border-top:0}
+.nlrow .tm{font-family:var(--f-mono);font-size:.82rem;font-variant-numeric:tabular-nums}
+.nlrow .im{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px}
+.nlrow .im.red{background:var(--sr);color:var(--sr-fg)}.nlrow .im.orange{background:var(--sy);color:var(--sy-fg)}
+.nlrow.past{opacity:.45}
+.nlrow.next{background:rgba(123,108,246,.1)}
+.nlrow.next .tm::after{content:"next";margin-left:6px;font-family:var(--f-ui);font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#b4abff}
+.nlrow .est{color:var(--faint);font-weight:600;font-size:.8rem;margin-left:6px}
+.nlempty{padding:12px 16px;color:var(--faint);font-size:.86rem;font-weight:600}
+#lst[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+#lst{white-space:nowrap}
+.navrow{flex-wrap:wrap}
+.brand{white-space:nowrap}
+@media (min-width:1100px){
+  .ctl .seg3{order:1}
+  #lst{order:2}#prev{order:3}#today{order:4}#next{order:5}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
  <aside class="side">
   <div class="top">
-    <div class="brand"><img src="icon.png" alt="">NQ Planner</div>
+    <button class="brand" id="brand" title="Refresh for the latest schedule"><img src="icon.png" alt="">NQ Planner</button>
     <div class="upd" id="upd"></div>
   </div>
 
@@ -305,6 +384,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       <button id="v-day" aria-pressed="false">Day</button>
     </div>
     <div class="navrow">
+      <button class="btn" id="lst" aria-pressed="false">Show list</button>
       <button class="btn" id="today">Today</button>
       <button class="arrow" id="prev" aria-label="Previous">&#8249;</button>
       <button class="arrow" id="next" aria-label="Next">&#8250;</button>
@@ -343,7 +423,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   }
   let NOW = nyNow();
 
-  let DATA, BY = {}, view = "month", cursor = NOW.date;
+  let DATA, BY = {}, view = "month", cursor = NOW.date, listMode = false;
   let expanded = false; try { expanded = localStorage.getItem("nq-expanded") === "1"; } catch (e) {}
   const setExpanded = v => { expanded = v; try { localStorage.setItem("nq-expanded", v ? "1" : "0"); } catch (e) {} };
 
@@ -355,27 +435,41 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   }
   function topTag(day){
     if (!day) return "";
-    if (day.holiday) return day.holidayType === "half" ? "Half" : "";
+    if (day.holiday) return day.holidayType === "half" ? "Half" : day.holiday;
     const reds = day.marks.filter(m => m[2] === "news");
     const pri = ["FOMC","CPI","NFP","Minutes","PPI","GDP·PCE","Retail"];
     const top = reds.find(m => pri.includes(m[1])) || reds[0];
     return top ? top[1] : "";
   }
+  // a bank holiday with futures open is a "fake holiday": say the market is open
+  function dayLabel(day){
+    if (day.holidayType === "closed") return "Markets closed";
+    if (day.holidayType === "bank") return "Markets open";
+    return day.label;
+  }
+  function dayHeadline(day){
+    if (day.holidayType === "closed") return "Markets closed · " + day.holiday;
+    if (day.holidayType === "bank") return "Markets open · " + day.holiday;
+    return day.holiday || day.label;
+  }
 
   /* ---------- routing ---------- */
   function readHash(){
-    const m = location.hash.match(/^#(month|week|day)-(\d{4}-\d{2}-\d{2})$/);
-    if (m) { view = m[1]; cursor = m[2]; }
+    const m = location.hash.match(/^#(month|week|day|list)-(\d{4}-\d{2}-\d{2})$/);
+    if (m) { listMode = m[1] === "list"; if (!listMode) view = m[1]; cursor = m[2]; }
   }
-  function writeHash(){ history.replaceState(null, "", "#" + view + "-" + cursor); }
+  function writeHash(){ history.replaceState(null, "", "#" + (listMode ? "list" : view) + "-" + cursor); }
 
-  function setView(v){ view = v; render(); }
+  function setView(v){ view = v; listMode = false; render(); }
   ["month","week","day"].forEach(v => $("v-" + v).onclick = () => setView(v));
   $("today").onclick = () => { cursor = NOW.date; render(); };
   $("prev").onclick = () => step(-1);
   $("next").onclick = () => step(1);
+  $("lst").onclick = () => { listMode = !listMode; render(); };
+  $("brand").onclick = () => { $("brand").classList.add("spin"); setTimeout(() => location.reload(), 250); };
   function step(n){
-    if (view === "month") { const d = D(cursor); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth()+n); cursor = iso(d); }
+    if (listMode) cursor = addDays(monday(cursor), 7*n);
+    else if (view === "month") { const d = D(cursor); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth()+n); cursor = iso(d); }
     else if (view === "week") cursor = addDays(monday(cursor), 7*n);
     else { let s = cursor; do { s = addDays(s, n); } while ([0,6].includes(D(s).getUTCDay())); cursor = s; }
     render();
@@ -393,23 +487,23 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     if (aseg) {
       el.innerHTML = `<span class="k">Right now · Asia session (before ${dow(asiaDay.date)} ${short(asiaDay.date)})</span>
         <span class="row"><span class="v">${esc(aseg[3])}</span><span class="pill ${aseg[2]}">${STAT[aseg[2]]}</span></span>
-        <span class="n">${dow(asiaDay.date)}: ${esc(asiaDay.label)} day${asiaDay.news.some(x => x.impact === "red") ? " · " + esc(asiaDay.news.filter(x => x.impact === "red").map(x => x.time + " " + x.name).join(" · ")) : ""}</span>`;
+        <span class="n">${dow(asiaDay.date)}: ${esc(dayLabel(asiaDay))}${asiaDay.holiday ? "" : " day"}${asiaDay.news.some(x => x.impact === "red") ? " · " + esc(asiaDay.news.filter(x => x.impact === "red").map(x => x.time + " " + x.name).join(" · ")) : ""}</span>`;
       return;
     }
     if (t && t.holidayType !== "closed") {
       const cur = t.segs.find(([a,b]) => NOW.min >= toMin(a) && NOW.min < toMin(b));
       const nxt = t.segs.find(([a,,k]) => k === "g" && toMin(a) > NOW.min);
       const st = cur ? cur[2] : "n";
-      el.innerHTML = `<span class="k">Right now · ${dow(t.date)} ${short(t.date)} · ${esc(t.label)} day</span>
+      el.innerHTML = `<span class="k">Right now · ${dow(t.date)} ${short(t.date)} · ${t.holidayType === "bank" ? "Markets open · " + esc(t.holiday) : esc(t.label) + " day"}</span>
         <span class="row"><span class="v">${cur ? esc(cur[3]) : (NOW.min < T0 ? "Asia session" : "Session over")}</span>
         <span class="pill ${st}">${cur ? STAT[cur[2]] : "Off"}</span></span>
         <span class="n">${nxt ? "Next good window " + fmtR(toMin(nxt[0]), toMin(nxt[1])) : (t.segs.some(s => s[2] === "g") ? "No more good windows today." : "No good windows today.")}</span>`;
     } else {
       let s = NOW.date; for (let i = 0; i < 10 && !(BY[s] && BY[s].holidayType !== "closed" && s > NOW.date); i++) s = addDays(s,1);
       const n = BY[s];
-      el.innerHTML = `<span class="k">${t ? esc(t.holiday) + " · market closed" : "Weekend"}</span>
+      el.innerHTML = `<span class="k">${t ? "Markets closed · " + esc(t.holiday) : "Weekend"}</span>
         <span class="row"><span class="v">${n ? "Next: " + dow(n.date) + " " + short(n.date) : "No data yet"}</span>
-        <span class="pill n">${n ? esc(n.label) : "—"}</span></span>
+        <span class="pill n">${n ? esc(dayLabel(n)) : "—"}</span></span>
         <span class="n">${n ? esc(n.news.filter(x => x.impact === "red").map(x => x.time + " " + x.name).join(" · ") || "No red-folder news") : ""}</span>`;
     }
   }
@@ -492,16 +586,32 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     sh.classList.toggle("pop", DESK());
     if (!DESK()) return;
     const card = sh.querySelector(".shc"); if (!card) return;
+    // centre the card over the block it explains, kept inside the window
     const w = 380, h = card.offsetHeight, vw = innerWidth, vh = innerHeight;
-    let x = r.right + 12; if (x + w > vw - 12) x = r.left - w - 12; if (x < 12) x = Math.min(vw - w - 12, Math.max(12, r.left));
-    let y = r.top; if (y + h > vh - 12) y = vh - h - 12; if (y < 12) y = 12;
+    const cy = Math.max(r.top, 0) + (Math.min(r.bottom, vh) - Math.max(r.top, 0)) / 2;
+    const x = Math.min(vw - w - 12, Math.max(12, r.left + r.width / 2 - w / 2));
+    const y = Math.min(vh - h - 12, Math.max(12, cy - h / 2));
     card.style.left = x + "px"; card.style.top = y + "px";
+    dragPop(card);
+  }
+  function dragPop(card){
+    card.onpointerdown = e => {
+      if (e.button !== 0 || e.target.closest("button")) return;
+      const x0 = e.clientX - card.offsetLeft, y0 = e.clientY - card.offsetTop;
+      card.setPointerCapture(e.pointerId); card.classList.add("drag");
+      card.onpointermove = m => {
+        const x = Math.min(innerWidth - card.offsetWidth, Math.max(0, m.clientX - x0));
+        const y = Math.min(innerHeight - card.offsetHeight, Math.max(0, m.clientY - y0));
+        card.style.left = x + "px"; card.style.top = y + "px";
+      };
+      card.onpointerup = card.onpointercancel = () => { card.onpointermove = null; card.classList.remove("drag"); };
+    };
   }
 
   /* ---------- long-press explainer ---------- */
   function explain(s){
     const dd = BY[s]; if (!dd) return;
-    const lb = dd.holiday ? (dd.holidayType === "half" ? dd.holiday : "Bank holiday · " + dd.holiday) : dd.label;
+    const lb = dayHeadline(dd);
     const greens = dd.segs.filter(x => x[2] === "g").map(x => fmtR(toMin(x[0]), toMin(x[1])));
     const reds = dd.news.filter(n => n.impact === "red").map(n => n.time + " " + n.name);
     const a = eveningAsia(s);
@@ -542,10 +652,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     for (let s = start; D(s) <= lastDay || D(s).getUTCDay() !== 1; s = addDays(s,1)) {
       const wd = D(s).getUTCDay(); if (wd === 0 || wd === 6) continue;
       days.push(s);
-      const dd = BY[s]; if (dd && D(s).getUTCMonth() === m) { const k = dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label; cnt[k] = (cnt[k]||0)+1; }
+      const dd = BY[s]; if (dd && D(s).getUTCMonth() === m) { const k = dayLabel(dd); cnt[k] = (cnt[k]||0)+1; }
       if (days.length > 40) break;
     }
-    const order = [["Great","s2"],["Good","s1"],["OK","s0"],["Light","s-1"],["Sit out","s-2"],["Holiday","shol"]];
+    const order = [["Great","s2"],["Good","s1"],["OK","s0"],["Light","s-1"],["Sit out","s-2"],["Markets open","shol"],["Markets closed","shol"]];
     const counts = order.filter(([k]) => cnt[k]).map(([k,c]) => `<span class="cnt ${c}">${cnt[k]} ${k}</span>`).join("");
     const tiles = days.map(s => {
       const dd = BY[s], inMonth = D(s).getUTCMonth() === m;
@@ -553,14 +663,14 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       if (!dd) return `<div class="tile"><span class="dn">${D(s).getUTCDate()}</span><span class="lb" style="color:var(--faint)">– –</span></div>`;
       const past = s < NOW.date ? " past" : "", today = s === NOW.date ? " today" : "";
       const tag = topTag(dd);
-      const lb = dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label;
+      const lb = dayLabel(dd);
       return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(lb)}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span><span class="win">${esc(winText(dd))}</span></span>${asiaBadge(s)}</button>`;
     }).join("");
     $("view").innerHTML = `<section class="panel cal">
       <div class="calhead"><h2>${MON[m]}</h2><div class="counts">${counts}</div></div>
       <div class="dow"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span></div>
       <div class="grid5">${tiles}</div>
-      <div class="legend"><span class="s2">Great</span><span class="s1">Good</span><span class="s0">OK</span><span class="s-1">Light</span><span class="s-2">Sit out</span><span class="shol">Bank holiday</span><span class="shalf">Half day</span><span style="background:var(--panel-2);display:inline-flex;align-items:center;gap:6px"><i class="a8" style="position:static;box-shadow:none">8</i>8 PM Asia good</span></div>
+      <div class="legend"><span class="s2">Great</span><span class="s1">Good</span><span class="s0">OK</span><span class="s-1">Light</span><span class="s-2">Sit out</span><span class="shol">Holiday</span><span class="shalf">Half day</span><span style="background:var(--panel-2);display:inline-flex;align-items:center;gap:6px"><i class="a8" style="position:static;box-shadow:none">8</i>8 PM Asia good</span></div>
       <p class="notes" style="padding:10px 4px 0">Tap a day to open it. Press and hold for the reasoning.</p>
     </section>`;
     bindTiles();
@@ -577,8 +687,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       const past = s < NOW.date ? " past" : "", today = s === NOW.date ? " today" : "";
       const tag = topTag(dd);
       const best = dd.segs.filter(x => x[2] === "g").map(x => fmtR(toMin(x[0]), toMin(x[1]))).slice(0,2).join(", ");
-      const lb = dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label;
-      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${dow(s).slice(0,3)}<br>${D(s).getUTCDate()}</span><span class="body"><span class="lb">${esc(lb)}</span><span class="sub" style="display:block">${best ? "Trade " + esc(best) : (dd.holidayType === "closed" ? "Market closed" : "No green window")}</span></span></button>`;
+      const lb = dayLabel(dd);
+      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${dow(s).slice(0,3)}<br>${D(s).getUTCDate()}</span><span class="body"><span class="lb">${esc(lb)}</span><span class="sub" style="display:block">${best ? "Trade " + esc(best) : (dd.holidayType === "closed" ? "No trading today" : "No green window")}</span></span></button>`;
     }).join("");
     $("view").innerHTML = `<section class="panel cal wk">
       <div class="calhead"><h2>Week of ${short(ds[0])}</h2></div>
@@ -596,7 +706,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const s = cursor, dd = BY[s];
     $("title").textContent = dow(s).slice(0,3) + ", " + short(s) + " " + D(s).getUTCFullYear();
     if (!dd) { $("view").innerHTML = `<section class="panel err">No schedule for this day yet. New weeks are added every Sunday.</section>`; return; }
-    const lb = dd.holiday ? (dd.holidayType === "half" ? dd.holiday : "Bank holiday · " + dd.holiday) : dd.label;
+    const lb = dayHeadline(dd);
     const news = dd.news.length ? dd.news.map(n => `<li><span class="t">${esc(n.time)}</span><span class="ip" style="background:${n.impact === "red" ? "#ef5b61" : "#e7ac36"}"></span><span>${esc(n.name)}</span></li>`).join("") : `<li>No scheduled news</li>`;
     const wins = dd.segs.filter(x => !(x[2] === "r" && toMin(x[1]) <= T8)).map(([a,b,k,n]) => `<li data-seg="${s}|${toMin(a)}|${toMin(b)}|${k}" data-reason="${esc(n)}" style="cursor:pointer"><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span></li>`).join("");
     $("view").innerHTML = `<section class="daybox ${tileClass(dd)}${s === NOW.date ? " today" : ""}">
@@ -697,7 +807,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   const DESK = () => window.matchMedia("(min-width:1100px)").matches;
   const C = { g: "var(--go-c)", y: "var(--warn-c)", r: "var(--stop-c)" };
   function winText(dd){
-    if (dd.holidayType === "closed") return "Market closed";
+    if (dd.holidayType === "closed") return "No trading today";
     const g = dd.segs.filter(x => x[2] === "g").map(x => fmtR(toMin(x[0]), toMin(x[1])));
     return g.length ? "Trade " + g.join(", ") : "No green window";
   }
@@ -707,7 +817,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const firstNews = Math.min(9999, ...dates.map(s => Math.min(9999, ...(BY[s]?.marks || []).map(m => toMin(m[0])))));
     const S0 = firstNews < 510 ? Math.floor((firstNews - 10) / 5) * 5 : 510, S1 = 960;
     const head = `<div class="wg-head" style="--cols:${dates.length}"><span class="wg-tz">New York</span>${dates.map(s => {
-      const dd = BY[s]; const lb = dd ? (dd.holiday && dd.holidayType !== "half" ? "Holiday" : dd.label) : "No data";
+      const dd = BY[s]; const lb = dd ? dayLabel(dd) : "No data";
       return `<button class="wg-dh${s === NOW.date ? " today" : ""}" data-day="${s}"><span class="d1">${D(s).getUTCDate()}<small>${dow(s)}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(lb)}</span>` : ""}</button>`;
     }).join("")}</div>`;
     host.innerHTML = `<div class="wg">${head}<div class="wg-body"><div class="wg-grid" style="--cols:${dates.length}"></div></div></div>`;
@@ -756,7 +866,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const s = cursor, dd = BY[s];
     $("title").textContent = dow(s).slice(0,3) + ", " + short(s) + " " + D(s).getUTCFullYear();
     if (!dd) { $("view").innerHTML = `<section class="panel err">No schedule for this day yet. New weeks are added every Sunday.</section>`; return; }
-    const lb = dd.holiday ? (dd.holidayType === "half" ? dd.holiday : "Bank holiday · " + dd.holiday) : dd.label;
+    const lb = dayHeadline(dd);
     let nd = addDays(s, 1); for (let i = 0; i < 4 && !BY[nd]; i++) nd = addDays(nd, 1);
     const ov = (BY[nd]?.asia || []).map(([a,b,k,n]) => `<div class="ovr ${k}" data-seg="${nd}|${toMin(a)}|${toMin(b)}|${k}" data-reason="${esc(n)}"><span class="t">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span></div>`).join("");
     const news = dd.news.length ? dd.news.map(n => `<li style="display:grid;grid-template-columns:auto auto 1fr"><span class="t">${esc(n.time)}</span><span class="ip" style="background:${n.impact === "red" ? "#ef5b61" : "#e7ac36"}"></span><span>${esc(n.name)}</span></li>`).join("") : `<li>No scheduled news</li>`;
@@ -764,33 +874,77 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       <div class="dd-side">
         <section class="daybox ${tileClass(dd)}"><div class="row1"><h3>${esc(lb)}</h3><span class="dt">${dow(s)} ${D(s).getUTCDate()}</span></div><p class="why">${esc(dd.why)}</p></section>
         <section class="panel"><ul class="windows"><li style="grid-template-columns:1fr;font-weight:800;font-size:.8rem;letter-spacing:.1em;color:var(--muted)">NEWS</li>${news}</ul></section>
+        ${weekRed(s)}
         ${ov ? `<section class="panel ov"><h4>Overnight · Asia &amp; London → ${dow(nd).slice(0,3)} ${short(nd)}</h4>${ov}</section>` : ""}
         ${dd.notes && dd.notes.length ? `<p class="notes">${dd.notes.map(esc).join(" · ")}</p>` : ""}
       </div></div>`;
     deskGrid($("ddg"), [s]);
     bindSegs($("view").querySelector(".dd-side"));
+    $("view").querySelectorAll(".wkd[data-d]").forEach(b => b.onclick = () => { cursor = b.dataset.d; render(); });
   }
 
+  /* ---------- red folder news ---------- */
+  const FOLD = `<svg viewBox="0 0 16 13" aria-hidden="true"><path fill="currentColor" d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3.4l1.6 1.6h6A1.5 1.5 0 0 1 15 4.1v6.9a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 11z"/></svg>`;
+  const fold = imp => FOLD.replace("<svg", `<svg class="fold ${imp}"`);
+  const weekDays = s => { const mon = monday(s); return [0,1,2,3,4].map(i => addDays(mon, i)); };
+  const reds = s => (BY[s]?.news || []).filter(n => n.impact === "red");
+  // the week's red folder, Mon–Fri, shown beside the day schedule
+  function weekRed(s){
+    const rows = weekDays(s).map(d => {
+      const r = reds(d);
+      const items = r.length ? `<ul>${r.map(n => `<li>${fold("red")}<span class="tm">${fmt(toMin(n.time))}</span><span>${esc(n.name)}</span></li>`).join("")}</ul>` : `<span class="none">No red folder</span>`;
+      return `<button class="wkd${d === s ? " cur" : ""}" data-d="${d}"><span class="dl">${dow(d).slice(0,3)}<small>${short(d)}</small></span>${items}</button>`;
+    }).join("");
+    return `<section class="panel wkred"><h4>Red folder this week</h4>${rows}</section>`;
+  }
+
+  /* ---------- week news list ---------- */
+  function renderList(){
+    const ds = weekDays(cursor);
+    $("title").textContent = "News · " + short(ds[0]) + " – " + short(ds[4]);
+    let nextFound = false;
+    const days = ds.map(s => {
+      const dd = BY[s];
+      const lb = dd ? dayLabel(dd) : "";
+      const head = `<div class="nlhead" data-d="${s}"><span class="dd">${dow(s).slice(0,3)}<small>${short(s)}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(lb)}</span><span class="tw">${esc(winText(dd))}</span>` : ""}</div>`;
+      if (!dd) return `<section class="nlday">${head}<div class="nlempty">No schedule for this week yet. New weeks are added every Sunday.</div></section>`;
+      const items = dd.news.slice().sort((a, b) => toMin(a.time) - toMin(b.time)).map(n => {
+        const past = s < NOW.date || (s === NOW.date && toMin(n.time) < NOW.min);
+        const isNext = !past && !nextFound && (nextFound = true);
+        const est = /\(est\.\)/.test(n.name);
+        return `<div class="nlrow${past ? " past" : ""}${isNext ? " next" : ""}"><span class="tm">${fmt(toMin(n.time))}</span>${fold(n.impact)}<span>${esc(n.name.replace(/\s*\(est\.\)/, ""))}${est ? `<span class="est">est.</span>` : ""}</span><span class="im ${n.impact}">${n.impact === "red" ? "High" : "Medium"}</span></div>`;
+      }).join("");
+      return `<section class="nlday${s === NOW.date ? " today" : ""}">${head}${items || `<div class="nlempty">No scheduled news</div>`}</section>`;
+    }).join("");
+    $("view").innerHTML = `<div class="nlist">${days}</div>`;
+    $("view").querySelectorAll(".nlhead[data-d]").forEach(h => h.onclick = () => { cursor = h.dataset.d; view = "day"; listMode = false; render(); });
+  }
+
+  let miniMonth = null; // "YYYY-MM-01" while browsing with the arrows; null follows the cursor
   function renderMini(){
-    const d = D(cursor); const y = d.getUTCFullYear(), m = d.getUTCMonth();
+    const d = D(miniMonth || cursor); const y = d.getUTCFullYear(), m = d.getUTCMonth();
     const first = new Date(Date.UTC(y, m, 1, 12)); const start = addDays(iso(first), -((first.getUTCDay() + 6) % 7));
-    let cells = ["M","T","W","T","F","S","S"].map((h,i) => `<span class="h${i > 4 ? " we" : ""}">${h}</span>`).join("");
+    const curWeek = view === "week" || listMode ? monday(cursor) : "";
+    let cells = `<span class="h"></span>` + ["M","T","W","T","F","S","S"].map((h,i) => `<span class="h${i > 4 ? " we" : ""}">${h}</span>`).join("");
     for (let i = 0; i < 42; i++) {
       const s = addDays(start, i), dd = BY[s], wd = D(s).getUTCDay(), inM = D(s).getUTCMonth() === m;
       if (i >= 35 && !inM) break;
+      if (i % 7 === 0) cells += `<button class="wkb${s === curWeek ? " on" : ""}" data-w="${s}" title="Week of ${short(s)}" aria-label="Open week of ${short(s)}">&#9656;</button>`;
       const dot = dd && inM ? `<i style="background:${dd.holidayType && dd.holidayType !== "half" ? "#7b6cf6" : dd.score >= 1 ? "#26c48d" : dd.score === 0 ? "#8cc4b0" : dd.score === -1 ? "#e7ac36" : "#ef5b61"}"></i>` : "";
       const cls = ["md", !inM ? "out" : "", (wd === 0 || wd === 6) ? "we" : "", s === cursor ? "sel" : "", s === NOW.date ? "today" : "", dd ? "click" : ""].filter(Boolean).join(" ");
       cells += `<span class="${cls}" ${dd ? `data-d="${s}" role="button" tabindex="0"` : ""}>${D(s).getUTCDate()}${dot}</span>`;
     }
-    $("mini").innerHTML = `<h3>${MON[m]} ${y}</h3><div class="mgrid">${cells}</div>`;
-    $("mini").querySelectorAll("[data-d]").forEach(e => e.onclick = () => { cursor = e.dataset.d; view = "day"; render(); });
+    $("mini").innerHTML = `<h3><span>${MON[m]} ${y}</span><span class="mnav"><button class="arrow" data-m="-1" aria-label="Previous month">&#8249;</button><button class="arrow" data-m="1" aria-label="Next month">&#8250;</button></span></h3><div class="mgrid wk">${cells}</div>`;
+    $("mini").querySelectorAll("[data-m]").forEach(b => b.onclick = () => { const t = D(iso(first)); t.setUTCMonth(t.getUTCMonth() + Number(b.dataset.m)); miniMonth = iso(t); renderMini(); });
+    $("mini").querySelectorAll("[data-d]").forEach(e => e.onclick = () => { cursor = e.dataset.d; view = "day"; listMode = false; render(); });
+    $("mini").querySelectorAll("[data-w]").forEach(e => e.onclick = () => { cursor = e.dataset.w; if (!listMode) view = "week"; render(); });
   }
 
   function renderBrk(){
     const d = D(cursor); const m = d.getUTCMonth(), y = d.getUTCFullYear();
     const days = Object.values(BY).filter(x => { const t = D(x.date); return t.getUTCMonth() === m && t.getUTCFullYear() === y; });
-    const k = x => x.holiday && x.holidayType !== "half" ? "Holiday" : x.label;
-    const rows = [["Great","#12a77f"],["Good","#26c48d"],["OK","#8cc4b0"],["Light","#e7ac36"],["Sit out","#ef5b61"],["Holiday","#7b6cf6"]];
+    const k = dayLabel;
+    const rows = [["Great","#12a77f"],["Good","#26c48d"],["OK","#8cc4b0"],["Light","#e7ac36"],["Sit out","#ef5b61"],["Markets open","#7b6cf6"],["Markets closed","#4a4f5c"]];
     const n = days.length || 1;
     $("brk").innerHTML = `<h3>${MON[m]} breakdown</h3>` + rows.map(([lab, col]) => {
       const c = days.filter(x => k(x) === lab).length;
@@ -799,27 +953,45 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   }
 
   function renderUpcoming(){
-    const out = [];
+    // every upcoming red folder release: one card per day, split by week
+    let html = "", lastWeek = "";
+    const thisWeek = monday(NOW.date);
     Object.values(BY).filter(x => x.date >= NOW.date).sort((a,b) => a.date < b.date ? -1 : 1).forEach(x => {
-      x.news.filter(n => n.impact === "red").forEach(n => { if (out.length < 6 && !(x.date === NOW.date && toMin(n.time) < NOW.min)) out.push([x.date, n]); });
+      const r = reds(x.date).filter(n => !(x.date === NOW.date && toMin(n.time) < NOW.min));
+      if (!r.length) return;
+      const wk = monday(x.date);
+      if (wk !== lastWeek) {
+        lastWeek = wk;
+        html += `<div class="upw">${wk === thisWeek ? "This week" : wk === addDays(thisWeek, 7) ? "Next week" : "Week of " + short(wk)}</div>`;
+      }
+      const rel = x.date === NOW.date ? "Today" : x.date === addDays(NOW.date, 1) ? "Tomorrow" : "";
+      const edge = x.holidayType && x.holidayType !== "half" ? "#7b6cf6" : x.score >= 2 ? "#12a77f" : x.score === 1 ? "#26c48d" : x.score === 0 ? "#8cc4b0" : x.score === -1 ? "#e7ac36" : "#ef5b61";
+      html += `<button class="upc${x.date === NOW.date ? " now" : ""}" style="border-left-color:${edge}" data-d="${x.date}" title="${esc(x.label)} day">
+        <span class="upc-d"><b>${dow(x.date).slice(0,3)}</b><span>${short(x.date)}</span>${rel ? `<i>${rel}</i>` : ""}</span>
+        <span class="upc-l">${r.map(n => `<span class="upr">${fold("red")}<span class="tm">${fmt(toMin(n.time))}</span><span>${esc(n.name)}</span></span>`).join("")}</span></button>`;
     });
-    $("upn").innerHTML = `<h3>Upcoming red folder</h3>` + (out.length ? out.map(([d, n]) => `<div class="brow" style="grid-template-columns:14px 118px 1fr;cursor:pointer" data-d="${d}"><span class="bd" style="background:#ef5b61"></span><span style="color:var(--muted);white-space:nowrap">${dow(d).slice(0,1)}${dow(d).slice(1,3).toLowerCase()} ${short(d).split(" ")[1]} · ${fmt(toMin(n.time))}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.name)}</span></div>`).join("") : `<p class="notes">Nothing scheduled.</p>`);
+    $("upn").innerHTML = `<h3>Upcoming red folder</h3>` + (html ? `<div class="upl">${html}</div>` : `<p class="notes">Nothing scheduled.</p>`);
     $("upn").querySelectorAll("[data-d]").forEach(e => e.onclick = () => { cursor = e.dataset.d; view = "day"; render(); });
   }
 
   function render(){
-    $("sheet").hidden = true;
-    ["month","week","day"].forEach(v => $("v-" + v).setAttribute("aria-pressed", String(v === view)));
+    $("sheet").hidden = true; miniMonth = null;
+    ["month","week","day"].forEach(v => $("v-" + v).setAttribute("aria-pressed", String(!listMode && v === view)));
+    $("lst").setAttribute("aria-pressed", String(listMode));
+    $("lst").textContent = listMode ? "Show schedule" : "Show list";
     $("view").removeAttribute("style");
     const dk = DESK();
-    if (view === "month") renderMonth(); else if (view === "week") (dk ? renderWeekDesk : renderWeek)(); else (dk ? renderDayDesk : renderDay)();
-    if (dk) { renderMini(); renderBrk(); renderUpcoming(); if (view === "month") $("title").textContent = MON[D(cursor).getUTCMonth()] + ", " + D(cursor).getUTCFullYear(); }
+    if (listMode) renderList();
+    else if (view === "month") renderMonth(); else if (view === "week") (dk ? renderWeekDesk : renderWeek)(); else (dk ? renderDayDesk : renderDay)();
+    if (dk) { renderMini(); renderBrk(); renderUpcoming(); if (view === "month" && !listMode) $("title").textContent = MON[D(cursor).getUTCMonth()] + ", " + D(cursor).getUTCFullYear(); }
     if (!dk && view !== "day") { $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px"; }
     renderNow(); writeHash();
   }
 
   fetch("data.json", {cache: "no-store"}).then(r => r.json()).then(d => {
     DATA = d; d.days.forEach(x => BY[x.date] = x);
+    // rulebook: consumer sentiment counts as red folder even when the calendar shows it orange
+    d.days.forEach(x => x.news.forEach(n => { if (/sentiment|consumer confidence/i.test(n.name)) n.impact = "red"; }));
     $("upd").textContent = "Updated " + short(d.updated);
     $("foot").innerHTML = `<p>All times New York. Green = good to trade · yellow = risky / light size · red = don't trade.</p><p>Calendar sources: ${d.sources.map(esc).join(", ")}. Dates marked "est." are confirmed each Sunday.</p>`;
     readHash(); render();
