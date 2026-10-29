@@ -256,6 +256,9 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .wb.g{background:var(--sg);color:var(--sg-fg);border-color:rgba(38,196,141,.35)}
 .wb.y{background:var(--sy);color:var(--sy-fg);border-color:rgba(231,172,54,.35)}
 .wb.r{background:var(--sr);color:var(--sr-fg);border-color:rgba(239,91,97,.3)}
+.wb.off{background:repeating-linear-gradient(135deg,transparent 0 8px,rgba(255,255,255,.025) 8px 16px);color:var(--muted);border:1px dashed var(--line-2);cursor:default}
+.wb.off:hover{filter:none}.wb.off:active{transform:none}
+.wb.asia{box-shadow:inset 3px 0 0 #b4abff}
 .wb .wt{font-size:.74rem;font-weight:700;opacity:.9;font-variant-numeric:tabular-nums;white-space:nowrap}
 .wb .wr{font-size:.9rem;font-weight:800;line-height:1.2}
 .wb .wc{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto}
@@ -553,7 +556,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       [/^Half day/, "Half days can be hit or miss, and the market closes early."],
       [/^Market closed/, "CME equity futures are closed."],
       [/Globex (re)?open/, "The session just reopened and volume is thin."],
-      [/^Asia kill zone/, "Asia is low volume and your rulebook says to skip it. If you try it, size light."],
+      [/^Asia kill zone/, "8 PM to midnight is the Asia kill zone. Volume is lower than New York, so size light."],
       [/^Post-FOMC Asia/, "After FOMC the market keeps repricing overnight, so Asia has real movement tonight."],
       [/^Big news tomorrow/, "Don't trade before big news. Moves the night before CPI, NFP or FOMC are mostly positioning."],
       [/^Late Asia/, "After midnight Asia slows down before London starts."],
@@ -815,7 +818,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
   function deskGrid(host, dates){
     const firstNews = Math.min(9999, ...dates.map(s => Math.min(9999, ...(BY[s]?.marks || []).map(m => toMin(m[0])))));
-    const S0 = firstNews < 510 ? Math.floor((firstNews - 10) / 5) * 5 : 510, S1 = 960;
+    // Day fills the screen down to 4 PM; scrolling continues into that evening's Asia session (to 2 AM)
+    const S0 = firstNews < 510 ? Math.floor((firstNews - 10) / 5) * 5 : 510, S1 = 1560;
     const head = `<div class="wg-head" style="--cols:${dates.length}"><span class="wg-tz">New York</span>${dates.map(s => {
       const dd = BY[s]; const lb = dd ? dayLabel(dd) : "No data";
       return `<button class="wg-dh${s === NOW.date ? " today" : ""}" data-day="${s}"><span class="d1">${D(s).getUTCDate()}<small>${dow(s)}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(lb)}</span>` : ""}</button>`;
@@ -823,7 +827,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     host.innerHTML = `<div class="wg">${head}<div class="wg-body"><div class="wg-grid" style="--cols:${dates.length}"></div></div></div>`;
     const body = host.querySelector(".wg-body"), grid = host.querySelector(".wg-grid");
     const avail = Math.max(420, body.clientHeight - 4);
-    const PX = Math.max(1.05, avail / (S1 - S0));
+    const PX = Math.max(1.05, avail / (T1 - S0));
     const H = (S1 - S0) * PX, Y = m => (m - S0) * PX;
     let ax = `<div class="wg-ax" style="height:${H}px">`;
     for (let m = Math.ceil(S0/60)*60; m <= S1; m += 60) ax += `<span style="top:${Math.min(Math.max(Y(m),8),H-8)}px">${hr12(m)}</span>`;
@@ -846,8 +850,22 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
           c += `<div class="wb ${k}${size}" style="top:${top}px;height:${Math.max(h,6)}px" data-seg="${s}|${A}|${B}|${k}" data-reason="${esc(n)}" title="${fmtR(A,B)} · ${esc(n)}">
             <span class="wt">${fmtR(A,B)}</span><span class="wr">${esc(n)}</span>${ms ? `<span class="wc">${ms}</span>` : ""}</div>`;
         });
-        if (s === NOW.date && NOW.min >= S0 && NOW.min <= S1) c += `<div class="wg-now" style="top:${Y(NOW.min)}px"></div>`;
+        if (s === NOW.date && NOW.min >= S0) c += `<div class="wg-now" style="top:${Y(NOW.min)}px"></div>`;
       }
+      // Evening after this day: the next trading day's Asia session
+      const nd = addDays(s, 1), ndd = BY[nd];
+      const off = (A, B, txt) => { c += `<div class="wb off${Y(B) - Y(A) < 50 ? " sm" : ""}" style="top:${Y(A) + 2}px;height:${Y(B) - Y(A) - 4}px"><span class="wt">${fmtR(A,B)}</span><span class="wr">${esc(txt)}</span></div>`; };
+      if (ndd && ndd.asia && ndd.asia.length) {
+        off(T1, toMin(ndd.asia[0][0]), "Close · Asia opens " + hr12(toMin(ndd.asia[0][0])) + " → " + dow(nd).slice(0,3));
+        ndd.asia.forEach(([a,b,k,n]) => {
+          const A = toMin(a), B = Math.min(toMin(b), S1); if (B <= A) return;
+          const h = Y(B) - Y(A) - 4, size = h < 26 ? " xs" : h < 50 ? " sm" : "";
+          const ms = A === 1560 ? `<span class="chipm time">3:15 macro</span>` : "";
+          c += `<div class="wb ${k} asia${size}" style="top:${Y(A) + 2}px;height:${Math.max(h,6)}px" data-seg="${nd}|${A}|${B}|${k}" data-reason="${esc(n)}" title="${fmtR(A,B)} · ${esc(n)}">
+            <span class="wt">${fmtR(A,B)}</span><span class="wr">${esc(n)}</span>${ms ? `<span class="wc">${ms}</span>` : ""}</div>`;
+        });
+      } else off(T1, S1, D(s).getUTCDay() === 5 ? "Weekend · market closed" : "No overnight session");
+      if (addDays(NOW.date, -1) === s && NOW.min < S1 - 1440) c += `<div class="wg-now" style="top:${Y(NOW.min + 1440)}px"></div>`;
       cols += c + "</div>";
     });
     grid.innerHTML = ax + cols;
