@@ -47,6 +47,27 @@ class Day:
 
 
 LABEL = {2: "Great", 1: "Good", 0: "OK", -1: "Light", -2: "Sit out"}
+OPEX_RULE = "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials."
+
+
+def monthly_opex(year, month, holidays):
+    """Standard monthly equity/index OPEX; shift back for exchange holidays."""
+    first = date(year, month, 1)
+    expiry = first + timedelta(days=(4 - first.weekday()) % 7 + 14)
+    # Gregorian Easter (Good Friday can coincide with March/April OPEX).
+    a, b, c = year % 19, year // 100, year % 100
+    h = (19 * a + b - b // 4 - (b - (b + 8) // 25 + 1) // 3 + 15) % 30
+    l = (32 + 2 * (b % 4) + 2 * (c // 4) - h - c % 4) % 7
+    m = (a + 11 * h + 22 * l) // 451
+    n = h + l - 7 * m + 114
+    good_friday = date(year, n // 31, n % 31 + 1) - timedelta(days=2)
+    june = date(year, 6, 19)
+    juneteenth = june + timedelta(days=-1 if june.weekday() == 5 else 1 if june.weekday() == 6 else 0)
+    while (expiry.weekday() > 4 or expiry == good_friday
+           or (year >= 2022 and expiry == juneteenth)
+           or holidays.get(expiry.isoformat(), {}).get("type") == "closed"):
+        expiry -= timedelta(days=1)
+    return expiry
 
 
 def main():
@@ -97,6 +118,9 @@ def main():
         why = []
         notes = [notes_in[iso]] if iso in notes_in else []
         out = {"date": iso, "news": [], "marks": [], "holiday": None}
+        is_opex = d == monthly_opex(d.year, d.month, hol)
+        if is_opex:
+            out.update(opex=True, opexRule=OPEX_RULE)
 
         for e in es:
             tag = " (est.)" if e.get("est") else ""
@@ -218,6 +242,11 @@ def main():
             out.update(holiday=h["name"] + " (half day)", holidayType="half")
             score = min(score, -1)
             why.insert(0, f"{h['name']}: early close at {h['close']}. Half days are hit or miss.")
+
+        if is_opex:
+            score = min(score, -1)
+            day.recolor("g", "y", "OPEX: lower probability, target 1:1, no partials")
+            why.insert(0, OPEX_RULE)
 
         # Asia session: the evening before this trading day (times past 24:00 are after midnight)
         kz = ["20:00", "24:00", "y", "Asia kill zone, light size"]

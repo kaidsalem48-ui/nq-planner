@@ -998,6 +998,8 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "opex": true,
+   "opexRule": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials.",
    "asia": [
     [
      "18:00",
@@ -1024,8 +1026,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": 1,
-   "label": "Good",
+   "score": -1,
+   "label": "Light",
    "segs": [
     [
      "2:00",
@@ -1048,8 +1050,8 @@
     [
      "9:30",
      "10:30",
-     "g",
-     "NY AM, main window"
+     "y",
+     "OPEX: lower probability, target 1:1, no partials"
     ],
     [
      "10:30",
@@ -1070,7 +1072,7 @@
      "PM: only if AM was bad"
     ]
    ],
-   "why": "No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.",
+   "why": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials. No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.",
    "notes": []
   },
   {
@@ -3311,6 +3313,8 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "opex": true,
+   "opexRule": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials.",
    "asia": [
     [
      "18:00",
@@ -3337,8 +3341,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": 1,
-   "label": "Good",
+   "score": -1,
+   "label": "Light",
    "segs": [
     [
      "2:00",
@@ -3361,8 +3365,8 @@
     [
      "9:30",
      "10:30",
-     "g",
-     "NY AM, main window"
+     "y",
+     "OPEX: lower probability, target 1:1, no partials"
     ],
     [
      "10:30",
@@ -3383,7 +3387,7 @@
      "PM: only if AM was bad"
     ]
    ],
-   "why": "No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.",
+   "why": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials. No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.",
    "notes": []
   },
   {
@@ -5064,6 +5068,8 @@
    "news": [],
    "marks": [],
    "holiday": null,
+   "opex": true,
+   "opexRule": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials.",
    "asia": [
     [
      "18:00",
@@ -5090,8 +5096,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": 1,
-   "label": "Good",
+   "score": -1,
+   "label": "Light",
    "segs": [
     [
      "2:00",
@@ -5114,8 +5120,8 @@
     [
      "9:30",
      "10:30",
-     "g",
-     "NY AM, main window"
+     "y",
+     "OPEX: lower probability, target 1:1, no partials"
     ],
     [
      "10:30",
@@ -5136,7 +5142,7 @@
      "PM: only if AM was bad"
     ]
    ],
-   "why": "No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.",
+   "why": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials. No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.",
    "notes": [
     "Quad witching / Dec NQ expiration"
    ]

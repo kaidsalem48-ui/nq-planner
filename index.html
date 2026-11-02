@@ -438,6 +438,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   }
   function topTag(day){
     if (!day) return "";
+    if (day.opex) return "OPEX";
     if (day.holiday) return day.holidayType === "half" ? "Half" : day.holiday;
     const reds = day.marks.filter(m => m[2] === "news");
     const pri = ["FOMC","CPI","NFP","Minutes","PPI","GDP·PCE","Retail"];
@@ -453,7 +454,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   function dayHeadline(day){
     if (day.holidayType === "closed") return "Markets closed · " + day.holiday;
     if (day.holidayType === "bank") return "Markets open · " + day.holiday;
-    return day.holiday || day.label;
+    return (day.opex ? "OPEX · " : "") + (day.holiday || day.label);
   }
 
   /* ---------- routing ---------- */
@@ -497,10 +498,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       const cur = t.segs.find(([a,b]) => NOW.min >= toMin(a) && NOW.min < toMin(b));
       const nxt = t.segs.find(([a,,k]) => k === "g" && toMin(a) > NOW.min);
       const st = cur ? cur[2] : "n";
-      el.innerHTML = `<span class="k">Right now · ${dow(t.date)} ${short(t.date)} · ${t.holidayType === "bank" ? "Markets open · " + esc(t.holiday) : esc(t.label) + " day"}</span>
+      el.innerHTML = `<span class="k">Right now · ${dow(t.date)} ${short(t.date)} · ${esc(dayHeadline(t))}</span>
         <span class="row"><span class="v">${cur ? esc(cur[3]) : (NOW.min < T0 ? "Asia session" : "Session over")}</span>
         <span class="pill ${st}">${cur ? STAT[cur[2]] : "Off"}</span></span>
-        <span class="n">${nxt ? "Next good window " + fmtR(toMin(nxt[0]), toMin(nxt[1])) : (t.segs.some(s => s[2] === "g") ? "No more good windows today." : "No good windows today.")}</span>`;
+        <span class="n">${t.opex ? esc(t.opexRule) : nxt ? "Next good window " + fmtR(toMin(nxt[0]), toMin(nxt[1])) : (t.segs.some(s => s[2] === "g") ? "No more good windows today." : "No good windows today.")}</span>`;
     } else {
       let s = NOW.date; for (let i = 0; i < 10 && !(BY[s] && BY[s].holidayType !== "closed" && s > NOW.date); i++) s = addDays(s,1);
       const n = BY[s];
@@ -667,7 +668,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       const past = s < NOW.date ? " past" : "", today = s === NOW.date ? " today" : "";
       const tag = topTag(dd);
       const lb = dayLabel(dd);
-      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(lb)}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span><span class="win">${esc(winText(dd))}</span></span>${asiaBadge(s)}</button>`;
+      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(dayHeadline(dd))}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span><span class="win">${esc(dd.opex ? "1:1 · no partials" : winText(dd))}</span></span>${asiaBadge(s)}</button>`;
     }).join("");
     $("view").innerHTML = `<section class="panel cal">
       <div class="calhead"><h2>${MON[m]}</h2><div class="counts">${counts}</div></div>
@@ -823,7 +824,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const S0 = firstNews < 510 ? Math.floor((firstNews - 10) / 5) * 5 : 510, S1 = 1560, G0 = 120;
     const head = `<div class="wg-head" style="--cols:${dates.length}"><span class="wg-tz">New York</span>${dates.map(s => {
       const dd = BY[s]; const lb = dd ? dayLabel(dd) : "No data";
-      return `<button class="wg-dh${s === NOW.date ? " today" : ""}" data-day="${s}"><span class="d1">${D(s).getUTCDate()}<small>${dow(s)}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(lb)}</span>` : ""}</button>`;
+      return `<button class="wg-dh${s === NOW.date ? " today" : ""}" data-day="${s}"><span class="d1">${D(s).getUTCDate()}<small>${dow(s)}${dd?.opex ? " · OPEX" : ""}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(lb)}</span>` : ""}</button>`;
     }).join("")}</div>`;
     host.innerHTML = `<div class="wg">${head}<div class="wg-body"><div class="wg-grid" style="--cols:${dates.length}"></div></div></div>`;
     const body = host.querySelector(".wg-body"), grid = host.querySelector(".wg-grid");
@@ -939,7 +940,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const days = ds.map(s => {
       const dd = BY[s];
       const lb = dd ? dayLabel(dd) : "";
-      const head = `<div class="nlhead" data-d="${s}"><span class="dd">${dow(s).slice(0,3)}<small>${short(s)}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(lb)}</span><span class="tw">${esc(winText(dd))}</span>` : ""}</div>`;
+      const head = `<div class="nlhead" data-d="${s}"><span class="dd">${dow(s).slice(0,3)}<small>${short(s)}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(dayHeadline(dd))}</span><span class="tw">${esc(dd.opex ? "1:1 · no partials" : winText(dd))}</span>` : ""}</div>`;
       if (!dd) return `<section class="nlday">${head}<div class="nlempty">No schedule for this week yet. New weeks are added every Sunday.</div></section>`;
       const items = dd.news.slice().sort((a, b) => toMin(a.time) - toMin(b.time)).map(n => {
         const past = s < NOW.date || (s === NOW.date && toMin(n.time) < NOW.min);
