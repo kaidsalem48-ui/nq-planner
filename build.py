@@ -48,7 +48,7 @@ class Day:
 
 LABEL = {2: "Great", 1: "Good", 0: "OK", -1: "Light", -2: "Sit out"}
 OPEX_RULE = "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials."
-ELECTION_RULE = "Your Election Day rule: random volatility and unpredictable price action. Trade only after 9:30 AM New York time, take only clean V-shape setups, and target 1R."
+ELECTION_RULE = "Your Election Day rule: random volatility and unpredictable price action. Only looking for 1:1R after 9:30 AM New York time, on clean V-shape setups. Still risky."
 
 
 def monthly_opex(year, month, holidays):
@@ -121,7 +121,9 @@ def main():
         out = {"date": iso, "news": [], "marks": [], "holiday": None}
         is_opex = d == monthly_opex(d.year, d.month, hol)
         if is_opex:
-            out.update(opex=True, opexRule=OPEX_RULE)
+            out.update(opex=True, quadWitching=d.month in (3, 6, 9, 12),
+                       expiryLabel="Quad witching" if d.month in (3, 6, 9, 12) else "OPEX",
+                       opexRule=OPEX_RULE)
 
         for e in es:
             tag = " (est.)" if e.get("est") else ""
@@ -248,16 +250,18 @@ def main():
             score = min(score, -1)
             day.recolor("g", "y", "OPEX: lower probability, target 1:1, no partials")
             why.insert(0, OPEX_RULE)
+            if d.month in (3, 6, 9, 12):
+                why.insert(0, "Quad witching: overlapping quarterly expiries can bring repositioning and unusual volume. Confirm index rebalancing separately.")
 
         # Federal Election Day: Tuesday after the first Monday in November,
         # in even-numbered years. Keep this rule when new calendar years are added.
         if d.year % 2 == 0 and d.month == 11 and d.weekday() == 1 and 2 <= d.day <= 8:
             score = min(score, -1)
-            day.paint(T0, 570, "r", "Election Day: wait until after 9:30 AM")
+            day.paint(T0, 570, "r", "Election Day: random volatility, unpredictable price action")
             for i, state in enumerate(day.st):
                 if i + T0 >= 570 and state != "r":
                     day.st[i] = "y"
-                    day.why[i] += " · Election Day: clean V-shape setups only, target 1R"
+                    day.why[i] += " · Election Day: only looking for 1:1R after 9:30, still risky · clean V-shape setups"
             why.insert(0, ELECTION_RULE)
             notes.append(ELECTION_RULE)
 

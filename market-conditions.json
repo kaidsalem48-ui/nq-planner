@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "days": {
+    "2026-11-03": {
+      "recordedAt": "2026-11-03T20:29:25.362235+00:00",
+      "values": {
+        "mcVix": 20.86,
+        "mcYieldLevel": 4.91,
+        "mcDxy": 101.83
+      },
+      "sources": [
+        {
+          "title": "Charles Schwab market-open update",
+          "url": "https://www.schwab.com/learn/story/stock-market-update-open",
+          "asOf": "2026-11-03T09:16:00-05:00",
+          "fields": [
+            "mcVix",
+            "mcYieldLevel",
+            "mcDxy"
+          ]
+        }
+      ]
+    }
+  },
+  "updatedAt": "2026-11-03T20:30:40.566932+00:00"
+}

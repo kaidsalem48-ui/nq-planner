@@ -999,6 +999,8 @@
    "marks": [],
    "holiday": null,
    "opex": true,
+   "quadWitching": false,
+   "expiryLabel": "OPEX",
    "opexRule": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials.",
    "asia": [
     [
@@ -2125,13 +2127,13 @@
      "2:00",
      "9:30",
      "r",
-     "Election Day: wait until after 9:30 AM"
+     "Election Day: random volatility, unpredictable price action"
     ],
     [
      "9:30",
      "9:50",
      "y",
-     "JOLTS at 10:00, risky \u00b7 Election Day: clean V-shape setups only, target 1R"
+     "JOLTS at 10:00, risky \u00b7 Election Day: only looking for 1:1R after 9:30, still risky \u00b7 clean V-shape setups"
     ],
     [
      "9:50",
@@ -2143,25 +2145,25 @@
      "10:00",
      "12:00",
      "y",
-     "NY AM, main window \u00b7 Election Day: clean V-shape setups only, target 1R"
+     "NY AM, main window \u00b7 Election Day: only looking for 1:1R after 9:30, still risky \u00b7 clean V-shape setups"
     ],
     [
      "12:00",
      "13:30",
      "y",
-     "Lunch: only if AM was bad \u00b7 Election Day: clean V-shape setups only, target 1R"
+     "Lunch: only if AM was bad \u00b7 Election Day: only looking for 1:1R after 9:30, still risky \u00b7 clean V-shape setups"
     ],
     [
      "13:30",
      "16:00",
      "y",
-     "PM: only if AM was bad \u00b7 Election Day: clean V-shape setups only, target 1R"
+     "PM: only if AM was bad \u00b7 Election Day: only looking for 1:1R after 9:30, still risky \u00b7 clean V-shape setups"
     ]
    ],
-   "why": "Your Election Day rule: random volatility and unpredictable price action. Trade only after 9:30 AM New York time, take only clean V-shape setups, and target 1R. JOLTS at 10:00: stay out the 10 min before it.",
+   "why": "Your Election Day rule: random volatility and unpredictable price action. Only looking for 1:1R after 9:30 AM New York time, on clean V-shape setups. Still risky. JOLTS at 10:00: stay out the 10 min before it.",
    "notes": [
     "Midterm Election Day",
-    "Your Election Day rule: random volatility and unpredictable price action. Trade only after 9:30 AM New York time, take only clean V-shape setups, and target 1R."
+    "Your Election Day rule: random volatility and unpredictable price action. Only looking for 1:1R after 9:30 AM New York time, on clean V-shape setups. Still risky."
    ]
   },
   {
@@ -3303,6 +3305,8 @@
    "marks": [],
    "holiday": null,
    "opex": true,
+   "quadWitching": false,
+   "expiryLabel": "OPEX",
    "opexRule": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials.",
    "asia": [
     [
@@ -5058,6 +5062,8 @@
    "marks": [],
    "holiday": null,
    "opex": true,
+   "quadWitching": true,
+   "expiryLabel": "Quad witching",
    "opexRule": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials.",
    "asia": [
     [
@@ -5131,7 +5137,7 @@
      "PM: only if AM was bad"
     ]
    ],
-   "why": "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials. No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.",
+   "why": "Quad witching: overlapping quarterly expiries can bring repositioning and unusual volume. Confirm index rebalancing separately. Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials. No red folder: trade 9:30-10:30 on good price action, be done by 10:30, don't hold long.",
    "notes": [
     "Quad witching / Dec NQ expiration"
    ]

@@ -184,6 +184,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .cal .tile .lb{white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
   .cal .tile .lb.small{font-size:.7rem;line-height:1.05}
   .cal .tile .tag{text-overflow:ellipsis}
+  .cal .tile.election .tag{top:24px;white-space:normal;line-height:1;max-height:20px;text-overflow:clip}
   .cal .tile:has(.a8) .lb{padding-right:0}
   .cal .tile .a8{right:auto;bottom:auto;left:6px;top:6px;width:16px;height:16px;font-size:.6rem}
 }
@@ -363,6 +364,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .ctl .seg3{order:1}
   #lst{order:2}#prev{order:3}#today{order:4}#next{order:5}
 }
+.market-conditions{margin:8px 0 12px}.market-conditions>summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;padding:12px 16px}.market-conditions>summary:before{content:'›';font-size:18px}.market-conditions[open]>summary:before{transform:rotate(90deg)}.market-conditions .bd{border-top:1px solid var(--line)}.market-date{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px}.market-date .f{max-width:200px}.market-summary{border-left:3px solid var(--orange,#d99114);padding:10px 14px;margin:10px 0;background:var(--bg);border-radius:0 8px 8px 0}.market-summary-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.market-summary p{margin:8px 0}.market-summary ul{margin:8px 0;padding-left:20px}.condition-sections{border-top:1px solid var(--line);margin:12px 0}.condition-sections>details{border-bottom:1px solid var(--line);padding:10px 0}.condition-sections summary,.condition-guide summary{cursor:pointer;font-weight:600}.condition-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}.condition-grid input,.condition-grid select{width:100%;min-width:0}.condition-guide{margin-top:12px}.condition-guide p{max-width:75ch}.market-report-picker{max-width:330px;margin:8px 0 12px}@media(max-width:700px){.market-conditions{margin:6px 0 8px}.market-conditions>summary{padding:10px 12px}.condition-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.market-date{gap:8px}.market-summary{padding:10px}.condition-grid .f{font-size:11px}.condition-grid select{font-size:13px}.market-conditions .bd{padding:12px}}
+#condition-host .market-conditions{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:10px 0}#condition-host .bd{padding:14px}#condition-host .note{font-size:12px;color:#aab3c4}#condition-host .f{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}#condition-host input,#condition-host select,#condition-host textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px;width:100%;min-width:0}#condition-host .chip{font-size:11px;border-radius:5px;padding:3px 7px;background:var(--panel-2);color:var(--fg)}#condition-host .chip.y{background:var(--sy);color:var(--sy-fg)}#condition-host .market-summary{border-color:var(--sy-line)}#condition-host p,#condition-host li{font-size:13px}#condition-host a{color:#a89fff}#condition-host summary:focus-visible,#condition-host input:focus-visible,#condition-host select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}#condition-host .condition-grid .f{min-width:0}@media(max-width:700px){#condition-host .bd{padding:12px}}
 </style>
 </head>
 <body>
@@ -395,6 +398,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     </div>
   </section>
 
+  <div id="condition-host"></div>
   <main id="view"></main>
   <div class="sheet" id="sheet" hidden></div>
 
@@ -430,15 +434,95 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   let expanded = false; try { expanded = localStorage.getItem("nq-expanded") === "1"; } catch (e) {}
   const setExpanded = v => { expanded = v; try { localStorage.setItem("nq-expanded", v ? "1" : "0"); } catch (e) {} };
 
+
+  let NOTES={};try{NOTES=JSON.parse(localStorage.getItem('nq-market-conditions-v1')||'{}');}catch{}
+  let AUTO_CONDITIONS = {days:{}}, autoRecordingStatus = "Loading daily recordings…";
+  const marketRecord = day => ({...(AUTO_CONDITIONS.days?.[day]?.values || {}), ...(NOTES['day:'+day] || {})});
+  function recordingInfo(day) {
+    const record=AUTO_CONDITIONS.days?.[day];
+    const manual=Object.keys(NOTES['day:'+day]||{}).some(k=>k.startsWith('mc')||k==='marketGapPoints');
+    if(!record)return `${esc(autoRecordingStatus)}<br>Daily recording: weekdays at 9:35 AM New York. Manual edits stay on this device.`;
+    return `Daily snapshot recorded ${esc(stampNY(Date.parse(record.recordedAt)))}. Source times are listed below; this is not a live feed.${manual?' Your manual edits take priority.':''}<details><summary>Recorded sources &amp; times</summary><ul>${(record.sources||[]).filter(s=>/^https:\/\//i.test(s.url)).map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> · as of ${esc(stampNY(Date.parse(s.asOf)))}</li>`).join('')||'<li>No verified values available for this session.</li>'}</ul></details>`;
+  }
+  const ui={marketOpen:false},localNoteEdits=new Map(),saveUi=()=>{},stampNY=ms=>new Date(ms).toLocaleString('en-US',{timeZone:'America/New_York'} )+' NY';
+  const wd=day=>D(day).getUTCDay();let marketBase={};
+  const saveNote=async(k,value)=>{const next={...NOTES,[k]:{...(NOTES[k]||{}),...value}};localStorage.setItem('nq-market-conditions-v1',JSON.stringify(next));NOTES=next;localNoteEdits.set(k,Date.now());};
+  function applyMarketConditions(){for(const [day,base] of Object.entries(marketBase)){const d=BY[day]=JSON.parse(JSON.stringify(base)),a=marketAssessment(day);if(a.expiry){d.opex=true;d.expiryLabel=a.expiry;d.quadWitching=a.expiry==='Quad witching';d.opexRule=a.plan;}else if((NOTES['day:'+day]||{}).mcExpiry==='None'){/* Schedule's established OPEX restriction remains; an override never removes a news restriction. */}
+    if(a.level==='Reduced'&&!['closed','bank'].includes(d.holidayType)){d.score=Math.min(d.score,-1);d.label=d.score===-2?'Sit out':'Light';d.segs=d.segs.map(s=>s[2]==='g'?[s[0],s[1],'y',s[3]+' · market conditions: reduce aggression']:s);d.asia=(d.asia||[]).map(s=>s[2]==='g'?[s[0],s[1],'y',s[3]+' · market conditions: reduce aggression']:s);d.why+=' '+[...a.reasons,a.plan].join(' ');}}
+  }
+  // Dated observations, saved in the same private, field-merged day records as notes.
+  function scheduledExpiry(day){
+    const y=+day.slice(0,4),m=+day.slice(5,7),first=`${y}-${String(m).padStart(2,'0')}-01`;
+    let date=addDays(first,(5-wd(first)+7)%7+14);
+    // Good Friday and the observed Juneteenth holiday can move a third-Friday expiry.
+    const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,n=Math.floor((a+11*h+22*l)/451),em=Math.floor((h+l-7*n+114)/31),ed=(h+l-7*n+114)%31+1;
+    const goodFriday=addDays(`${y}-${String(em).padStart(2,'0')}-${String(ed).padStart(2,'0')}`,-2),juneteenth=`${y}-06-19`,observedJune=wd(juneteenth)===6?addDays(juneteenth,-1):wd(juneteenth)===0?addDays(juneteenth,1):juneteenth;
+    for(let j=0;j<7&&(wd(date)===0||wd(date)===6||date===goodFriday||y>=2022&&date===observedJune||BY[date]?.holidayType==='closed');j++)date=addDays(date,-1);
+    return day===date?([3,6,9,12].includes(m)?'Quad witching':'OPEX'):'';
+  }
+  function expiryForDay(day){const override=marketRecord(day).mcExpiry;return override==='None'?'':override||scheduledExpiry(day);}
+  const marketNum=(n,k)=>n[k]!==''&&n[k]!=null&&Number.isFinite(+n[k])?+n[k]:null;
+  const TECH_NAMES=['AAPL','MSFT','NVDA','AMZN','GOOGL','META','TSLA'];
+  function techBreadth(n){
+    const names=TECH_NAMES.filter(k=>marketNum(n,'mc'+k)!=null),direction=n.mcDirection;
+    if(!['Up','Down'].includes(direction)||names.length!==7)return {label:n.mcBreadth||'Not recorded',detail:`${names.length}/7 tech moves recorded. Enter all seven and NQ direction for a participation tally.`};
+    const aligned=names.filter(k=>direction==='Up'?+n['mc'+k]>0:+n['mc'+k]<0),opposed=names.filter(k=>direction==='Up'?+n['mc'+k]<0:+n['mc'+k]>0);
+    return {label:n.mcBreadth||(aligned.length>=5?'Broad participation':opposed.length>=4?'Divergent':'Narrow / mixed'),detail:`${aligned.length}/7 align with NQ ${direction.toLowerCase()}; ${opposed.length} oppose. ${opposed.length?'Opposing: '+opposed.join(', ')+'.':''} Equal-count check; not index-weighted contribution.`};
+  }
+  function marketAssessment(day){
+    const n=marketRecord(day),expiry=expiryForDay(day),vix=marketNum(n,'mcVix'),overnight=marketNum(n,'mcOvernight'),breadth=techBreadth(n),reasons=[],watch=[];
+    if(expiry)reasons.push(expiry==='Quad witching'?'Quad witching: overlapping expiries may bring repositioning and unusual volume.':'OPEX: your lower-probability rule applies.');
+    if(overnight!=null&&Math.abs(overnight)>200)reasons.push(`Overnight move ${overnight>0?'+':''}${overnight} pts exceeds your 200-point rule: expect potentially poor price action.`);
+    if(vix!=null&&vix>18&&n.mcVol==='Expanding')reasons.push('VIX above 18 and expanding: reduce aggression while volatility accelerates.');
+    else if(vix!=null)watch.push(`VIX ${vix}: ${vix>18?'above':vix<18?'below':'at'} your 18 threshold${n.mcVol?' · '+n.mcVol.toLowerCase():''}. Below 18 is not an automatic green light.`);
+    if(['Divergent','Narrow / mixed','Narrow participation'].includes(breadth.label))reasons.push('Tech participation is narrow or divergent: NQ strength may lack broad support.');
+    if(n.mcMacro==='Headwinds')reasons.push('You marked yields / dollar as headwinds to your setup.');
+    if(n.mcRebalance==='Confirmed')reasons.push('Confirmed index rebalance: monitor flow and the closing auction.');
+    if(n.mcRebalance==='Possible')watch.push('Possible rebalance: confirm the index announcement; expiry alone does not establish a rebalance.');
+    if(n.mcGamma==='Short gamma')watch.push('Short gamma observation: dealer hedging can reinforce moves in either direction; avoid assuming stability.');
+    if(n.mcGamma==='Long gamma')watch.push('Long gamma observation: dealer hedging can oppose moves; monitor pinning and failed extensions.');
+    if(n.mcGamma==='Mixed / near flip')watch.push('Gamma near a flip: hedging behavior may change as price crosses your recorded level.');
+    if(n.marketType==='Reversal')watch.push('Current session reversed: reassess continuation assumptions and gap behavior.');
+    if(n.mcOvernightType==='Reversal'||n.mcPositioning==='Crowded longs'||n.mcPositioning==='Crowded shorts')watch.push('Overnight reversal or crowded positioning: watch for trapped inventory and failed continuation.');
+    const range=marketNum(n,'mcRange'),prior=marketNum(n,'mcPriorRange');if(range!=null&&prior>0&&range>=prior)watch.push('Current daily range has reached the prior RTH range; reassess remaining room.');
+    const required=['mcVix','mcVol','mcOvernight','mcOvernightType','mcPositioning','mcGamma','mcMacro','mcYields','mcDollar','marketGapPoints','mcRange','mcPriorRange','mcRebalance'];
+    const missing=required.filter(k=>n[k]==null||n[k]==='');if(breadth.label==='Not recorded')missing.push('tech participation');if(n.mcGamma==='Unknown')missing.push('known gamma regime');if(n.mcGamma&&n.mcGamma!=='Unknown'&&!n.mcGammaSource)missing.push('gamma source');
+    const level=reasons.length?'Reduced':missing.length?'Incomplete':watch.some(x=>/gamma|positioning|range/.test(x))?'Selective':'Standard';
+    return {n,expiry,vix,overnight,breadth,reasons,watch,missing,level,plan:expiry?'Your expiry plan: target 1:1, no partials; reduce the day grade and aggression.':reasons.length?'Your caution plan: reduce aggression, wait for cleaner confirmation, and reassess before increasing size.':missing.length?'Complete the missing context before deciding how aggressive to be.':'Context reviewed. Use your normal risk plan only when the setup and live price action agree.'};
+  }
+  function marketSummary(day,editable=true){const a=marketAssessment(day),has=Object.keys(a.n).some(k=>k.startsWith('mc'));if(!has&&!a.expiry)return '';return `<section class="market-summary"><div class="market-summary-head"><b>Market conditions · ${esc(day)}</b><span class="chip ${a.level==='Reduced'?'y':'n'}">${a.level}</span>${a.expiry?`<span class="chip y">${a.expiry}</span>`:''}</div><p>${esc(a.plan)}</p>${a.reasons.length?`<ul>${a.reasons.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:''}${a.watch.length?`<ul>${a.watch.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:''}<p class="note">${a.vix!=null?'VIX '+a.vix+' · ':''}${a.n.mcVol?esc(a.n.mcVol)+' · ':''}${a.overnight!=null?'Overnight '+a.overnight+' pts · ':''}${esc(a.breadth.label)}. ${a.missing.length?a.missing.length+' context checks missing.':''} ${AUTO_CONDITIONS.days?.[day]?'Daily recorded snapshot':'Manual observations'}${a.n.mcObserved?' · manual edit '+esc(stampNY(a.n.mcObserved)):''}; not a live feed.</p>${editable?`<button class="btn" data-market-edit-day="${esc(day)}">Review conditions</button>`:''}</section>`;}
+  const MARKET_SECTIONS=[
+    ['Volatility & expiry',[['mcVix','VIX level','number'],['mcVol','Volatility',['Expanding','Contracting','Stable']],['mcExpiry','Expiry override',['OPEX','Quad witching']],['mcRebalance','Index rebalance',['None confirmed','Possible','Confirmed']]]],
+    ['Overnight & range',[['mcOvernight','Overnight net move (NQ pts)','number'],['mcOvernightRange','Overnight high − low (pts)','number'],['mcOvernightType','Overnight behavior',['Trend up','Trend down','Reversal','Balanced']],['mcPositioning','Overnight inventory',['Long','Short','Balanced','Crowded longs','Crowded shorts']],['marketGapPoints','RTH open − prior RTH close (pts)','number'],['mcRange','Current RTH high − low (pts)','number'],['mcPriorRange','Prior RTH high − low (pts)','number'],['marketType','Current day behavior',['Trend up','Trend down','Range','Reversal','Choppy']]]],
+    ['Dealer hedging & macro',[['mcGamma','Dealer gamma',['Long gamma','Short gamma','Mixed / near flip','Unknown']],['mcGammaFlip','Gamma flip (NQ price, if known)','number'],['mcGammaSource','Gamma source / observation','text'],['mcYieldLevel','US 10Y yield (%)','number'],['mcYields','Yield direction',['Rising','Falling','Flat']],['mcDxy','Dollar index (DXY)','number'],['mcDollar','Dollar direction',['Rising','Falling','Flat']],['mcMacro','Effect on this setup',['Supportive','Mixed','Headwinds']]]],
+    ['Big-tech participation',[['mcDirection','Current NQ direction',['Up','Down','Flat']],['mcBreadth','Breadth observation override',['Broad participation','Narrow participation','Narrow / mixed','Divergent']],...TECH_NAMES.map(k=>['mc'+k,k+' change from prior close (%)','number'])]]
+  ];
+  function marketConditionCard(){
+    const day=cursor,a=marketAssessment(day),n=a.n;
+    const field=([key,label,type])=>`<label class="f">${label}${Array.isArray(type)?`<select data-condition="${key}"><option value="">${key==='mcBreadth'?'Auto from seven names':key==='mcExpiry'?'Auto from calendar':'Not recorded'}</option>${type.map(v=>`<option ${n[key]===v?'selected':''}>${v}</option>`).join('')}</select>`:`<input class="txt" data-condition="${key}" type="${type}" ${type==='number'?'step="any"':''} maxlength="180" value="${esc(n[key]??'')}">`}</label>`;
+    return `<details class="card market-conditions" id="market-conditions" ${ui.marketOpen?'open':''}><summary><b>Market conditions</b><span class="chip ${a.level==='Reduced'?'y':'n'}">${a.level}</span><span class="note">${esc(day)}${a.expiry?' · '+a.expiry:''}</span></summary><div class="bd"><div class="market-date"><label class="f">Trading day<input class="txt" id="condition-day" type="date" value="${esc(day)}"></label><div class="note">${recordingInfo(day)}</div></div><div id="condition-assessment">${marketSummary(day,false)||`<p class="note">Review the conditions below before choosing aggression. Missing data stays unknown.</p>`}</div><p class="note">Overnight net move = 09:29 NY price − prior 18:00 NY price; enter a signed number. The 200-point rule uses its absolute value, not the overnight high–low range. Compare all tech moves at the same time.</p><div class="condition-sections">${MARKET_SECTIONS.map(([title,fields],i)=>`<details ${i===0?'open':''}><summary>${title}</summary><div class="condition-grid">${fields.map(field).join('')}</div></details>`).join('')}</div><p class="note" id="tech-participation">${esc(a.breadth.detail)}</p><label class="f">Positioning / market context notes<textarea data-condition="mcComment" rows="2" placeholder="Key gamma levels, gap location, trapped inventory, rebalance source…">${esc(n.mcComment||'')}</textarea></label><p id="condition-status" class="note" role="status">Conditions adjust this Planner day’s grade and green windows. Scheduled red restrictions remain in force. Changes save automatically. The VIX 18 threshold and overnight &gt;200-point caution are your rules, not measured probability estimates.</p><details class="condition-guide"><summary>How to read this context</summary><p>VIX reflects SPX option-implied volatility, not NQ-specific volatility or direction. Compare level and change. Dealer long gamma hedging can dampen moves; short gamma can reinforce them, but exposure must come from a positioning source and cannot be inferred from volume alone.</p><p>Quarterly third-Friday expiry is labeled Quad witching (also commonly called triple witching). Holiday adjustments apply; use the override if a product has a different expiry. Expiry volume is not automatically directional conviction or a confirmed index rebalance.</p><p class="note"><a href="https://www.cboe.com/tradable-products/vix/" target="_blank" rel="noopener">Cboe VIX</a> · <a href="https://www.cboe.com/insights/posts/volatility-insights-evaluating-the-market-impact-of-spx-0-dte-options/" target="_blank" rel="noopener">Cboe dealer hedging</a> · <a href="https://www.sifma.org/wp-content/uploads/2024/09/SIFMA-Insights-Primer_Options_FINAL.pdf" target="_blank" rel="noopener">Expiry primer</a></p></details></div></details>`;
+  }
+  function refreshConditions(){const panel=$('market-conditions'),day=cursor;if(!panel||Date.now()-(localNoteEdits.get('day:'+day)||0)<1500)return;const n=marketRecord(day);panel.querySelectorAll('[data-condition]').forEach(el=>{if(document.activeElement!==el&&el.value!==String(n[el.dataset.condition]??''))el.value=n[el.dataset.condition]??'';});if(panel.open){const a=marketAssessment(day);$('condition-assessment').innerHTML=marketSummary(day,false)||'<p class="note">No observations recorded.</p>';$('tech-participation').textContent=a.breadth.detail;panel.querySelector('summary .chip').textContent=a.level;}}
+  function bindMarketConditions(){
+    if($('condition-report'))$('condition-report').onchange=e=>{reportState.market=e.target.value||'movement';render();};
+    const panel=$('market-conditions');if(panel){panel.ontoggle=()=>{const was=ui.marketOpen;ui.marketOpen=panel.open;saveUi();if(was&&!panel.open)render();};$('condition-day').onchange=e=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(e.target.value))return;cursor=e.target.value;ui.marketOpen=true;saveUi();render();};
+      panel.querySelectorAll('[data-condition]').forEach(el=>el.onchange=async()=>{const day=cursor,key=el.dataset.condition;let value=el.type==='number'?(el.value===''?'':+el.value):el.value.trim();if(el.type==='number'&&!Number.isFinite(value)&&value!=='')return;const nonnegative=['mcVix','mcOvernightRange','mcRange','mcPriorRange','mcDxy','mcGammaFlip'];if(nonnegative.includes(key)&&value!==''&&value<0){$('condition-status').textContent='This value must be zero or greater.';return;}if(key==='mcExpiry'&&value==='Auto')value='';$('condition-status').textContent='Saving…';try{await saveNote('day:'+day,{[key]:value,mcObserved:Date.now()});const a=marketAssessment(day);$('condition-assessment').innerHTML=marketSummary(day,false);$('tech-participation').textContent=a.breadth.detail;panel.querySelector('summary .chip').textContent=a.level;panel.querySelector('summary .chip').className='chip '+(a.level==='Reduced'?'y':'n');$('condition-status').textContent='Saved in Planner on this device.';applyMarketConditions();}catch{$('condition-status').textContent='Could not save. Change the value to retry.';}});
+    }
+    panel?.querySelectorAll('input[data-condition],textarea[data-condition]').forEach(el=>{el.oninput=el.onchange;});
+    document.querySelectorAll('[data-market-edit-day]').forEach(b=>b.onclick=()=>{cursor=b.dataset.marketEditDay;ui.marketOpen=true;saveUi();render();$('market-conditions')?.scrollIntoView({block:'start',behavior:'smooth'});});
+  }
+
   function tileClass(day){
     if (!day) return "";
     if (day.holidayType === "closed" || day.holidayType === "bank") return "shol";
     if (day.holidayType === "half") return "shalf";
     return LABEL_CLASS(day.score);
   }
+  const isElectionDay = day => !!day && !!(day.electionDay || (day.notes || []).some(n => /^(?:Your Election Day rule:|(?:Midterm )?Election Day$)/i.test(n)));
   function topTag(day){
     if (!day) return "";
-    if (day.opex) return "OPEX";
+    if (isElectionDay(day)) return "Election Day";
+    if (day.opex) return day.expiryLabel||"OPEX";
     if (day.holiday) return day.holidayType === "half" ? "Half" : day.holiday;
     const reds = day.marks.filter(m => m[2] === "news");
     const pri = ["FOMC","CPI","NFP","Minutes","PPI","GDP·PCE","Retail"];
@@ -454,7 +538,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   function dayHeadline(day){
     if (day.holidayType === "closed") return "Markets closed · " + day.holiday;
     if (day.holidayType === "bank") return "Markets open · " + day.holiday;
-    return (day.opex ? "OPEX · " : "") + (day.holiday || day.label);
+    return (isElectionDay(day) ? "Election Day · " : "") + (day.opex ? (day.expiryLabel||"OPEX")+" · " : "") + (day.holiday || day.label);
   }
 
   /* ---------- routing ---------- */
@@ -665,7 +749,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       const dd = BY[s], inMonth = D(s).getUTCMonth() === m;
       if (!inMonth) return `<div class="tile empty"><span class="dn">${D(s).getUTCDate()}</span><span></span></div>`;
       if (!dd) return `<div class="tile"><span class="dn">${D(s).getUTCDate()}</span><span class="lb" style="color:var(--faint)">– –</span></div>`;
-      const past = s < NOW.date ? " past" : "", today = s === NOW.date ? " today" : "";
+      const past = s < NOW.date ? " past" : "", today = (s === NOW.date ? " today" : "") + (isElectionDay(dd) ? " election" : "");
       const tag = topTag(dd);
       const lb = dayLabel(dd);
       return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(dayHeadline(dd))}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span><span class="win">${esc(dd.opex ? "1:1 · no partials" : winText(dd))}</span></span>${asiaBadge(s)}</button>`;
@@ -824,7 +908,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const S0 = firstNews < 510 ? Math.floor((firstNews - 10) / 5) * 5 : 510, S1 = 1560, G0 = 120;
     const head = `<div class="wg-head" style="--cols:${dates.length}"><span class="wg-tz">New York</span>${dates.map(s => {
       const dd = BY[s]; const lb = dd ? dayLabel(dd) : "No data";
-      return `<button class="wg-dh${s === NOW.date ? " today" : ""}" data-day="${s}"><span class="d1">${D(s).getUTCDate()}<small>${dow(s)}${dd?.opex ? " · OPEX" : ""}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(lb)}</span>` : ""}</button>`;
+      return `<button class="wg-dh${s === NOW.date ? " today" : ""}" data-day="${s}"><span class="d1">${D(s).getUTCDate()}<small>${dow(s)}${dd?.opex ? " · "+(dd.expiryLabel||"OPEX") : ""}</small></span>${dd ? `<span class="gp ${tileClass(dd)}">${esc(lb)}</span>` : ""}</button>`;
     }).join("")}</div>`;
     host.innerHTML = `<div class="wg">${head}<div class="wg-body"><div class="wg-grid" style="--cols:${dates.length}"></div></div></div>`;
     const body = host.querySelector(".wg-body"), grid = host.querySelector(".wg-grid");
@@ -1009,6 +1093,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   }
 
   function render(){
+    applyMarketConditions();$("condition-host").innerHTML=marketConditionCard();bindMarketConditions();
     $("sheet").hidden = true; miniMonth = null;
     ["month","week","day"].forEach(v => $("v-" + v).setAttribute("aria-pressed", String(!listMode && v === view)));
     $("lst").setAttribute("aria-pressed", String(listMode));
@@ -1022,13 +1107,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     renderNow(); writeHash();
   }
 
-  fetch("data.json", {cache: "no-store"}).then(r => r.json()).then(d => {
+  Promise.all([fetch("data.json", {cache: "no-store"}).then(r => {if(!r.ok)throw new Error('Schedule unavailable');return r.json();}), fetch("market-conditions.json", {cache:"no-store"}).then(r=>{if(!r.ok)throw new Error('Recordings unavailable');return r.json();}).then(d=>{if(d.version!==1||!d.days)throw new Error('Invalid recordings');AUTO_CONDITIONS=d;autoRecordingStatus="No automatic snapshot recorded for this date yet.";}).catch(()=>{autoRecordingStatus="Daily recordings could not load. Missing values remain unknown.";})]).then(([d]) => {
     DATA = d; d.days.forEach(x => BY[x.date] = x);
     // rulebook: consumer sentiment counts as red folder even when the calendar shows it orange
     d.days.forEach(x => x.news.forEach(n => { if (/sentiment|consumer confidence/i.test(n.name)) n.impact = "red"; }));
     $("upd").textContent = "Updated " + short(d.updated);
     $("foot").innerHTML = `<p>All times New York. Green = good to trade · yellow = risky / light size · red = don't trade.</p><p>Calendar sources: ${d.sources.map(esc).join(", ")}. Dates marked "est." are confirmed each Sunday.</p>`;
-    readHash(); render();
+    marketBase=Object.fromEntries(d.days.map(x=>[x.date,JSON.parse(JSON.stringify(x))]));readHash(); render();
     setInterval(() => { NOW = nyNow(); renderNow(); }, 60000);
   }).catch(() => { $("view").innerHTML = `<section class="panel err">Couldn't load the schedule. Check your connection and reload.</section>`; });
   window.addEventListener("hashchange", () => { readHash(); render(); });
