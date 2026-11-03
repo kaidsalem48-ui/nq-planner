@@ -1,6 +1,7 @@
 # Outlook writing preferences
 
-The user supplied two batches of ten reference screenshots in this chat on November 3, 2026.
+The user supplied three batches of reference screenshots (10, 10 and 9 images)
+in this chat on November 3, 2026, covering examples from 2025 and 2026.
 Use their editorial structure for NQ Planner monthly, weekly and daily outlooks.
 This is a durable project preference; read it before creating future commentary.
 
@@ -19,7 +20,7 @@ This is a durable project preference; read it before creating future commentary.
 
 The screenshots illustrate inflation weeks, jobs weeks, Fed decision weeks,
 lighter weeks with minutes, and weeks combining GDP/PCE with major speeches.
-Those March–November examples are style references, not a verified current calendar.
+Those historical examples are style references, not a verified current calendar.
 Do not reuse their historical dates, officeholders, earnings claims or macro
 backdrops in a new period without fresh verification. Do not include their class
 schedules, Discord usernames, branding or reactions.
@@ -66,6 +67,34 @@ months, a lighter post-data week, bank-holiday thin-volume cautions, a Fed black
 week, a Fed/GDP/PCE/earnings cluster, and a jobs week containing elections and a
 US clock change. These are examples of how to organize context, not instructions
 to import their calendar entries or claim their market narratives are true today.
+
+## Additional preferences from the third batch
+
+- Support a compact **What we're watching** / **Market watch** format: a few
+  named themes with a short explanation of why each matters, followed by a
+  clear volatility watch. Use this when a full event-by-event essay is unnecessary.
+- Where verified, lead with a notable opening gap, previous-session close or
+  range condition. Specify the instrument/contract, session and baseline:
+  Sunday Globex versus Friday's close is different from today's RTH opening gap
+  and from the defined 18:00-to-09:29 overnight net move. Do not invent a gap size
+  or an all-time-high claim, or treat a gap as proof of the next direction.
+- Describe gap fill versus continuation as competing scenarios to observe,
+  rather than an expected outcome. The same applies to pre-release range
+  tightening, chop and post-release expansion.
+- Briefly connect inflation to Fed expectations, employment to the policy outlook,
+  spending/housing to growth, and a verified earnings cluster to index leadership.
+  Any actual figures, consensus values, trends or blackout dates need fresh sources.
+- A holiday paragraph should distinguish the specific markets that are closed
+  from those still open and frame low-volume risk without declaring a closure
+  that the planner does not support.
+- Cross-asset context (including crypto, energy, yields and the dollar) can be
+  included when directly relevant to NQ and verified; avoid unrelated headlines.
+- Selective bold labels and optional restrained icons may help scanning. Do not
+  copy the source's all-bold paragraphs, promotional material or class schedules.
+
+These nine examples add April gap-led outlooks and compact 2025 market-watch
+posts focused on inflation, holidays, Fed policy, employment and earnings.
+Retain their organization and explanatory approach, not their historical values.
 
 ## Scope
 
