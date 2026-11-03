@@ -441,7 +441,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   function recordingInfo(day) {
     const record=AUTO_CONDITIONS.days?.[day];
     const manual=Object.keys(NOTES['day:'+day]||{}).some(k=>k.startsWith('mc')||k==='marketGapPoints');
-    if(!record)return `${esc(autoRecordingStatus)}<br>Daily recording: weekdays at 9:35 AM New York. Manual edits stay on this device.`;
+    if(!record)return `${esc(autoRecordingStatus)}<br>Daily recording: weekdays at 8:00 AM New York. Manual edits stay on this device.`;
     return `Daily snapshot recorded ${esc(stampNY(Date.parse(record.recordedAt)))}. Source times are listed below; this is not a live feed.${manual?' Your manual edits take priority.':''}<details><summary>Recorded sources &amp; times</summary><ul>${(record.sources||[]).filter(s=>/^https:\/\//i.test(s.url)).map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> · as of ${esc(stampNY(Date.parse(s.asOf)))}</li>`).join('')||'<li>No verified values available for this session.</li>'}</ul></details>`;
   }
   const ui={marketOpen:false},localNoteEdits=new Map(),saveUi=()=>{},stampNY=ms=>new Date(ms).toLocaleString('en-US',{timeZone:'America/New_York'} )+' NY';

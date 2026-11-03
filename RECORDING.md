@@ -1,7 +1,7 @@
 # Daily market-condition recording
 
 The Codex automation **Record NQ Planner market conditions** runs in the existing
-chat at **9:35 AM America/New_York, Monday–Friday**. Codex must be running and the
+chat at **8:00 AM America/New_York, Monday–Friday**. Codex must be running and the
 computer awake/online for local scheduled runs. This is a daily sourced snapshot,
 not an exchange data feed. Successful runs are quiet; failed runs may notify.
 
@@ -10,6 +10,10 @@ all devices. Private chart notes and manual overrides remain in device storage.
 Never put account data, credentials, trade records or personal notes in this file.
 
 ## Recording procedure
+
+This is a premarket snapshot. At 8:00 AM, the same-day 09:29 overnight
+endpoint, RTH opening gap and current RTH range do not exist yet; leave those
+fields absent. Never substitute an 08:00 quote for the defined 09:29 endpoint.
 
 Use current primary sources or a timestamped quote provider. Verify the date,
 actual quote time, instrument/contract, units and baseline. Missing data stays
@@ -24,12 +28,12 @@ The source day must match the New York recording date. A valid partial snapshot:
 ```json
 {
   "date": "2026-11-03",
-  "recordedAt": "2026-11-03T09:35:00-05:00",
+  "recordedAt": "2026-11-03T08:00:00-05:00",
   "values": {"mcVix": 20.86},
   "sources": [{
     "title": "Provider's timestamped market snapshot",
     "url": "https://provider.example/snapshot",
-    "asOf": "2026-11-03T09:16:00-05:00",
+    "asOf": "2026-11-03T07:55:00-05:00",
     "fields": ["mcVix"]
   }]
 }
