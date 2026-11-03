@@ -33,7 +33,7 @@ ENUMS = {"mcOvernightType": {"Trend up", "Trend down", "Reversal", "Balanced"},
          "mcGamma": {"Long gamma", "Short gamma", "Mixed / near flip", "Unknown"},
          "mcRebalance": {"None confirmed", "Possible", "Confirmed"}}
 TEXT = {"mcGammaSource", "mcComment"}
-NONNEGATIVE = {"mcVix", "mcOvernightRange", "mcRange", "mcPriorRange", "mcDxy", "mcYieldLevel"}
+NONNEGATIVE = {"mcGammaFlip", "mcVix", "mcOvernightRange", "mcRange", "mcPriorRange", "mcDxy", "mcYieldLevel"}
 
 
 def instant(value):
@@ -116,6 +116,16 @@ def record(snapshot, deploy=False):
     existing = archive["days"].get(day)
     if existing and instant(existing["recordedAt"]) > instant(entry["recordedAt"]):
         raise ValueError("Refusing to replace a newer daily record")
+    if existing:
+        incoming = set(entry["values"])
+        retained_sources = []
+        for source in existing.get("sources", []):
+            fields = [key for key in source["fields"] if key not in incoming]
+            if fields:
+                retained_sources.append({**source, "fields": fields})
+        entry["values"] = {**existing.get("values", {}), **entry["values"]}
+        entry["sources"] = retained_sources + entry["sources"]
+        validate({"date": day, **entry})
     archive["days"][day] = entry
     archive["updatedAt"] = datetime.now(timezone.utc).isoformat()
     serialized = json.dumps(archive, indent=2, ensure_ascii=False) + "\n"
@@ -129,7 +139,7 @@ def record(snapshot, deploy=False):
             stage = Path(folder)
             assert stage.resolve().is_relative_to(work.resolve())
             # Deploy the actual live UI, rather than replacing it with an older local checkout.
-            for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt"]:
+            for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt", "OUTLOOK_STYLE.md", "RECORDING.md"]:
                 (stage / name).write_bytes(download(name))
             (stage / "market-conditions.json").write_text(serialized, encoding="utf-8")
             (stage / ".vercel").mkdir()
@@ -145,7 +155,7 @@ def record(snapshot, deploy=False):
         # Never push a Git UI that differs from what is live, or include another task's staged work.
         if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=HERE).returncode:
             raise RuntimeError("Snapshot is live, but Git has other staged work; archive was not committed")
-        for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt"]:
+        for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt", "OUTLOOK_STYLE.md", "RECORDING.md"]:
             head = subprocess.check_output(["git", "show", "HEAD:" + name], cwd=HERE)
             if head.replace(b"\r\n", b"\n") != download(name).replace(b"\r\n", b"\n"):
                 raise RuntimeError("Snapshot is live, but Git and live site differ; refusing a push that could roll back the UI")

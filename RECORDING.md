@@ -1,86 +1,82 @@
-# Daily market-condition recording
+# Automatic market conditions
 
-The Codex automation **Record NQ Planner market conditions** runs in the existing
-chat at **8:00 AM America/New_York, Monday–Friday**. Codex must be running and the
-computer awake/online for local scheduled runs. This is a daily sourced snapshot,
-not an exchange data feed. Successful runs are quiet; failed runs may notify.
+The existing Codex automation runs weekdays at **8 AM, 10 AM, noon, 4 PM and
+5 PM America/New_York**. Codex must be running and the computer awake and online.
+No manual market-condition entry is required. These are timestamped snapshots,
+not an exchange tick feed. The public archive is shared by all planner devices.
 
-`market-conditions.json` is public market information shared by the planner on
-all devices. Private chart notes and manual overrides remain in device storage.
-Never put account data, credentials, trade records or personal notes in this file.
+## Run
 
-## Recording procedure
-
-This is a premarket snapshot. At 8:00 AM, the same-day 09:29 overnight
-endpoint, RTH opening gap and current RTH range do not exist yet; leave those
-fields absent. Never substitute an 08:00 quote for the defined 09:29 endpoint.
-
-Use current primary sources or a timestamped quote provider. Verify the date,
-actual quote time, instrument/contract, units and baseline. Missing data stays
-absent. Do not infer dealer gamma or inventory from price/volume. Do not label
-volatility Expanding/Contracting from a single VIX tick without a defined interval.
-Do not combine stock quotes from different times into a breadth signal. A daily
-article can quote previous-session numbers: its publication time is not proof of
-the observation time. Omit those values unless their true session is verified.
-
-The source day must match the New York recording date. A valid partial snapshot:
-
-```json
-{
-  "date": "2026-11-03",
-  "recordedAt": "2026-11-03T08:00:00-05:00",
-  "values": {"mcVix": 20.86},
-  "sources": [{
-    "title": "Provider's timestamped market snapshot",
-    "url": "https://provider.example/snapshot",
-    "asOf": "2026-11-03T07:55:00-05:00",
-    "fields": ["mcVix"]
-  }]
-}
-```
-
-The example illustrates the schema; use real verified values and URLs in runs.
-Record a partial snapshot if only some fields can be verified. An empty values
-object and sources array represent no verified data, including a market closure;
-they never mean neutral or zero market conditions. Report a data failure honestly.
-Known gamma requires `mcGammaSource` and a direct positioning source for both fields.
-Allowed fields and enums are enforced in `record_market_conditions.py`.
-
-Run from `C:\Users\Sarphik\nq-planner-repo`:
+From `C:\Users\Sarphik\nq-planner-repo`:
 
 ```powershell
-python -m pip install -r requirements-recording.txt
-python record_market_conditions.py --input <snapshot-path> --validate-only
-python record_market_conditions.py --input <snapshot-path> --deploy
+python collect_market_conditions.py --deploy
 ```
 
-The recorder validates all fields, merges local and live history, rejects replacing
-a newer same-day record, and publishes the **current live UI**, calendar data and
-assets with the updated archive. It does not rebuild the calendar or deploy a stale
-local UI. It refuses to publish if existing live history cannot be read, and checks
-the published entry afterward. It commits and pushes only the public archive after
-checking that Git's UI/assets match production and no unrelated work is staged.
-If those checks fail, the published snapshot stays live and the job reports that
-the Git copy needs reconciliation; it never pushes an older UI over the live one.
-On a failed deployment, retry using the same input;
-the previous live archive remains available and the local entry is preserved.
+The collector discovers the provider's front NQ contract, then downloads that
+explicit contract's bars (never continuous-contract bars for session comparisons),
+VIX, the 10-year yield index, DXY and the seven tech stocks. It validates all
+measurements, preserves existing same-day fields on partial updates with their
+original source times, retains dated history and publishes using the existing
+Vercel sign-in. No credentials, account data or private notes belong in the archive.
+`work/automatic-snapshot.json` contains the most recent collected input.
 
-## Planner behavior
+## Automatic calculations
 
-The planner fetches the archive on refresh. Automatic values fill missing manual
-fields; local manual values, including deliberate blanks, take precedence. The
-panel shows recording time and linked source observation times. Snapshots are
-historical observations for that day and never claim to be current tick data.
-Existing news restrictions stay intact. The planner's established market-condition
-rules may reduce a day's aggression; missing inputs never create a green light.
+- VIX level and volatility label versus provider previous close: more than +2%
+  Expanding, below -2% Contracting, otherwise Stable. This is a descriptive
+  daily-change label, not a measured intraday acceleration or a probability.
+- Yield direction versus previous close: Rising/Falling beyond 0.01 percentage
+  point (one basis point); Flat within that band. DXY uses 0.05 index point.
+- Overnight net: same-contract prior 18:00 NY opening price to 09:29 NY closing
+  price. Exact endpoints suffice for net; full range and behavior require every
+  bar in the window. Complete 5-minute bars may replace incomplete 1-minute bars
+  for the whole overnight window; null/missing bars are never forward-filled.
+- RTH opening gap: 09:30 open minus previous RTH last-minute close, same contract.
+  Current/prior RTH high-low require complete bars, including holiday early closes.
+- Overnight/current behavior: net divided by full high-low range >=60% is Trend
+  up, <=-60% Trend down, otherwise Balanced (overnight) / Range (RTH).
+  These are labeled heuristics, not a prediction or proof of investor inventory.
+- Tech changes and NQ direction use an identical completed minute and the prior
+  RTH close for each instrument. Breadth counts names, not index weight.
+- Macro context uses a shared completed minute for rates and dollar: both rising
+  means potential Headwinds, both falling Supportive, otherwise Mixed. This is
+  an interpretation of cross-asset context, not a directional forecast.
+- Monthly OPEX and quarterly expiry calculate in the UI with holiday adjustments;
+  the next four dates remain visible. Quarterly rebalance windows are labeled as
+  scheduled context; they do not confirm an actual announced rebalance or flow.
 
-## Deployment
+At 8 AM the 09:29 endpoint, opening gap and RTH range do not yet exist. Later runs
+fill these once measured. No future values or stale-session quotes are substituted.
+The source may be delayed, rate-limited or incomplete; preserve/report missing
+coverage honestly. A previous source field can remain visible with its original
+timestamp when a later run cannot refresh it. Never claim a successful fresh value
+merely because an earlier observation was retained.
 
-The planner's Vercel link is `.vercel/project.json` (not committed). The daily task
-uses the existing Vercel CLI sign-in. Do not copy keys or tokens into the archive.
-Initial UI/support-file changes are saved in Git; routine recording commits only
-the archive. If a run reports a Git/live mismatch, reconcile the current live UI
-and archive before another Git-based deployment so history is not rolled back.
+## Positioning and research
 
-## Automatic-only conditions
-The user requests no manual market-condition entry. The UI now reads only the public archive; legacy local condition overrides are retained in storage but ignored. Daily, weekly and monthly views share the dated archive; period ranges summarize recorded observations, not full session extrema. Every displayed field must have a sourced value or an explicit awaiting/source-unavailable status. Do not fabricate data to fill the interface. Complete later-session measures require a later run/feed; the 8 AM run cannot know them.
+Dealer gamma, gamma flip and actual inventory need direct positioning data; do
+not infer them from OHLC, option volume or the overnight direction. There is no
+connected positioning feed yet. Keep them explicitly unavailable until sourced.
+The automation researches index announcements/rebalances and concise market
+commentary from dated sources, using OUTLOOK_STYLE.md. Only a direct announcement
+can establish a confirmed rebalance. A calendar window is not evidence of flow.
+
+To supplement automatic measurements with researched facts, use a separate JSON
+snapshot with the same NY date, current `recordedAt`, `values` and `sources`.
+Each source needs a public HTTPS URL, actual `asOf` timestamp and supported field
+names. Run `python record_market_conditions.py --input <path> --validate-only`,
+then `python record_market_conditions.py --input <path> --deploy`.
+Only submit verified supplemental fields; same-day merging preserves other fields.
+
+## UI and publishing
+
+Conditions are read-only. Legacy device overrides are ignored but not deleted.
+Daily, weekly and monthly views summarize dated recordings and the calendar;
+period lows/highs compare snapshots, not full period extrema. The page refreshes
+recordings on reload. Existing scheduled red restrictions stay in force.
+
+The recorder refuses deployment if live history cannot be read. It stages current
+live assets (including reference guides), verifies the published entry and commits
+only the archive after Git/live asset checks. It refuses a Git push that could roll
+back production. The initial code/UI deployment must precede routine recorder runs.
