@@ -2,7 +2,7 @@
   "version": 1,
   "days": {
     "2026-11-03": {
-      "recordedAt": "2026-11-03T23:25:33.471855+00:00",
+      "recordedAt": "2026-11-03T23:31:33.734259+00:00",
       "values": {
         "mcVix": 20.83,
         "mcVol": "Stable",
@@ -65,7 +65,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-02 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-03T23:15:00+00:00",
+          "asOf": "2026-11-03T23:21:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -181,5 +181,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-03T23:25:33.665262+00:00"
+  "updatedAt": "2026-11-03T23:31:34.039874+00:00"
 }
