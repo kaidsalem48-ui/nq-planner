@@ -19,7 +19,7 @@ from urllib.request import urlopen, Request
 HERE = Path(__file__).resolve().parent
 SITE = "https://nq-planner.vercel.app"
 ARCHIVE = HERE / "market-conditions.json"
-NUMBERS = {"mcVix", "mcOvernight", "mcOvernightRange", "marketGapPoints", "mcRange",
+NUMBERS = {"mcVixChange", "mcYieldChangeBp", "mcDxyChange", "mcMacroYieldChangeBp", "mcMacroDxyChange", "mcOvernightSoFar", "mcVix", "mcOvernight", "mcOvernightRange", "marketGapPoints", "mcRange",
            "mcPriorRange", "mcGammaFlip", "mcYieldLevel", "mcDxy", "mcAAPL", "mcMSFT", "mcNVDA",
            "mcAMZN", "mcGOOGL", "mcMETA", "mcTSLA"}
 ENUMS = {"mcOvernightType": {"Trend up", "Trend down", "Reversal", "Balanced"},
@@ -140,7 +140,7 @@ def record(snapshot, deploy=False):
             stage = Path(folder)
             assert stage.resolve().is_relative_to(work.resolve())
             # Deploy the actual live UI, rather than replacing it with an older local checkout.
-            for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt", "OUTLOOK_STYLE.md", "RECORDING.md"]:
+            for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt", "conditions-engine.js", "OUTLOOK_STYLE.md", "RECORDING.md"]:
                 (stage / name).write_bytes(download(name))
             (stage / "market-conditions.json").write_text(serialized, encoding="utf-8")
             (stage / ".vercel").mkdir()
@@ -160,7 +160,7 @@ def record(snapshot, deploy=False):
         # Never push a Git UI that differs from what is live, or include another task's staged work.
         if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=HERE).returncode:
             raise RuntimeError("Snapshot is live, but Git has other staged work; archive was not committed")
-        for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt", "OUTLOOK_STYLE.md", "RECORDING.md"]:
+        for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt", "conditions-engine.js", "OUTLOOK_STYLE.md", "RECORDING.md"]:
             head = subprocess.check_output(["git", "show", "HEAD:" + name], cwd=HERE)
             if head.replace(b"\r\n", b"\n") != download(name).replace(b"\r\n", b"\n"):
                 raise RuntimeError("Snapshot is live, but Git and live site differ; refusing a push that could roll back the UI")

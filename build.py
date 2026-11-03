@@ -48,7 +48,7 @@ class Day:
 
 LABEL = {2: "Great", 1: "Good", 0: "OK", -1: "Light", -2: "Sit out"}
 OPEX_RULE = "Your OPEX rule: lower probability. Don't expect price to keep running the highs. Target 1:1. No partials."
-ELECTION_RULE = "Your Election Day rule: random volatility and unpredictable price action. Only looking for 1:1R after 9:30 AM New York time, on clean V-shape setups. Still risky."
+ELECTION_RULE = "Your Election Day rule: do not trade after 9:30 AM New York time. You expect poor, unpredictable price action. Existing pre-open restrictions remain."
 
 
 def monthly_opex(year, month, holidays):
@@ -256,12 +256,12 @@ def main():
         # Federal Election Day: Tuesday after the first Monday in November,
         # in even-numbered years. Keep this rule when new calendar years are added.
         if d.year % 2 == 0 and d.month == 11 and d.weekday() == 1 and 2 <= d.day <= 8:
-            score = min(score, -1)
-            day.paint(T0, 570, "r", "Election Day: random volatility, unpredictable price action")
+            score = -2
+            day.paint(T0, 570, "r", "Election Day: existing pre-open restriction")
             for i, state in enumerate(day.st):
-                if i + T0 >= 570 and state != "r":
-                    day.st[i] = "y"
-                    day.why[i] += " · Election Day: only looking for 1:1R after 9:30, still risky · clean V-shape setups"
+                if i + T0 >= 570:
+                    day.st[i] = "r"
+                    day.why[i] += " · Election Day: do not trade after 9:30 New York; your poor-price-action rule"
             why.insert(0, ELECTION_RULE)
             notes.append(ELECTION_RULE)
 

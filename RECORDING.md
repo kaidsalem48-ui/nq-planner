@@ -1,6 +1,6 @@
 # Automatic market conditions
 
-The existing Codex automation runs weekdays at **8 AM, 10 AM, noon, 4 PM and
+The existing Codex automation runs weekdays at **8 AM, 9 AM, 10 AM, noon, 4 PM and
 5 PM America/New_York**. Codex must be running and the computer awake and online.
 No manual market-condition entry is required. These are timestamped snapshots,
 not an exchange tick feed. The public archive is shared by all planner devices.
@@ -55,12 +55,12 @@ merely because an earlier observation was retained.
 
 ## Positioning and research
 
-Dealer gamma, gamma flip and actual inventory need direct positioning data; do
-not infer them from OHLC, option volume or the overnight direction. There is no
-connected positioning feed yet. Keep them explicitly unavailable until sourced.
-The automation researches index announcements/rebalances and concise market
-commentary from dated sources, using OUTLOOK_STYLE.md. Only a direct announcement
-can establish a confirmed rebalance. A calendar window is not evidence of flow.
+Gamma, dealer hedging and inferred overnight inventory have been removed from
+the active interface and condition assessment at the user's request. Do not
+research or repopulate them. Price data cannot establish dealer positioning.
+The automation may research index announcements/rebalances and concise market
+commentary from dated sources using OUTLOOK_STYLE.md. Only a direct announcement
+can establish a confirmed rebalance; expiry is not evidence of actual flows.
 
 To supplement automatic measurements with researched facts, use a separate JSON
 snapshot with the same NY date, current `recordedAt`, `values` and `sources`.
@@ -80,3 +80,38 @@ The recorder refuses deployment if live history cannot be read. It stages curren
 live assets (including reference guides), verifies the published entry and commits
 only the archive after Git/live asset checks. It refuses a Git push that could roll
 back production. The initial code/UI deployment must precede routine recorder runs.
+
+## Evaluations and in-app updates
+
+`conditions-engine.js` is the shared, testable evaluation engine. It evaluates
+VIX, overnight net movement, gap/RTH range, tech participation, rates/dollar,
+expiry and source quality separately, then gives a priority-based Overall
+conclusion. It never presents an uncalibrated weighted score as a probability.
+Each group shows the measured inputs, interpretation, conclusion, missing data
+and source times. Source observation time drives freshness, not recording time.
+Dynamic values older than 90 minutes during 08:00–16:30 NY are excluded; fixed
+final overnight/opening-gap/prior-range measurements keep their source times.
+Historical session views remain explicitly dated.
+
+User rules: VIX >18 is caution; VIX >18 and >2% above previous close reduces
+aggression. Absolute overnight net >200 points is caution; >=450 points gets a
+strong red large-move alert. Before 09:29 use `mcOvernightSoFar` with its actual
+source minute and a provisional label. Final `mcOvernight` retains the exact
+18:00-to-09:29 definition. High–low range is never substituted for signed net.
+
+**Updated Election Day rule:** do not trade after 09:30 New York; the user expects
+poor, unpredictable price action. This supersedes the old after-09:30 1:1R rule.
+The established pre-open restriction remains. The calendar generator paints
+Election Day NY windows red and assigns Sit out; no claim is made that every
+Election Day must statistically have poor price action.
+
+The Updates control beside Show list has a red unread count and a persistent
+high-risk indicator. Alerts use stable date/type/threshold identifiers, allowing
+read warnings to stay available without repeatedly becoming new. A materially
+larger overnight bucket (50 points) or final measurement gets a new identifier.
+Mark all read stores acknowledgment on that device. It never clears the risk
+rule or day warning. Each new published snapshot gets its own update entry.
+The page checks the archive every minute while open and on return to the app;
+failed refreshes show a connection warning and retain dated cached readings.
+These are in-app notices about scheduled observations, not OS push notifications
+or instant exchange-price alerts. Codex still needs to be awake/online for runs.

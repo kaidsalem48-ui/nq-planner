@@ -1,2 +1,5 @@
 .vercel
 work/
+
+__pycache__/
+*.pyc

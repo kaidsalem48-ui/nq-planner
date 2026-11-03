@@ -2,13 +2,13 @@
   "version": 1,
   "days": {
     "2026-11-03": {
-      "recordedAt": "2026-11-03T23:01:17.330892+00:00",
+      "recordedAt": "2026-11-03T23:25:33.471855+00:00",
       "values": {
         "mcVix": 20.83,
         "mcVol": "Stable",
         "mcYieldLevel": 4.952,
         "mcYields": "Rising",
-        "mcDxy": 101.878,
+        "mcDxy": 101.89,
         "mcDollar": "Rising",
         "mcPriorRange": 789.5,
         "mcRange": 227.75,
@@ -23,7 +23,13 @@
         "mcMETA": 2.376,
         "mcTSLA": -1.418,
         "mcOvernight": 66.75,
-        "mcMacro": "Headwinds"
+        "mcMacro": "Headwinds",
+        "mcVixChange": -1.513,
+        "mcYieldChangeBp": 5.8,
+        "mcDxyChange": 0.145,
+        "mcOvernightSoFar": 66.75,
+        "mcMacroYieldChangeBp": 5.8,
+        "mcMacroDxyChange": 0.122
       },
       "sources": [
         {
@@ -32,6 +38,7 @@
           "asOf": "2026-11-03T21:15:01+00:00",
           "fields": [
             "mcVix",
+            "mcVixChange",
             "mcVol"
           ]
         },
@@ -41,24 +48,34 @@
           "asOf": "2026-11-03T19:59:55+00:00",
           "fields": [
             "mcYieldLevel",
+            "mcYieldChangeBp",
             "mcYields"
           ]
         },
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-03T22:51:12+00:00",
+          "asOf": "2026-11-03T23:04:59+00:00",
           "fields": [
             "mcDxy",
+            "mcDxyChange",
             "mcDollar"
           ]
         },
         {
           "title": "NQZ26.CME prior RTH range 2026-11-02 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-03T21:59:00+00:00",
+          "asOf": "2026-11-03T23:15:00+00:00",
           "fields": [
             "mcPriorRange"
+          ]
+        },
+        {
+          "title": "NQZ26.CME overnight so far: completed source-minute close minus prior 18:00 open; provisional until 09:29",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
+          "asOf": "2026-11-03T14:29:00+00:00",
+          "fields": [
+            "mcOvernightSoFar"
           ]
         },
         {
@@ -148,7 +165,8 @@
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
           "asOf": "2026-11-03T19:59:00+00:00",
           "fields": [
-            "mcMacro"
+            "mcMacro",
+            "mcMacroYieldChangeBp"
           ]
         },
         {
@@ -156,11 +174,12 @@
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
           "asOf": "2026-11-03T19:59:00+00:00",
           "fields": [
-            "mcMacro"
+            "mcMacro",
+            "mcMacroDxyChange"
           ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-03T23:01:17.486333+00:00"
+  "updatedAt": "2026-11-03T23:25:33.665262+00:00"
 }

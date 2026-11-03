@@ -205,3 +205,17 @@ For richer daily commentary the recording automation may save `mcComment`, but
 it must cite the actual same-session reporting in `sources` with `mcComment` in
 the supported fields. Include a source/as-of time. Do not turn reported context
 into a prediction. Dealer positioning and gamma must stay unknown without data.
+
+## Latest market-condition and Election Day preferences
+
+The user wants measured inputs followed by what each means and an Overall
+conclusion. Apply `conditions-engine.js` and RECORDING.md for the exact rules.
+Explain high VIX, overnight magnitude, gap versus range, synchronized tech
+participation, rates/dollar and expiry in plain language. Tie the observations
+to risk and patience without claiming a statistically reliable prediction.
+A 450+ absolute overnight net move warrants a prominent warning on the trading
+date; preserve the existing >200-point caution. Distinguish premarket “so far”
+from the final 09:29 endpoint, and signed net move from high–low range.
+Dealer gamma, dealer-hedging claims and inferred inventory are removed.
+Election Day now means **do not trade after 9:30 AM New York** under the user's
+poor-price-action rule. This replaces the former after-9:30 1:1R allowance.
