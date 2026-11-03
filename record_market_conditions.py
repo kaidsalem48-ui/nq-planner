@@ -12,6 +12,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import time
 from urllib.parse import urlparse
 from urllib.request import urlopen, Request
 
@@ -148,9 +149,13 @@ def record(snapshot, deploy=False):
             if not command:
                 raise RuntimeError("Vercel CLI not found")
             subprocess.run([command, "deploy", "--prod", "--yes"], cwd=stage, check=True)
-        published = json.loads(download("market-conditions.json"))
-        if published.get("days", {}).get(day) != entry:
-            raise RuntimeError("Published daily snapshot did not pass verification")
+        for attempt in range(6):
+            published = json.loads(download("market-conditions.json"))
+            if published.get("days", {}).get(day) == entry:
+                break
+            if attempt == 5:
+                raise RuntimeError("Published daily snapshot did not pass verification after alias propagation")
+            time.sleep(2)
         # Persist the public archive in Git so a subsequent calendar push keeps it.
         # Never push a Git UI that differs from what is live, or include another task's staged work.
         if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=HERE).returncode:

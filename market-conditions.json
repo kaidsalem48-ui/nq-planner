@@ -2,13 +2,13 @@
   "version": 1,
   "days": {
     "2026-11-03": {
-      "recordedAt": "2026-11-03T22:58:57.227051+00:00",
+      "recordedAt": "2026-11-03T23:00:33.874255+00:00",
       "values": {
         "mcVix": 20.83,
         "mcVol": "Stable",
         "mcYieldLevel": 4.952,
         "mcYields": "Rising",
-        "mcDxy": 101.875,
+        "mcDxy": 101.876,
         "mcDollar": "Rising",
         "mcPriorRange": 789.5,
         "mcRange": 227.75,
@@ -47,7 +47,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-03T22:48:54+00:00",
+          "asOf": "2026-11-03T22:50:29+00:00",
           "fields": [
             "mcDxy",
             "mcDollar"
@@ -162,5 +162,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-03T22:58:57.375641+00:00"
+  "updatedAt": "2026-11-03T23:00:34.061391+00:00"
 }
