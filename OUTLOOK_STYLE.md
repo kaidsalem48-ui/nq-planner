@@ -1,6 +1,6 @@
 # Outlook writing preferences
 
-The user supplied three batches of reference screenshots (10, 10 and 9 images)
+The user supplied four batches of reference screenshots (10, 10, 9 and 10 images)
 in this chat on November 3, 2026, covering examples from 2025 and 2026.
 Use their editorial structure for NQ Planner monthly, weekly and daily outlooks.
 This is a durable project preference; read it before creating future commentary.
@@ -95,6 +95,35 @@ to import their calendar entries or claim their market narratives are true today
 These nine examples add April gap-led outlooks and compact 2025 market-watch
 posts focused on inflation, holidays, Fed policy, employment and earnings.
 Retain their organization and explanatory approach, not their historical values.
+
+## Additional preferences from the fourth batch
+
+- Compact weekly briefs can lead with three to five theme-led bullets rather
+  than an introductory essay. Give each a short descriptive label and explain
+  its relevance, not just its date: labor demand, business activity, producer
+  inflation, consumer confidence, policy expectations or earnings leadership.
+- Scale the outlook to the calendar. A lighter week may need only a few bullets
+  and one sentence identifying the main remaining catalyst. Avoid padding it.
+- When verified reporting supports a geopolitical section, explain the specific
+  transmission channel (for example, energy supply, shipping, inflation or risk
+  sentiment) rather than adding a generic tensions paragraph. Clearly distinguish
+  observed cross-asset moves from possible future effects.
+- Distinguish policy decisions, minutes, testimony, speeches and political policy
+  headlines. They are different catalysts; verify the speaker, role, date and
+  scheduled time rather than recycling a historical officeholder or event.
+- Explain links between releases and policy expectations in conditional terms.
+  A stronger payroll print does not mechanically guarantee rising yields, and a
+  weak print does not automatically imply a cut. Interpret surprises and revisions
+  against a verified consensus and the current policy backdrop when available.
+- Earnings breadth or named-company examples should be verified and relevant to
+  the selected period. Do not reuse a screenshot's company count or ticker list.
+- Historical shutdowns, release delays and data-quality caveats may matter when
+  current official sources confirm them; do not carry them into later periods.
+
+This batch reinforces concise named-theme briefs for lighter weeks, jobs/PMI
+clusters, inflation and Fed weeks, plus sourced policy and geopolitical context.
+One screenshot repeats a prior earnings/housing/blackout example; duplicates
+reinforce the preference rather than introducing a separate rule.
 
 ## Scope
 
