@@ -5,6 +5,37 @@ in this chat on November 3, 2026, covering examples from 2025 and 2026.
 Use their editorial structure for NQ Planner monthly, weekly and daily outlooks.
 This is a durable project preference; read it before creating future commentary.
 
+## Primary purpose: how the user interprets news
+
+The user clarified that the screenshots were sent to teach how they read news
+and how that changes their outlook. Prioritize this reasoning when preparing
+future briefs. Formatting is secondary. Additional reference batches do not by
+themselves request a new interface, a deployment or a new trading restriction.
+
+Follow the chain: **news and current context → expectations and the main catalyst
+→ plausible trading conditions → the user's saved plan**.
+
+- Weigh releases by importance to the current backdrop; do not treat every event
+  as equally significant. Identify what the period is building toward.
+- Connect prior results, revisions and verified expectations to what the next
+  release could confirm or challenge, particularly for inflation, employment,
+  growth and the Fed outlook.
+- Consider the period's sequence: a quiet early week ahead of a major release
+  can call for patience; a crowded release/earnings day warrants extra selectivity.
+  Describe these as possibilities, not guaranteed price paths.
+- Interpret verified gaps, ranges, yields, dollar moves and earnings leadership
+  alongside the calendar. Headline/geopolitical risk can matter even when the
+  scheduled economic calendar is light.
+- Translate that context into the user's familiar outlook language: potential
+  chop or range compression, headline sensitivity, two-way volatility, gap-fill
+  versus continuation scenarios, and where patience/selectivity matters.
+- Apply the user's existing risk and timing rules. A reference outlook's opinion
+  must not silently become a permanent rule, a numerical prediction or a change
+  to trading/account settings. Verify current facts before using them.
+
+Remember the analytical approach across monthly, weekly and daily outlooks;
+do not memorize the screenshots' historical market claims as facts about today.
+
 ## Voice and structure
 
 - Lead with the period and a short, readable overview of its main theme.
