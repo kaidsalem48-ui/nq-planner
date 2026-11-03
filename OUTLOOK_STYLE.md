@@ -5,6 +5,34 @@ in this chat on November 3, 2026, covering examples from 2025 and 2026.
 Use their editorial structure for NQ Planner monthly, weekly and daily outlooks.
 This is a durable project preference; read it before creating future commentary.
 
+## Main reference: concise, informative period briefs
+
+The user's latest Nov 2–7 jobs-week screenshot is the primary writing reference.
+They explicitly want outlooks as concise and informative as this example.
+
+- Open directly: “Jobs week”, “Inflation week”, “Fed week”, or the actual dominant
+  theme. Name the main release and its weekday; explain why it sets the tone.
+- In one short paragraph, connect that catalyst to plausible trading conditions:
+  patience or possible compression beforehand, headline sensitivity around other
+  events, and possible sharp two-way moves at the release. Keep these conditional.
+- Add one compact context paragraph only when supported: prior results, revisions,
+  consensus and policy implications. Explain what a stronger/weaker result could
+  change. No generic filler, repeated risk paragraphs or lists of unrelated quotes.
+- Add a timing note only when useful and verified (holiday, early close, DST).
+  Omit promotional streams, classes, usernames and channel content.
+- Finish with **Key events**: one concise bullet per weekday, exact New York times,
+  selective bold for main catalysts; combine related releases and verified earnings.
+- Close with at most one brief line applying the user's saved plan if needed.
+  Prefer two short overview/context paragraphs plus the chronological event list;
+  include extra paragraphs only when they earn their space. Scale daily briefs down.
+- Monthly briefs use the same economy, organized around major weeks and themes.
+  Weekly and daily briefs must interpret news, not merely recite the calendar.
+
+This screenshot is a writing reference, not verification of payroll figures,
+earnings dates, forecasts or current policy. Research these before publication.
+Its confident “expect consolidation” phrasing should become a conditional scenario,
+without losing the direct, practical tone the user wants.
+
 ## Primary purpose: how the user interprets news
 
 The user clarified that the screenshots were sent to teach how they read news
