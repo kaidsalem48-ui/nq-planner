@@ -19,9 +19,14 @@ HERE = Path(__file__).resolve().parent
 SITE = "https://nq-planner.vercel.app"
 ARCHIVE = HERE / "market-conditions.json"
 NUMBERS = {"mcVix", "mcOvernight", "mcOvernightRange", "marketGapPoints", "mcRange",
-           "mcPriorRange", "mcYieldLevel", "mcDxy", "mcAAPL", "mcMSFT", "mcNVDA",
+           "mcPriorRange", "mcGammaFlip", "mcYieldLevel", "mcDxy", "mcAAPL", "mcMSFT", "mcNVDA",
            "mcAMZN", "mcGOOGL", "mcMETA", "mcTSLA"}
-ENUMS = {"mcVol": {"Expanding", "Contracting", "Stable"},
+ENUMS = {"mcOvernightType": {"Trend up", "Trend down", "Reversal", "Balanced"},
+         "mcPositioning": {"Long", "Short", "Balanced", "Crowded longs", "Crowded shorts"},
+         "marketType": {"Trend up", "Trend down", "Range", "Reversal", "Choppy"},
+         "mcMacro": {"Supportive", "Mixed", "Headwinds"},
+         "mcBreadth": {"Broad participation", "Narrow participation", "Narrow / mixed", "Divergent"},
+         "mcVol": {"Expanding", "Contracting", "Stable"},
          "mcYields": {"Rising", "Falling", "Flat"},
          "mcDollar": {"Rising", "Falling", "Flat"},
          "mcDirection": {"Up", "Down", "Flat"},

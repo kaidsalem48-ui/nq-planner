@@ -171,7 +171,7 @@ Calendar-based outlooks use the planner's current data and mark estimated dates.
 Unknown coverage must not be described as an empty or safe calendar. Calendar
 summaries are generated for the selected period; an 8:00 AM recorded snapshot
 can add sourced market context without pretending to know later prices or data.
-Manual observations override automatic fields on that device.
+Market conditions are automatic and read-only. Legacy device observations do not override sourced recordings.
 
 For richer daily commentary the recording automation may save `mcComment`, but
 it must cite the actual same-session reporting in `sources` with `mcComment` in

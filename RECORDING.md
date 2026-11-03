@@ -81,3 +81,6 @@ uses the existing Vercel CLI sign-in. Do not copy keys or tokens into the archiv
 Initial UI/support-file changes are saved in Git; routine recording commits only
 the archive. If a run reports a Git/live mismatch, reconcile the current live UI
 and archive before another Git-based deployment so history is not rolled back.
+
+## Automatic-only conditions
+The user requests no manual market-condition entry. The UI now reads only the public archive; legacy local condition overrides are retained in storage but ignored. Daily, weekly and monthly views share the dated archive; period ranges summarize recorded observations, not full session extrema. Every displayed field must have a sourced value or an explicit awaiting/source-unavailable status. Do not fabricate data to fill the interface. Complete later-session measures require a later run/feed; the 8 AM run cannot know them.
