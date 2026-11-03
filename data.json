@@ -2118,32 +2118,20 @@
      "London kill zone, risky"
     ]
    ],
-   "score": 1,
-   "label": "Good",
+   "score": -1,
+   "label": "Light",
    "segs": [
     [
      "2:00",
-     "8:00",
-     "r",
-     "Asia / London, skip"
-    ],
-    [
-     "8:00",
-     "9:25",
-     "y",
-     "Pre-open, light only"
-    ],
-    [
-     "9:25",
      "9:30",
      "r",
-     "Too close to 9:30 open"
+     "Election Day: wait until after 9:30 AM"
     ],
     [
      "9:30",
      "9:50",
      "y",
-     "JOLTS at 10:00, risky"
+     "JOLTS at 10:00, risky \u00b7 Election Day: clean V-shape setups only, target 1R"
     ],
     [
      "9:50",
@@ -2154,25 +2142,26 @@
     [
      "10:00",
      "12:00",
-     "g",
-     "NY AM, main window"
+     "y",
+     "NY AM, main window \u00b7 Election Day: clean V-shape setups only, target 1R"
     ],
     [
      "12:00",
      "13:30",
      "y",
-     "Lunch: only if AM was bad"
+     "Lunch: only if AM was bad \u00b7 Election Day: clean V-shape setups only, target 1R"
     ],
     [
      "13:30",
      "16:00",
      "y",
-     "PM: only if AM was bad"
+     "PM: only if AM was bad \u00b7 Election Day: clean V-shape setups only, target 1R"
     ]
    ],
-   "why": "JOLTS at 10:00: stay out the 10 min before it.",
+   "why": "Your Election Day rule: random volatility and unpredictable price action. Trade only after 9:30 AM New York time, take only clean V-shape setups, and target 1R. JOLTS at 10:00: stay out the 10 min before it.",
    "notes": [
-    "Midterm Election Day"
+    "Midterm Election Day",
+    "Your Election Day rule: random volatility and unpredictable price action. Trade only after 9:30 AM New York time, take only clean V-shape setups, and target 1R."
    ]
   },
   {
