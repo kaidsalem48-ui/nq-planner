@@ -539,10 +539,20 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     return day===date?([3,6,9,12].includes(m)?'Quad witching':'OPEX'):'';
   }
   function expiryForDay(day){const override=marketRecord(day).mcExpiry;return override==='None'?'':override||scheduledExpiry(day);}
+  // Next monthly OPEX and next quad witching after this day, so the expiry slot always says what's coming.
+  function upcomingExpiry(day){
+    const out=[];let monthly=null,quad=null;
+    for(let i=1;i<=100&&!(monthly&&quad);i++){const s=addDays(day,i),k=scheduledExpiry(s);if(!k)continue;if(!monthly)monthly=[s,k];if(k==='Quad witching'&&!quad)quad=s;}
+    const nice=s=>dow(s).slice(0,1)+dow(s).slice(1,3).toLowerCase()+' '+short(s),gap=s=>Math.round((D(s)-D(day))/864e5);
+    if(monthly)out.push(`Next ${monthly[1]==='Quad witching'?'expiry is quad witching':'monthly OPEX'}: ${nice(monthly[0])} (in ${gap(monthly[0])} days).`);
+    if(quad&&(!monthly||quad!==monthly[0]))out.push(`Next quad witching: ${nice(quad)} (in ${gap(quad)} days).`);
+    if(quad)out.push(`Nasdaq-100 ${+quad.slice(5,7)===12?'annual reconstitution':'quarterly rebalance'} takes effect after the ${short(quad)} close, so expect heavier closing-auction volume that day.`);
+    return out;
+  }
   const conditionEngine=window.NQConditions;
   function marketAssessment(day){
     const base=marketBase[day]||BY[day],pmEligible=!!base&&base.score!==-2&&!['closed','half','bank'].includes(base.holidayType)&&base.segs?.some(segment=>segment[2]!=='r'&&toMin(segment[0])<960&&toMin(segment[1])>810);
-    return conditionEngine.evaluate(AUTO_CONDITIONS.days?.[day],{day,now:Date.now(),expiry:scheduledExpiry(day),calendarKnown:!!BY[day],closed:base?.holidayType==='closed',pmEligible});
+    return conditionEngine.evaluate(AUTO_CONDITIONS.days?.[day],{day,now:Date.now(),expiry:scheduledExpiry(day),upcomingExpiry:upcomingExpiry(day),calendarKnown:!!BY[day],closed:base?.holidayType==='closed',pmEligible});
   }
   const riskChip=a=>['Sit out','AM sit out','High risk'].includes(a.level)?'r':['Reduced','Selective'].includes(a.level)?'y':'n';
   function marketSummary(day){
@@ -559,27 +569,27 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     expiry:[['OCC · Options expiration calendar','https://www.optionseducation.org/referencelibrary/expiration-calendar']]
   };
   function conditionGroupSummary(group,assessment){
-    const n=assessment.n;
+    const n={...(assessment.last?.n||{}),...assessment.n},breadthNow=assessment.breadth.aligned==null&&assessment.last?assessment.last.breadth:assessment.breadth,lastTag=group.state==='Last reading'?' · last reading':'';
     const signed=(value,suffix)=>value==null?'':(value>0?'+':'')+value+suffix;
     switch(group.id){
       case 'volatility':
-        return n.mcVix==null?'VIX unavailable':[`VIX ${n.mcVix.toFixed(2)}`,signed(n.mcVixChange,'% vs. prior close')].filter(Boolean).join(' · ');
+        return n.mcVix==null?'VIX unavailable':[`VIX ${n.mcVix.toFixed(2)}`,signed(n.mcVixChange==null?null:+n.mcVixChange.toFixed(2),'% vs. prior close')].filter(Boolean).join(' · ')+lastTag;
       case 'overnight':
-        return assessment.overnight==null?'Awaiting 6 PM–2 AM NY data':signed(assessment.overnight,' NQ pts')+(assessment.preliminary?' · So far':' · Final · 6 PM–2 AM NY');
+        return assessment.overnight==null?'Awaiting 6 PM–2 AM NY data':(!assessment.preliminary&&n.mcOvernightRange!=null?`Range ${n.mcOvernightRange} · net ${signed(assessment.overnight,' pts')}`:signed(assessment.overnight,' NQ pts'))+(assessment.preliminary?' · So far':' · Final · 6 PM–2 AM NY');
       case 'range':
-        return [n.mcRange==null?'':`${n.mcRange} pt range`,n.mcPriorRange>0&&n.mcRange!=null?`${Math.round(100*n.mcRange/n.mcPriorRange)}% of prior session`:''].filter(Boolean).join(' · ')||'Awaiting regular session range';
+        return [n.marketGapPoints==null?'':n.marketGapPoints===0?'Gap N/A':`Gap ${signed(n.marketGapPoints,' pts')}`,n.mcRange==null?'':`${n.mcRange} pt range`,n.mcPriorRange>0&&n.mcRange!=null?`${Math.round(100*n.mcRange/n.mcPriorRange)}% of prior session`:''].filter(Boolean).join(' · ').replace(/.+/,m=>m+lastTag)||'Gap N/A until the 9:30 open';
       case 'tech':
-        return assessment.breadth.aligned==null?assessment.breadth.label:`${assessment.breadth.aligned} of 7 moving with NQ`;
+        return breadthNow.aligned==null?breadthNow.label:`${breadthNow.aligned} of 7 moving with NQ`+lastTag;
       case 'macro':
-        return [n.mcYieldLevel==null?'':`10Y ${n.mcYieldLevel}%`,n.mcDxy==null?'':`DXY ${n.mcDxy}`,n.mcMacro==='Headwinds'?'Pressure on tech':''].filter(Boolean).join(' · ')||'Awaiting rates and dollar data';
+        return [n.mcYieldLevel==null?'':`10Y ${n.mcYieldLevel}%`,n.mcDxy==null?'':`DXY ${n.mcDxy}`,n.mcMacro==='Headwinds'?'Pressure on tech':''].filter(Boolean).join(' · ').replace(/.+/,m=>m+lastTag)||'Awaiting rates and dollar data';
       case 'expiry':
-        return assessment.expiry||(n.mcRebalance==='Confirmed'?'Index rebalance confirmed':'No expiry on snapshot date');
+        return assessment.expiry||(n.mcRebalance==='Confirmed'?'Index rebalance confirmed':(upcomingExpiry(assessment.day)[0]||'No expiry today').replace(/ \(in (\d+) days\)\./,' · $1 days'));
       default:
         return group.sources.length?`${group.sources.length} source records`:'Awaiting sources';
     }
   }
   function conditionGroupHTML(group,assessment,scope){
-    const tone=group.state==='Sit out'?'r':group.state==='Caution'?'y':'n';
+    const tone=group.state==='Sit out'?'r':['Caution','Last reading'].includes(group.state)?'y':'n';
     const references=(conditionReferences[group.id]||[]).map(([label,url])=>
       `<li><a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a></li>`).join('');
     const evidence=group.sources.map(source=>
