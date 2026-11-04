@@ -53,7 +53,12 @@
     if(large){
       reasons.push(`${preliminary?'Overnight so far':'Overnight net move'} ${signed(overnight)} points meets your 500-point sit-out rule.`);
       const stage=preliminary?'provisional':'final';
-      alert('overnight-large-'+stage+'-'+Math.floor(Math.abs(overnight)/50),'Sit out · 500+ point overnight move',moveReading+' '+overnightPlan,'danger',String(overnight));
+      alert('overnight-large-'+stage+'-'+Math.floor(Math.abs(overnight)/50),'Sit out · Overnight '+signed(overnight)+' NQ pts',moveReading+' '+overnightPlan,'danger',String(overnight));
+    }
+    if(overnight!==null&&!large){
+      const stage=preliminary?'provisional':'final';
+      const label=preliminary?'Overnight so far':'Overnight final';
+      alert('overnight-'+stage,label+' · '+signed(overnight)+' NQ pts',moveReading,'info',String(overnight));
     }
     const range=number('mcRange'),prior=number('mcPriorRange',true),gap=number('marketGapPoints',true),behavior=text('marketType',['Trend up','Trend down','Range','Reversal','Choppy']);
     const ratio=range!==null&&prior>0?range/prior:null;

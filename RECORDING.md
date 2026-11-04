@@ -72,7 +72,7 @@ Only submit verified supplemental fields; same-day merging preserves other field
 ## UI and publishing
 
 Conditions are read-only. Legacy device overrides are ignored but not deleted.
-Daily, weekly and monthly views summarize dated recordings and the calendar;
+Weekly Outlook shows the detailed conditions for its latest recorded session.
 period lows/highs compare snapshots, not full period extrema. The page refreshes
 recordings on reload. Existing scheduled red restrictions stay in force.
 
@@ -111,7 +111,7 @@ high-risk indicator. Alerts use stable date/type/threshold identifiers, allowing
 read warnings to stay available without repeatedly becoming new. A materially
 larger overnight bucket (50 points) or final measurement gets a new identifier.
 Mark all read stores acknowledgment on that device. It never clears the risk
-rule or day warning. Each new published snapshot gets its own update entry.
+rule or day warning. Each new published snapshot gets its own update entry. Updates also shows the signed overnight net move each trading day. The provisional entry updates as measurements arrive. The final 09:29 NY reading takes its place.
 The page checks the archive every minute while open and on return to the app;
 failed refreshes show a connection warning and retain dated cached readings.
 These are in-app notices about scheduled observations, not OS push notifications

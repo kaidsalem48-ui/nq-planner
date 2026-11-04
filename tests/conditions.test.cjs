@@ -6,7 +6,7 @@ function fixture(values={},date=day){const v={...base,...values};return {recorde
 function assess(values={},options={}){return engine.evaluate(fixture(values),{day,now,calendarKnown:true,...options});}
 assert.equal(assess().level,'Reviewed');
 for(const value of [500,-500,550,-550]){const a=assess({mcOvernight:value});assert.equal(a.level,'Sit out');assert.equal(a.restricted,true);assert(a.alerts.some(i=>i.severity==='danger'&&i.measurement===String(value)));assert(a.groups.find(g=>g.id==='overnight').reading.includes(String(Math.abs(value))));}
-for(const value of [499.75,-499.75,450,-450,201,-201]){const a=assess({mcOvernight:value});assert.equal(a.large,false);assert.equal(a.level,'Reviewed');assert(!a.alerts.some(alert=>alert.id.includes(':overnight-')));}
+for(const value of [0,499.75,-499.75,450,-450,201,-201]){const a=assess({mcOvernight:value});assert.equal(a.large,false);assert.equal(a.level,'Reviewed');assert(a.alerts.some(alert=>alert.id.endsWith(':overnight-final')&&alert.severity==='info'&&alert.measurement===String(value)));}
 assert.equal(assess({mcOvernight:200}).reasons.length,0);
 assert.equal(assess({mcOvernight:0,mcOvernightRange:600}).large,false,'Range must not substitute for signed net');
 const provisional=fixture({mcOvernight:undefined,mcOvernightSoFar:-500});const p=engine.evaluate(provisional,{day,now,calendarKnown:true});assert(p.preliminary&&p.large&&p.restricted);assert(p.alerts.find(a=>a.severity==='danger').message.includes('Sit out for now'));
