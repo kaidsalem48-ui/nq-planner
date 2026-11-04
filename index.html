@@ -377,7 +377,53 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #market-updates header{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
 #market-updates header h3{margin:0;flex:none}
 #market-updates .updates-nav{display:flex;align-items:center;justify-content:center;gap:4px;flex:1;min-width:0;padding:0}
-#market-updates .updates-nav .btn{padding:6px 8px;font-size:.78rem;white-space:nowrap;min-width:0}
+#market-updates .updates-nav .btn{padding:4px 12px;font-size:1.35rem;line-height:1.1;white-space:nowrap;min-width:0}
+#market-updates header .updates-back{flex:none;white-space:nowrap}
+/* ===== header bell / notification center ===== */
+.top-r{display:flex;align-items:center;gap:10px;min-width:0}
+.bell{position:relative;width:42px;height:42px;padding:0;border-radius:12px;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;color:var(--fg);flex:none}
+.bell:hover{background:var(--panel-2)}
+.bell.has-danger{color:#ffb2b5;border-color:#ef5b61}
+.bell #update-count{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;font-size:11px;line-height:19px;text-align:center;box-shadow:0 0 0 2px var(--bg)}
+.sm-only{display:none}
+/* ===== collapsible restriction notice ===== */
+details.condition-notice>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;list-style:none}
+details.condition-notice>summary::-webkit-details-marker{display:none}
+details.condition-notice>summary:after{content:'';width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin:-4px 4px 0 0;flex:none;transition:transform .15s}
+details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-top:4px}
+.cn-tag{margin-left:auto;font-size:.75rem;font-weight:800;padding:3px 9px;border-radius:999px;background:#0004;white-space:nowrap}
+/* ===== phone: compact top so the calendar sits higher ===== */
+@media (max-width:639px){
+  .wrap{gap:10px;padding-block:10px 40px}
+  .upd{display:none}
+  .brand{font-size:1.05rem}
+  .brand img{width:28px;height:28px}
+  .now{padding:12px 14px;gap:3px;border-radius:16px}
+  .now .k{font-size:.62rem;letter-spacing:.08em;line-height:1.35}
+  .now .v{font-size:1.02rem;line-height:1.3;font-weight:750}
+  .now .n{font-size:.8rem}
+  .now .pill{font-size:.72rem;padding:5px 9px}
+  .ctl{padding:8px;gap:8px;border-radius:16px}
+  .seg3{padding:3px;border-radius:11px}
+  .seg3 button{padding:7px 0;font-size:.88rem}
+  .ctl .navrow{display:grid!important;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;width:100%}
+  .ctl .navrow .list-updates{display:contents}
+  .ctl .navrow .nav-arrows{grid-column:1 / 4;grid-row:1;justify-content:flex-start}
+  .ctl .navrow .arrow{width:34px;height:34px}
+  .ctl .navrow .title{grid-column:4 / 10;grid-row:1;border:0;padding:0;margin:0;font-size:.92rem;text-align:center;align-self:center;overflow:hidden;text-overflow:ellipsis}
+  .ctl .navrow #today{grid-column:10 / 13;grid-row:1}
+  .ctl .navrow #outlook-toggle{grid-column:1 / 5;grid-row:2}
+  .ctl .navrow #lst{grid-column:5 / 9;grid-row:2}
+  .ctl .navrow #conditions-toggle{grid-column:9 / 13;grid-row:2}
+  .ctl .navrow .btn{width:100%;padding:8px 4px;font-size:.8rem;white-space:nowrap;border-radius:9px}
+  .lg-only{display:none}.sm-only{display:inline}
+  #condition-host .condition-notice{margin:0;padding:10px 12px;border-radius:12px}
+  details.condition-notice>summary b{font-size:.88rem}
+  .cal{padding:12px 8px 10px}
+  .calhead{padding:0 4px 10px}
+  .calhead h2{font-size:1.2rem}
+}
+@media (max-width:360px){#market-updates header{flex-wrap:wrap}#market-updates .updates-nav{order:3;flex-basis:100%;padding-top:6px}}
 #market-updates .updates-nav span{font-size:.78rem;white-space:nowrap}
 #market-updates header #updates-close{flex:none;margin-left:auto}
 #market-updates .updates-content.is-list{max-height:min(208px,45dvh);overflow-y:auto;scrollbar-gutter:stable}
@@ -424,7 +470,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
  <aside class="side">
   <div class="top">
     <button class="brand" id="brand" title="Refresh for the latest schedule"><img src="icon.png" alt="">NQ Planner</button>
-    <div class="upd" id="upd"></div>
+    <div class="top-r"><div class="upd" id="upd"></div><button class="bell updates-toggle" id="updates-toggle" aria-expanded="false" aria-controls="market-updates" aria-label="Updates"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="update-count" hidden></span></button></div>
   </div>
 
   <section class="panel now" id="now" aria-live="polite"></section>
@@ -442,7 +488,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     </div>
     <div class="navrow">
       <button class="btn" id="outlook-toggle" aria-pressed="false">Outlook</button>
-      <span class="list-updates"><button class="btn" id="lst" aria-pressed="false">Show list</button><button class="btn" id="conditions-toggle" aria-pressed="false">Market conditions</button><button class="btn updates-toggle" id="updates-toggle" aria-expanded="false" aria-controls="market-updates" aria-label="Updates"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="update-label">Updates</span><span id="update-count" hidden></span></button></span>
+      <span class="list-updates"><button class="btn" id="lst" aria-pressed="false">Show list</button><button class="btn" id="conditions-toggle" aria-pressed="false"><span class="lg-only">Market conditions</span><span class="sm-only">Conditions</span></button></span>
       <button class="btn" id="today">Today</button>
       <span class="nav-arrows"><button class="arrow" id="prev" aria-label="Previous">&#8249;</button>
       <button class="arrow" id="next" aria-label="Next">&#8250;</button></span>
@@ -623,7 +669,9 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     if(!conditionEngine.election(day)&&!assessment.large)return '';
     const title=conditionEngine.election(day)?'Election Day restriction':'Large overnight move';
     const reason=assessment.reasons.find(item=>item.includes('500-point AM sit-out'));
-    return `<aside class="condition-notice" role="note"><b>${esc(day)} · ${title}</b><p>${esc(assessment.plan)}</p>${reason?`<p>${esc(reason)}</p>`:''}</aside>`;
+    // One tappable line; the plan and reason open underneath so the calendar stays near the top.
+    const tag=conditionEngine.election(day)?'No trading after 9:30':assessment.pmWatch?'AM sit out · PM watch':'Sit out';
+    return `<details class="condition-notice" role="note"><summary><b>${title}</b><span class="cn-tag">${tag}</span></summary><p>${esc(assessment.plan)}</p>${reason?`<p>${esc(reason)}</p>`:''}</details>`;
   }
   let updatesOpen=false,selectedUpdate=null,seenUpdates={};try{seenUpdates=JSON.parse(localStorage.getItem('nq-condition-updates-seen-v1')||'{}');if(!seenUpdates||Array.isArray(seenUpdates)||typeof seenUpdates!=='object')seenUpdates={};}catch{}
   let archiveConnectionError=false,lastUnread='',checkingArchive=false;
@@ -642,8 +690,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const top=Math.max(12,Math.min(anchor.bottom+8,innerHeight-160));
     panel.style.setProperty('--updates-top',top+'px');
     panel.style.top=top+'px';
-    const mainLeft=innerWidth>=1100?document.querySelector('.mainp').getBoundingClientRect().left+12:12;
-    panel.style.left=Math.max(mainLeft,Math.min(anchor.right-panel.offsetWidth,innerWidth-panel.offsetWidth-12))+'px';
+    // Drop down from the bell, right edges aligned, kept on screen.
+    panel.style.left=Math.max(12,Math.min(anchor.right-panel.offsetWidth,innerWidth-panel.offsetWidth-12))+'px';
   }
   window.addEventListener('resize',positionUpdates);
   window.addEventListener('scroll',positionUpdates,true);
@@ -660,9 +708,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const ids=unread.map(i=>i.id).join('|');if(ids!==lastUnread){$('updates-live').textContent=unread.length?`${unread.length} unread updates. ${unread[0].title}.`:'';lastUnread=ids;}
     const activeIndex=items.findIndex(item=>item.id===selectedUpdate);
     const active=items[activeIndex];
-    // "All updates" and paging sit in the header, between the title and Close.
-    const updatesNav=active?`<nav class="updates-nav" aria-label="Browse updates"><button class="btn" data-update-back>All updates</button><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav>`:'';
-    $('market-updates').innerHTML=`<header><h3>Updates</h3>${updatesNav}<button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
+    // With an update open, the "Updates" title itself becomes the "All updates" back button; paging sits beside it.
+    const updatesTitle=active?`<button class="btn updates-back" data-update-back>All updates</button>`:'<h3>Updates</h3>';
+    const updatesNav=active?`<nav class="updates-nav" aria-label="Browse updates"><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav>`:'';
+    $('market-updates').innerHTML=`<header>${updatesTitle}${updatesNav}<button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
     <div class="updates-content${active?'':' is-list'}">${active?`<article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">Open market conditions</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span aria-hidden="true">›</span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
     $('market-updates').querySelectorAll('[data-update-index]').forEach(button=>button.onclick=()=>{
       selectedUpdate=items[Number(button.dataset.updateIndex)]?.id;
