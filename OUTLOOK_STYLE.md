@@ -135,7 +135,7 @@ to import their calendar entries or claim their market narratives are true today
 - Where verified, lead with a notable opening gap, previous-session close or
   range condition. Specify the instrument/contract, session and baseline:
   Sunday Globex versus Friday's close is different from today's RTH opening gap
-  and from the defined 18:00-to-09:29 overnight net move. Do not invent a gap size
+  and from the defined 18:00-to-02:00 NY overnight net move. Do not invent a gap size
   or an all-time-high claim, or treat a gap as proof of the next direction.
 - Describe gap fill versus continuation as competing scenarios to observe,
   rather than an expected outcome. The same applies to pre-release range
@@ -215,10 +215,11 @@ participation, rates/dollar and expiry in plain language. Tie the observations
 to risk and patience without claiming a statistically reliable prediction.
 An overnight net move of at least 500 points in either direction blocks the
 New York AM session. Label premarket “so far” readings provisional. The final
-09:29 reading supersedes the provisional reading. If the saved calendar allows
+02:00 reading supersedes the provisional reading. If the saved calendar allows
 the 13:30–16:00 NY PM segment, show a yellow conditional watch there after a
 choppy AM only when a cleaner setup confirms. Keep original red windows red.
-The illustrative 04:15–07:15 NY chart box shows an early move, not PM trading.
+The illustrative 04:15–07:15 NY chart box shows a later premarket move outside
+the defined overnight measurement, not PM trading.
 Use the net move for the 500-point rule.
 Dealer gamma, dealer-hedging claims and inferred inventory are removed.
 Election Day now means **do not trade after 9:30 AM New York** under the user's

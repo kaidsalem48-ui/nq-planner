@@ -565,7 +565,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       case 'volatility':
         return n.mcVix==null?'VIX unavailable':[`VIX ${n.mcVix.toFixed(2)}`,signed(n.mcVixChange,'% vs. prior close')].filter(Boolean).join(' · ');
       case 'overnight':
-        return assessment.overnight==null?'Awaiting overnight data':signed(assessment.overnight,' NQ pts')+(assessment.preliminary?' · So far':' · Final');
+        return assessment.overnight==null?'Awaiting 6 PM–2 AM NY data':signed(assessment.overnight,' NQ pts')+(assessment.preliminary?' · So far':' · Final · 6 PM–2 AM NY');
       case 'range':
         return [n.mcRange==null?'':`${n.mcRange} pt range`,n.mcPriorRange>0&&n.mcRange!=null?`${Math.round(100*n.mcRange/n.mcPriorRange)}% of prior session`:''].filter(Boolean).join(' · ')||'Awaiting regular session range';
       case 'tech':
@@ -614,7 +614,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   function conditionUpdates(){
     const a=marketAssessment(NOW.date),items=[...a.alerts],record=AUTO_CONDITIONS.days?.[NOW.date];
     if(a.overnight==null&&![0,6].includes(wd(NOW.date))&&BY[NOW.date]?.holidayType!=='closed'){
-      items.push({id:NOW.date+':overnight-pending',day:NOW.date,title:'Overnight move · awaiting data',message:'The overnight net move will appear here when a verified reading is available.',severity:'info'});
+      items.push({id:NOW.date+':overnight-pending',day:NOW.date,title:'Overnight move · awaiting data',message:'The 6 PM–2 AM New York net move will appear here when a verified reading is available.',severity:'info'});
     }
     if(record)items.push({id:NOW.date+':snapshot:'+record.recordedAt,day:NOW.date,title:'Market conditions updated',message:'New snapshot collected '+stampNY(Date.parse(record.recordedAt))+'. Open the evaluation for each condition and its source time.',severity:'info'});
     if(archiveConnectionError)items.push({id:NOW.date+':connection',day:NOW.date,title:'Updates could not load',message:'Showing the last downloaded archive. Reconnect and retry; a saved value may be old.',severity:'caution'});

@@ -119,12 +119,13 @@ def record(snapshot, deploy=False):
         raise ValueError("Refusing to replace a newer daily record")
     if existing:
         incoming = set(entry["values"])
+        retired = {"mcOvernightSoFar"} if "mcOvernight" in incoming else set()
         retained_sources = []
         for source in existing.get("sources", []):
-            fields = [key for key in source["fields"] if key not in incoming]
+            fields = [key for key in source["fields"] if key not in incoming | retired]
             if fields:
                 retained_sources.append({**source, "fields": fields})
-        entry["values"] = {**existing.get("values", {}), **entry["values"]}
+        entry["values"] = {**{key: value for key, value in existing.get("values", {}).items() if key not in retired}, **entry["values"]}
         entry["sources"] = retained_sources + entry["sources"]
         validate({"date": day, **entry})
     archive["days"][day] = entry

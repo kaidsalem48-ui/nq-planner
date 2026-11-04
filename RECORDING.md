@@ -28,8 +28,9 @@ Vercel sign-in. No credentials, account data or private notes belong in the arch
   daily-change label, not a measured intraday acceleration or a probability.
 - Yield direction versus previous close: Rising/Falling beyond 0.01 percentage
   point (one basis point); Flat within that band. DXY uses 0.05 index point.
-- Overnight net: same-contract prior 18:00 NY opening price to 09:29 NY closing
-  price. Exact endpoints suffice for net; full range and behavior require every
+- Overnight net: same-contract prior 18:00 NY opening price to 01:59 NY closing
+  price, the last completed minute before the 02:00 NY boundary. Exact endpoints
+  suffice for net; full range and behavior require every
   bar in the window. Complete 5-minute bars may replace incomplete 1-minute bars
   for the whole overnight window; null/missing bars are never forward-filled.
 - RTH opening gap: 09:30 open minus previous RTH last-minute close, same contract.
@@ -46,8 +47,9 @@ Vercel sign-in. No credentials, account data or private notes belong in the arch
   the next four dates remain visible. Quarterly rebalance windows are labeled as
   scheduled context; they do not confirm an actual announced rebalance or flow.
 
-At 8 AM the 09:29 endpoint, opening gap and RTH range do not yet exist. Later runs
-fill these once measured. No future values or stale-session quotes are substituted.
+At 8 AM the overnight window is complete, but the opening gap and RTH range do
+not yet exist. Later runs fill those once measured. No future values or
+stale-session quotes are substituted.
 The source may be delayed, rate-limited or incomplete; preserve/report missing
 coverage honestly. A previous source field can remain visible with its original
 timestamp when a later run cannot refresh it. Never claim a successful fresh value
@@ -95,16 +97,19 @@ Historical session views remain explicitly dated.
 
 User rules: VIX >18 is caution; VIX >18 and >2% above previous close reduces
 aggression. A net overnight move of at least 500 points in either direction
-blocks the New York AM session and raises a red alert. Once the final 09:29
+blocks the New York AM session and raises a red alert. Once the final 02:00
 reading is available, an otherwise eligible 13:30–16:00 NY segment becomes a
 yellow PM watch if the AM session was choppy and a cleaner setup confirms.
 This is a conditional observation window, not a claim that PM will trade well.
 Original red calendar windows, Election Day and closed/short sessions remain
-blocked. The illustrated 04:15–07:15 NY move describes the early overnight
-move; it is not the PM trading window.
+blocked. The illustrated 04:15–07:15 NY move describes a later premarket move
+outside the defined overnight measurement; it is not the PM trading window.
 Before the final reading, use `mcOvernightSoFar` with its actual source minute
 and keep a provisional restriction in effect until the final
-`mcOvernight` reading supersedes it and uses the 18:00-to-09:29 definition. Use the signed net move for this rule.
+`mcOvernight` reading supersedes it and uses the 18:00-to-02:00 NY definition.
+Old 09:29-window readings must not be labeled as 02:00-window readings. The
+evaluation accepts final overnight sources only when observed at 01:59 NY.
+Use the signed net move for this rule.
 
 **Updated Election Day rule:** do not trade after 09:30 New York; the user expects
 poor, unpredictable price action. This supersedes the old after-09:30 1:1R rule.
@@ -120,7 +125,7 @@ Opening a specific update marks it read on that device. It never clears the risk
 rule or day warning. The list scrolls after four entries, and the date appears
 in an opened update. Each new published snapshot gets its own update entry.
 Updates also shows the signed overnight net move each trading day. The
-provisional entry updates as measurements arrive. The final 09:29 NY reading
+provisional entry updates as measurements arrive. The final 02:00 NY reading
 takes its place. Market conditions is a separate weekly navigation view beside
 Show list, with day-specific recorded readings and source times.
 The page checks the archive every minute while open and on return to the app;

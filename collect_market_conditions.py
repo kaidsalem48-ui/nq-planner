@@ -87,13 +87,14 @@ def build(results, now, calendar):
         latest = max((k for k in bars if datetime.fromtimestamp(k, NY).date() == today), default=0)
         if prior and latest:
             add(nq, {"mcPriorRange": round(max(b[1] for b in prior) - min(b[2] for b in prior), 2)}, latest, nq_symbols[0] + " prior RTH range " + previous.isoformat() + " (recomputed at observation time)")
-        overnight_start, overnight_end = instant(today - timedelta(days=1), 18), instant(today, 9, 29)
+        # The 18:00–02:00 NY window ends with the 01:59 completed bar.
+        overnight_start, overnight_end = instant(today - timedelta(days=1), 18), instant(today, 2) - 60
         premarket_end = max((k for k in bars if overnight_start <= k <= min(cutoff, overnight_end)), default=0)
-        if overnight_start in bars and premarket_end:
-            add(nq, {"mcOvernightSoFar": round(bars[premarket_end][3] - bars[overnight_start][0], 2)}, premarket_end, nq_symbols[0] + " overnight so far: completed source-minute close minus prior 18:00 open; provisional until 09:29")
+        if cutoff < overnight_end and overnight_start in bars and premarket_end:
+            add(nq, {"mcOvernightSoFar": round(bars[premarket_end][3] - bars[overnight_start][0], 2)}, premarket_end, nq_symbols[0] + " overnight so far: completed source-minute close minus prior 18:00 open; provisional until 02:00 NY")
         overnight = complete(bars, overnight_start, overnight_end) if cutoff >= overnight_end else None
         if cutoff >= overnight_end and overnight_start in bars and overnight_end in bars:
-            add(nq, {"mcOvernight": round(bars[overnight_end][3] - bars[overnight_start][0], 2)}, overnight_end, nq_symbols[0] + " 09:29 close minus prior 18:00 open; exact endpoints")
+            add(nq, {"mcOvernight": round(bars[overnight_end][3] - bars[overnight_start][0], 2)}, overnight_end, nq_symbols[0] + " 01:59 close minus prior 18:00 open; 02:00 NY boundary, exact endpoints")
         overnight_data = nq
         resolution = "1-minute"
         if overnight is None and cutoff >= overnight_end and results.get(nq_symbols[0] + ":5m"):
@@ -104,7 +105,7 @@ def build(results, now, calendar):
             net = overnight[-1][3] - overnight[0][0]
             span = max(b[1] for b in overnight) - min(b[2] for b in overnight)
             behavior = "Trend up" if span and net / span >= .6 else "Trend down" if span and net / span <= -.6 else "Balanced"
-            add(overnight_data, {"mcOvernight": round(net, 2), "mcOvernightRange": round(span, 2), "mcOvernightType": behavior}, overnight_end, nq_symbols[0] + " complete " + resolution + " bars, 18:00 open to 09:29 close; trend if net/range >=60%")
+            add(overnight_data, {"mcOvernight": round(net, 2), "mcOvernightRange": round(span, 2), "mcOvernightType": behavior}, overnight_end, nq_symbols[0] + " complete " + resolution + " bars, 18:00 open to 01:59 close (02:00 NY boundary); trend if net/range >=60%")
         rth_start = instant(today, 9, 30)
         end = min(cutoff, instant(today, close_hour) - 60, latest)
         current = complete(bars, rth_start, end) if end >= rth_start else None

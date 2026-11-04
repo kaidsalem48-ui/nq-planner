@@ -14,18 +14,20 @@
     const raw=record?.values||{},recordedAt=Date.parse(record?.recordedAt),validSources=(record?.sources||[]).filter(s=>{
       const t=Date.parse(s.asOf);return String(s.url||'').startsWith('https://')&&Array.isArray(s.fields)&&Number.isFinite(t)&&Number.isFinite(recordedAt)&&t<=recordedAt&&recordedAt<=now+60000&&t<=now+60000&&nyDate(t)===day;
     });
+    const overnightFinalKeys=new Set(['mcOvernight','mcOvernightRange','mcOvernightType']);
+    const sourceCovers=(source,key)=>source.fields.includes(key)&&(!overnightFinalKeys.has(key)||nyMinute(Date.parse(source.asOf))===119)&&(key!=='mcOvernightSoFar'||nyMinute(Date.parse(source.asOf))<119);
     const issues=new Map(),n={};
     function evidence(key,frozen=false){
-      const rows=validSources.filter(s=>s.fields.includes(key)),time=rows.length?Math.min(...rows.map(s=>Date.parse(s.asOf))):null;
-      if(raw[key]===undefined||raw[key]===''||!rows.length){issues.set(key,'Missing verified data');return null;}
+      const rows=validSources.filter(s=>sourceCovers(s,key)),time=rows.length?Math.min(...rows.map(s=>Date.parse(s.asOf))):null;
+      if(raw[key]===undefined||raw[key]===''||!rows.length){issues.set(key,overnightFinalKeys.has(key)&&raw[key]!==undefined?'No 18:00–02:00 NY source':'Missing verified data');return null;}
       if(!frozen&&live&&now-time>RULES.maxAgeMinutes*60000){issues.set(key,'Older than 90 minutes');return null;}
       n[key]=raw[key];return {rows,time};
     }
     function number(key,frozen=false){if(!evidence(key,frozen))return null;const v=numeric(raw,key);if(v===null){delete n[key];issues.set(key,'Invalid numeric data');}return v;}
     function text(key,allowed,frozen=false){if(!evidence(key,frozen))return null;if(!allowed.includes(raw[key])){delete n[key];issues.set(key,'Invalid category');return null;}return raw[key];}
-    function timeFor(keys){const rows=validSources.filter(s=>s.fields.some(k=>keys.includes(k)));return rows.length?Math.min(...rows.map(s=>Date.parse(s.asOf))):null;}
+    function timeFor(keys){const rows=validSources.filter(s=>keys.some(k=>sourceCovers(s,k)));return rows.length?Math.min(...rows.map(s=>Date.parse(s.asOf))):null;}
     const groups=[],alerts=[],reasons=[],watch=[];
-    function group(id,title,state,reading,meaning,conclusion,keys){const sources=id==='sources'?validSources:validSources.filter(s=>s.fields.some(k=>keys.includes(k)));groups.push({id,title,state,reading,meaning,conclusion,keys,sources,asOf:id==='sources'&&sources.length?Math.min(...sources.map(s=>Date.parse(s.asOf))):timeFor(keys),missing:keys.filter(k=>issues.has(k))});}
+    function group(id,title,state,reading,meaning,conclusion,keys){const sources=id==='sources'?validSources:validSources.filter(s=>keys.some(k=>sourceCovers(s,k)));groups.push({id,title,state,reading,meaning,conclusion,keys,sources,asOf:id==='sources'&&sources.length?Math.min(...sources.map(s=>Date.parse(s.asOf))):timeFor(keys),missing:keys.filter(k=>issues.has(k))});}
     function alert(key,title,message,severity='caution',measurement=''){alerts.push({id:day+':'+key,day,title,message,severity,measurement});}
     const vix=number('mcVix'),vol=text('mcVol',['Expanding','Contracting','Stable']);
     const vixChange=number('mcVixChange');
@@ -36,7 +38,7 @@
     else if(vix!==null&&vix>18)watch.push('VIX is above your 18 threshold.');
     const final=number('mcOvernight',true);
     const provisionalNet=numeric(raw,'mcOvernightSoFar');
-    // Keep a sourced premarket sit-out in force while waiting for the final reading.
+    // Keep a sourced early-window sit-out in force while waiting for the 02:00 boundary.
     const provisionalStop=provisionalNet!==null&&Math.abs(provisionalNet)>=RULES.overnightLarge;
     const soFar=final===null?number('mcOvernightSoFar',provisionalStop):null;
     const overnight=final??soFar;
@@ -44,9 +46,9 @@
     const overnightRange=number('mcOvernightRange',true),overnightType=text('mcOvernightType',['Trend up','Trend down','Balanced','Reversal'],true);
     const large=overnight!==null&&Math.abs(overnight)>=RULES.overnightLarge;
     const pmWatch=large&&!preliminary&&!closed&&!election(day)&&pmEligible;
-    const moveReading=overnight===null?'Waiting for a verified overnight move.':`${preliminary?'Overnight so far':'Final overnight net'}: ${signed(overnight)} NQ points from the prior 6 PM NY open to ${preliminary?'the observation time':'9:29 AM NY'}.`;
-    const overnightPlan=preliminary?'Sit out for now. Recheck when the final 9:29 AM reading is published.':pmWatch?'Sit out the New York AM session. Watch 1:30–4:00 PM NY only if the morning was choppy and a cleaner setup confirms. PM quality is not guaranteed.':'Sit out this trading day under your 500-point overnight rule and existing calendar restrictions.';
-    const overnightConclusion=large?overnightPlan:overnight===null?'Wait for a verified reading.':preliminary?'The reading so far is below 500 points. Recheck after 9:29 AM.':'The final move is below 500 points. Use the other conditions and calendar rules to plan the session.';
+    const moveReading=overnight===null?'Waiting for a verified overnight move.':`${preliminary?'Overnight so far':'Final overnight net'}: ${signed(overnight)} NQ points from the prior 6 PM NY open to ${preliminary?'the observation time':'the 1:59 AM NY close (2:00 AM boundary)'}.`;
+    const overnightPlan=preliminary?'Sit out for now. Recheck when the final 2:00 AM NY window is published.':pmWatch?'Sit out the New York AM session. Watch 1:30–4:00 PM NY only if the morning was choppy and a cleaner setup confirms. PM quality is not guaranteed.':'Sit out this trading day under your 500-point overnight rule and existing calendar restrictions.';
+    const overnightConclusion=large?overnightPlan:overnight===null?'Wait for a verified reading.':preliminary?'The reading so far is below 500 points. Recheck after 2:00 AM NY.':'The final move is below 500 points. Use the other conditions and calendar rules to plan the session.';
     group('overnight','Overnight move',large?(pmWatch?'AM sit out':'Sit out'):overnight===null?'Unknown':'Observed',
       moveReading+(overnightRange!==null?` High–low range: ${overnightRange} points.`:' Full high–low range unavailable.'),
       `A net move of 500 points or more in either direction blocks the New York AM session. An otherwise eligible 1:30–4:00 PM NY window becomes a conditional watch after the final reading. Other red calendar restrictions still apply. The high–low range measures the session’s full span.${overnightType?' Recorded behavior: '+overnightType.toLowerCase()+'.':''}`,
@@ -54,12 +56,12 @@
     if(large){
       reasons.push(`${preliminary?'Overnight so far':'Overnight net move'} ${signed(overnight)} points meets your 500-point AM sit-out rule.`);
       const stage=preliminary?'provisional':'final';
-      alert('overnight-large-'+stage+'-'+Math.floor(Math.abs(overnight)/50),(pmWatch?'AM sit out':'Sit out')+' · Overnight '+signed(overnight)+' NQ pts',moveReading+' '+overnightPlan,'danger',String(overnight));
+      alert('overnight-1800-0200-large-'+stage+'-'+Math.floor(Math.abs(overnight)/50),(pmWatch?'AM sit out':'Sit out')+' · Overnight '+signed(overnight)+' NQ pts',moveReading+' '+overnightPlan,'danger',String(overnight));
     }
     if(overnight!==null&&!large){
       const stage=preliminary?'provisional':'final';
       const label=preliminary?'Overnight so far':'Overnight final';
-      alert('overnight-'+stage,label+' · '+signed(overnight)+' NQ pts',moveReading,'info',String(overnight));
+      alert('overnight-1800-0200-'+stage,label+' · '+signed(overnight)+' NQ pts',moveReading,'info',String(overnight));
     }
     const range=number('mcRange'),prior=number('mcPriorRange',true),gap=number('marketGapPoints',true),behavior=text('marketType',['Trend up','Trend down','Range','Reversal','Choppy']);
     const ratio=range!==null&&prior>0?range/prior:null;
