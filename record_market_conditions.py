@@ -19,7 +19,7 @@ from urllib.request import urlopen, Request
 HERE = Path(__file__).resolve().parent
 SITE = "https://nq-planner.vercel.app"
 ARCHIVE = HERE / "market-conditions.json"
-NUMBERS = {"mcVixChange", "mcYieldChangeBp", "mcDxyChange", "mcMacroYieldChangeBp", "mcMacroDxyChange", "mcOvernightSoFar", "mcVix", "mcOvernight", "mcOvernightRange", "marketGapPoints", "mcRange",
+NUMBERS = {"mcVixChange", "mcYieldChangeBp", "mcDxyChange", "mcMacroYieldChangeBp", "mcMacroDxyChange", "mcOvernightSoFar", "mcVix", "mcOvernight", "mcOvernightRange", "mcOvernightOpen", "mcOvernightHigh", "mcOvernightLow", "mcOvernightClose", "mcOvernightHighMin", "mcOvernightLowMin", "marketGapPoints", "mcRange",
            "mcPriorRange", "mcGammaFlip", "mcYieldLevel", "mcDxy", "mcAAPL", "mcMSFT", "mcNVDA",
            "mcAMZN", "mcGOOGL", "mcMETA", "mcTSLA"}
 ENUMS = {"mcOvernightType": {"Trend up", "Trend down", "Reversal", "Balanced"},
@@ -34,7 +34,7 @@ ENUMS = {"mcOvernightType": {"Trend up", "Trend down", "Reversal", "Balanced"},
          "mcGamma": {"Long gamma", "Short gamma", "Mixed / near flip", "Unknown"},
          "mcRebalance": {"None confirmed", "Possible", "Confirmed"}}
 TEXT = {"mcGammaSource", "mcComment"}
-NONNEGATIVE = {"mcGammaFlip", "mcVix", "mcOvernightRange", "mcRange", "mcPriorRange", "mcDxy", "mcYieldLevel"}
+NONNEGATIVE = {"mcGammaFlip", "mcVix", "mcOvernightRange", "mcOvernightOpen", "mcOvernightHigh", "mcOvernightLow", "mcOvernightClose", "mcOvernightHighMin", "mcOvernightLowMin", "mcRange", "mcPriorRange", "mcDxy", "mcYieldLevel"}
 
 
 def instant(value):

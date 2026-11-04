@@ -32,10 +32,20 @@ def fetch(symbol, interval="1m"):
 def instant(day, hour, minute=0):
     return int(datetime.combine(day, time(hour, minute), NY).timestamp())
 
-def complete(bars, start, end, step=60, skip=()):
+def complete(bars, start, end, step=60, skip=(), stamped=False):
     # Every minute, inclusive. Missing minutes invalidate the measurement, except the named provider gap.
     keys = [k for k in range(start, end + 1, step) if k not in skip]
-    return [bars[k] for k in keys] if keys and all(k in bars for k in keys) else None
+    if not keys or not all(k in bars for k in keys):
+        return None
+    return [(k, bars[k]) for k in keys] if stamped else [bars[k] for k in keys]
+
+def legs(stamped, start):
+    # High, low and when each printed, as minutes after the 18:00 NY open, so the app can show both swings.
+    hi = max(stamped, key=lambda kb: kb[1][1])
+    lo = min(stamped, key=lambda kb: kb[1][2])
+    return {"mcOvernightOpen": round(stamped[0][1][0], 2), "mcOvernightHigh": round(hi[1][1], 2),
+            "mcOvernightLow": round(lo[1][2], 2), "mcOvernightClose": round(stamped[-1][1][3], 2),
+            "mcOvernightHighMin": (hi[0] - start) // 60, "mcOvernightLowMin": (lo[0] - start) // 60}
 
 def direction(change, tolerance):
     return "Rising" if change > tolerance else "Falling" if change < -tolerance else "Flat"
@@ -95,10 +105,10 @@ def build(results, now, calendar):
         # The provider publishes empty NQ bars for 23:59-00:08 NY every night, although the contract trades.
         midnight = instant(today, 0)
         hole = set(range(midnight - 60, midnight + 9 * 60, 60))
-        overnight = complete(bars, overnight_start, overnight_end) if cutoff >= overnight_end else None
+        overnight = complete(bars, overnight_start, overnight_end, stamped=True) if cutoff >= overnight_end else None
         gap_note = ""
         if overnight is None and cutoff >= overnight_end:
-            overnight = complete(bars, overnight_start, overnight_end, skip=hole)
+            overnight = complete(bars, overnight_start, overnight_end, skip=hole, stamped=True)
             gap_note = "; range excludes the provider's empty 23:59-00:08 bars"
         if cutoff >= overnight_end and overnight_start in bars and overnight_end in bars:
             add(nq, {"mcOvernight": round(bars[overnight_end][3] - bars[overnight_start][0], 2)}, overnight_end, nq_symbols[0] + " 01:59 close minus prior 18:00 open; 02:00 NY boundary, exact endpoints")
@@ -106,13 +116,15 @@ def build(results, now, calendar):
         resolution = "1-minute"
         if overnight is None and cutoff >= overnight_end and results.get(nq_symbols[0] + ":5m"):
             five = results[nq_symbols[0] + ":5m"]
-            overnight = complete(five["bars"], overnight_start, overnight_end - 240, 300)
+            overnight = complete(five["bars"], overnight_start, overnight_end - 240, 300, stamped=True)
             overnight_data, resolution, gap_note = five, "5-minute", ""
         if overnight:
+            swing = legs(overnight, overnight_start)
+            overnight = [b for _, b in overnight]
             net = overnight[-1][3] - overnight[0][0]
             span = max(b[1] for b in overnight) - min(b[2] for b in overnight)
             behavior = "Trend up" if span and net / span >= .6 else "Trend down" if span and net / span <= -.6 else "Balanced"
-            add(overnight_data, {"mcOvernight": round(net, 2), "mcOvernightRange": round(span, 2), "mcOvernightType": behavior}, overnight_end, nq_symbols[0] + " complete " + resolution + " bars, 18:00 open to 01:59 close (02:00 NY boundary); trend if net/range >=60%" + gap_note)
+            add(overnight_data, {"mcOvernight": round(net, 2), "mcOvernightRange": round(span, 2), "mcOvernightType": behavior, **swing}, overnight_end, nq_symbols[0] + " complete " + resolution + " bars, 18:00 open to 01:59 close (02:00 NY boundary); trend if net/range >=60%" + gap_note)
         rth_start = instant(today, 9, 30)
         end = min(cutoff, instant(today, close_hour) - 60, latest)
         current = complete(bars, rth_start, end) if end >= rth_start else None

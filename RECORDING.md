@@ -115,6 +115,11 @@ evaluation accepts final overnight sources only when observed at 01:59 NY.
 not the signed net, so a 900-point drop that comes back still counts. Without a
 final range (provisional, or range data incomplete), |net| is used as a lower bound.
 Updates show both: "Range 896 · net −193".
+**Legs (2026-11-04):** each night's final reading also records the overnight open, high,
+low, 1:59 close and the minutes after 18:00 when the high and low printed
+(`mcOvernightOpen/High/Low/Close/HighMin/LowMin`, sourced at 01:59 like the range).
+The Updates title keeps the range. The opened update describes Leg 1 (first extreme
+to second extreme) and Leg 2 (second extreme to the 1:59 close).
 
 **Updated Election Day rule:** do not trade after 09:30 New York; the user expects
 poor, unpredictable price action. This supersedes the old after-09:30 1:1R rule.

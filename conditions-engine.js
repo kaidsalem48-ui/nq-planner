@@ -14,7 +14,7 @@
     const raw=record?.values||{},recordedAt=Date.parse(record?.recordedAt),validSources=(record?.sources||[]).filter(s=>{
       const t=Date.parse(s.asOf);return String(s.url||'').startsWith('https://')&&Array.isArray(s.fields)&&Number.isFinite(t)&&Number.isFinite(recordedAt)&&t<=recordedAt&&recordedAt<=now+60000&&t<=now+60000&&nyDate(t)===day;
     });
-    const overnightFinalKeys=new Set(['mcOvernight','mcOvernightRange','mcOvernightType']);
+    const overnightFinalKeys=new Set(['mcOvernight','mcOvernightRange','mcOvernightType','mcOvernightOpen','mcOvernightHigh','mcOvernightLow','mcOvernightClose','mcOvernightHighMin','mcOvernightLowMin']);
     const sourceCovers=(source,key)=>source.fields.includes(key)&&(!overnightFinalKeys.has(key)||nyMinute(Date.parse(source.asOf))===119)&&(key!=='mcOvernightSoFar'||nyMinute(Date.parse(source.asOf))<119);
     const issues=new Map(),n={};
     function evidence(key,frozen=false){
@@ -50,7 +50,18 @@
     const large=ruleMove!==null&&ruleMove>=RULES.overnightLarge;
     const pmWatch=large&&!preliminary&&!closed&&!election(day)&&pmEligible;
     const moveLabel=useRange?`Range ${overnightRange} · net ${signed(overnight??0)}`:signed(overnight??0);
-    const moveReading=overnight===null&&!useRange?'Waiting for a verified overnight move.':(useRange?`Overnight high–low range: ${overnightRange} NQ points (6 PM–2 AM NY). `:'')+(overnight===null?'':`${preliminary?'Overnight so far':'Final overnight net'}: ${signed(overnight)} NQ points from the prior 6 PM NY open to ${preliminary?'the observation time':'the 1:59 AM NY close (2:00 AM boundary)'}.`);
+    // Both swings of the night: first extreme to second extreme, then second extreme to the 1:59 close.
+    const legKeys=['mcOvernightHigh','mcOvernightLow','mcOvernightClose','mcOvernightHighMin','mcOvernightLowMin'];
+    const lv=useRange?legKeys.map(k=>number(k,true)):[];
+    let legsText='';
+    if(lv.length&&lv.every(v=>v!==null)){
+      const [hi,lo,close,hiMin,loMin]=lv;
+      const at=m=>{const t=(1080+m)%1440,h=Math.floor(t/60),mm=String(t%60).padStart(2,'0');return `${h%12||12}:${mm} ${h<12?'AM':'PM'}`;};
+      const pts=v=>Number(v.toFixed(2)).toLocaleString('en-US',{maximumFractionDigits:2});
+      const highFirst=hiMin<=loMin,second=highFirst?lo:hi,back=close-second;
+      legsText=` Leg 1: ${highFirst?'down':'up'} ${pts(hi-lo)} points from the ${at(highFirst?hiMin:loMin)} ${highFirst?'high':'low'} (${pts(highFirst?hi:lo)}) to the ${at(highFirst?loMin:hiMin)} ${highFirst?'low':'high'} (${pts(second)}). Leg 2: ${back>=0?'up':'down'} ${pts(Math.abs(back))} points to the 1:59 AM close (${pts(close)}).`;
+    }
+    const moveReading=overnight===null&&!useRange?'Waiting for a verified overnight move.':(useRange?`Overnight high–low range: ${overnightRange} NQ points (6 PM–2 AM NY).${legsText} `:'')+(overnight===null?'':`${preliminary?'Overnight so far':'Final overnight net'}: ${signed(overnight)} NQ points from the prior 6 PM NY open to ${preliminary?'the observation time':'the 1:59 AM NY close (2:00 AM boundary)'}.`);
     const overnightPlan=preliminary?'Sit out for now. Recheck when the final 2:00 AM NY window is published.':pmWatch?'Sit out the New York AM session. Watch 1:30–4:00 PM NY only if the morning was choppy and a cleaner setup confirms. PM quality is not guaranteed.':'Sit out this trading day under your 500-point overnight rule and existing calendar restrictions.';
     const overnightConclusion=large?overnightPlan:overnight===null?'Wait for a verified reading.':preliminary?'The reading so far is below 500 points. Recheck after 2:00 AM NY.':'The final move is below 500 points. Use the other conditions and calendar rules to plan the session.';
     group('overnight','Overnight move',large?(pmWatch?'AM sit out':'Sit out'):overnight===null?'Unknown':'Observed',
