@@ -626,7 +626,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const top=Math.max(12,Math.min(anchor.bottom+8,innerHeight-160));
     panel.style.setProperty('--updates-top',top+'px');
     panel.style.top=top+'px';
-    panel.style.left=Math.max(12,Math.min(anchor.left,innerWidth-panel.offsetWidth-12))+'px';
+    const mainLeft=innerWidth>=1100?document.querySelector('.mainp').getBoundingClientRect().left+12:12;
+    panel.style.left=Math.max(mainLeft,Math.min(anchor.right-panel.offsetWidth,innerWidth-panel.offsetWidth-12))+'px';
   }
   window.addEventListener('resize',positionUpdates);
   window.addEventListener('scroll',positionUpdates,true);
