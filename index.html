@@ -379,6 +379,8 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #market-updates .updates-nav{display:flex;align-items:center;justify-content:center;gap:4px;flex:1;min-width:0;padding:0}
 #market-updates .updates-nav .btn{padding:4px 12px;font-size:1.35rem;line-height:1.1;white-space:nowrap;min-width:0}
 #market-updates header .updates-back{flex:none;white-space:nowrap}
+#market-updates header .updates-markall{margin-left:auto;flex:none;white-space:nowrap;padding:6px 10px;font-size:.8rem;color:var(--muted)}
+#market-updates header .updates-markall+#updates-close{margin-left:0}
 /* ===== header bell / notification center ===== */
 .top-r{display:flex;align-items:center;gap:10px;min-width:0}
 .bell{position:relative;width:42px;height:42px;padding:0;border-radius:12px;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;color:var(--fg);flex:none}
@@ -710,8 +712,10 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const active=items[activeIndex];
     // With an update open, the "Updates" title itself becomes the "All updates" back button; paging sits beside it.
     const updatesTitle=active?`<button class="btn updates-back" data-update-back>All updates</button>`:'<h3>Updates</h3>';
+    // List view only: "Mark all read". Hidden while one update is open so the paging has room.
+    const markAll=!active&&unread.length?`<button class="btn updates-markall" data-mark-all>Mark all read</button>`:'';
     const updatesNav=active?`<nav class="updates-nav" aria-label="Browse updates"><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav>`:'';
-    $('market-updates').innerHTML=`<header>${updatesTitle}${updatesNav}<button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
+    $('market-updates').innerHTML=`<header>${updatesTitle}${updatesNav}${markAll}<button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
     <div class="updates-content${active?'':' is-list'}">${active?`<article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">Open market conditions</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span aria-hidden="true">›</span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
     $('market-updates').querySelectorAll('[data-update-index]').forEach(button=>button.onclick=()=>{
       selectedUpdate=items[Number(button.dataset.updateIndex)]?.id;
@@ -722,6 +726,12 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       renderNotifications();
       $('market-updates').querySelector('[data-update-back]')?.focus();
     });
+    const markAllButton=$('market-updates').querySelector('[data-mark-all]');
+    if(markAllButton)markAllButton.onclick=()=>{
+      const now=Date.now();items.forEach(item=>{if(!seenUpdates[item.id])seenUpdates[item.id]=now;});
+      try{localStorage.setItem("nq-condition-updates-seen-v1",JSON.stringify(seenUpdates));}catch{}
+      renderNotifications();$('updates-close').focus();
+    };
     const back=$('market-updates').querySelector('[data-update-back]');
     if(back)back.onclick=()=>{selectedUpdate=null;renderNotifications();$('market-updates').querySelector('.update-row')?.focus();};
     $('updates-close').onclick=()=>{updatesOpen=false;renderNotifications();button.focus();};
