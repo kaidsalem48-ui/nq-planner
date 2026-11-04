@@ -33,6 +33,8 @@ Vercel sign-in. No credentials, account data or private notes belong in the arch
   suffice for net; full range and behavior require every
   bar in the window. Complete 5-minute bars may replace incomplete 1-minute bars
   for the whole overnight window; null/missing bars are never forward-filled.
+  The provider publishes empty NQ bars for 23:59–00:08 NY every night; range and
+  behavior skip only those minutes and say so in the source title.
 - RTH opening gap: 09:30 open minus previous RTH last-minute close, same contract.
   Current/prior RTH high-low require complete bars, including holiday early closes.
 - Overnight/current behavior: net divided by full high-low range >=60% is Trend

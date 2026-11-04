@@ -32,9 +32,9 @@ def fetch(symbol, interval="1m"):
 def instant(day, hour, minute=0):
     return int(datetime.combine(day, time(hour, minute), NY).timestamp())
 
-def complete(bars, start, end, step=60):
-    # Every minute, inclusive. Missing minutes invalidate the measurement.
-    keys = list(range(start, end + 1, step))
+def complete(bars, start, end, step=60, skip=()):
+    # Every minute, inclusive. Missing minutes invalidate the measurement, except the named provider gap.
+    keys = [k for k in range(start, end + 1, step) if k not in skip]
     return [bars[k] for k in keys] if keys and all(k in bars for k in keys) else None
 
 def direction(change, tolerance):
@@ -92,7 +92,14 @@ def build(results, now, calendar):
         premarket_end = max((k for k in bars if overnight_start <= k <= min(cutoff, overnight_end)), default=0)
         if cutoff < overnight_end and overnight_start in bars and premarket_end:
             add(nq, {"mcOvernightSoFar": round(bars[premarket_end][3] - bars[overnight_start][0], 2)}, premarket_end, nq_symbols[0] + " overnight so far: completed source-minute close minus prior 18:00 open; provisional until 02:00 NY")
+        # The provider publishes empty NQ bars for 23:59-00:08 NY every night, although the contract trades.
+        midnight = instant(today, 0)
+        hole = set(range(midnight - 60, midnight + 9 * 60, 60))
         overnight = complete(bars, overnight_start, overnight_end) if cutoff >= overnight_end else None
+        gap_note = ""
+        if overnight is None and cutoff >= overnight_end:
+            overnight = complete(bars, overnight_start, overnight_end, skip=hole)
+            gap_note = "; range excludes the provider's empty 23:59-00:08 bars"
         if cutoff >= overnight_end and overnight_start in bars and overnight_end in bars:
             add(nq, {"mcOvernight": round(bars[overnight_end][3] - bars[overnight_start][0], 2)}, overnight_end, nq_symbols[0] + " 01:59 close minus prior 18:00 open; 02:00 NY boundary, exact endpoints")
         overnight_data = nq
@@ -100,12 +107,12 @@ def build(results, now, calendar):
         if overnight is None and cutoff >= overnight_end and results.get(nq_symbols[0] + ":5m"):
             five = results[nq_symbols[0] + ":5m"]
             overnight = complete(five["bars"], overnight_start, overnight_end - 240, 300)
-            overnight_data, resolution = five, "5-minute"
+            overnight_data, resolution, gap_note = five, "5-minute", ""
         if overnight:
             net = overnight[-1][3] - overnight[0][0]
             span = max(b[1] for b in overnight) - min(b[2] for b in overnight)
             behavior = "Trend up" if span and net / span >= .6 else "Trend down" if span and net / span <= -.6 else "Balanced"
-            add(overnight_data, {"mcOvernight": round(net, 2), "mcOvernightRange": round(span, 2), "mcOvernightType": behavior}, overnight_end, nq_symbols[0] + " complete " + resolution + " bars, 18:00 open to 01:59 close (02:00 NY boundary); trend if net/range >=60%")
+            add(overnight_data, {"mcOvernight": round(net, 2), "mcOvernightRange": round(span, 2), "mcOvernightType": behavior}, overnight_end, nq_symbols[0] + " complete " + resolution + " bars, 18:00 open to 01:59 close (02:00 NY boundary); trend if net/range >=60%" + gap_note)
         rth_start = instant(today, 9, 30)
         end = min(cutoff, instant(today, close_hour) - 60, latest)
         current = complete(bars, rth_start, end) if end >= rth_start else None
