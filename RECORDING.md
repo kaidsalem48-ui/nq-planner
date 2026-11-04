@@ -111,7 +111,10 @@ and keep a provisional restriction in effect until the final
 `mcOvernight` reading supersedes it and uses the 18:00-to-02:00 NY definition.
 Old 09:29-window readings must not be labeled as 02:00-window readings. The
 evaluation accepts final overnight sources only when observed at 01:59 NY.
-Use the signed net move for this rule.
+**Updated 2026-11-04 (user's call):** the rule uses the overnight high–low range,
+not the signed net, so a 900-point drop that comes back still counts. Without a
+final range (provisional, or range data incomplete), |net| is used as a lower bound.
+Updates show both: "Range 896 · net −193".
 
 **Updated Election Day rule:** do not trade after 09:30 New York; the user expects
 poor, unpredictable price action. This supersedes the old after-09:30 1:1R rule.
