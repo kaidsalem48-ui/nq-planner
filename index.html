@@ -530,6 +530,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <div class="updates-content">${active?`<nav aria-label="Browse updates"><button class="btn" data-update-back>All updates</button><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav><article class="market-update ${active.severity}"><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">See evaluation</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span aria-hidden="true">›</span></button>`).join('')||'<p>No market updates for this date.</p>'}</div>`;
     $('market-updates').querySelectorAll('[data-update-index]').forEach(button=>button.onclick=()=>{
       selectedUpdate=items[Number(button.dataset.updateIndex)]?.id;
+      if(selectedUpdate){
+        seenUpdates[selectedUpdate]=Date.now();
+        try{localStorage.setItem("nq-condition-updates-seen-v1",JSON.stringify(seenUpdates));}catch{}
+      }
       renderNotifications();
       $('market-updates').querySelector('[data-update-back]')?.focus();
     });
