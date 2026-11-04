@@ -1,7 +1,9 @@
 # Automatic market conditions
 
-The existing Codex automation runs weekdays at **8 AM, 9 AM, 10 AM, noon, 4 PM and
-5 PM America/New_York**. Codex must be running and the computer awake and online.
+The Windows task "NQ Planner market conditions" runs weekdays **every 30 minutes from
+8:00 AM to 4:30 PM, plus 5 PM America/New_York** (since 2026-11-04), so live inputs
+never pass the 90-minute limit during the session. The PC must be on or asleep
+(the task wakes it) and online. Codex is no longer needed.
 No manual market-condition entry is required. These are timestamped snapshots,
 not an exchange tick feed. The public archive is shared by all planner devices.
 
