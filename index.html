@@ -374,6 +374,24 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 #market-conditions[open] > .bd{max-height:65vh;max-height:65dvh;overflow-y:auto;scrollbar-gutter:stable}.updates-content{max-height:45dvh;overflow-y:auto;overscroll-behavior:contain}.updates-content nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0}.updates-content button:disabled{opacity:.4;cursor:default}.update-row{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left}.update-row:hover{background:var(--panel-2)}.update-row.danger{color:var(--sr-fg)}@media(min-width:1050px){.condition-evaluations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px}.condition-evaluations .condition-evaluation{max-width:none;min-width:0;overflow-wrap:anywhere}}#market-updates{position:fixed;z-index:1000;box-sizing:border-box;width:min(480px,calc(100vw - 24px));margin:0;max-height:min(60dvh,calc(100dvh - var(--updates-top,0px) - 12px));overflow:auto;box-shadow:0 12px 32px #0008}
 #market-updates .updates-content{max-height:none;overflow:visible}
+
+.condition-evaluations{display:grid;gap:8px;align-items:start;margin:14px 0 20px}
+.condition-evaluations .condition-accordion{padding:0;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);max-width:none;min-width:0}
+.condition-accordion>summary{position:relative;padding:12px 35px 12px 13px;list-style:none;cursor:pointer}
+.condition-accordion>summary::-webkit-details-marker{display:none}
+.condition-accordion>summary::after{content:"";position:absolute;right:15px;top:17px;width:7px;height:7px;border:solid var(--muted);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.condition-accordion[open]>summary::after{transform:rotate(225deg);top:21px}
+.condition-accordion>summary:hover{background:#ffffff08}
+.condition-accordion>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:9px}
+.condition-heading{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.condition-preview{display:block;margin-top:4px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.condition-detail{border-top:1px solid var(--line);padding:4px 13px 13px;overflow-wrap:anywhere}
+.condition-detail .condition-conclusion{padding:8px 10px;background:var(--panel);border-radius:6px}
+.condition-detail .condition-references{padding-left:18px;font-size:13px}
+.condition-detail a{color:#b7adff}
+.outlook-market{margin:0 0 24px}
+.outlook-market>.note{margin:0 0 10px;color:var(--muted)}
+@media(min-width:1050px){.condition-evaluations{column-gap:12px}}
 </style>
 </head>
 <body>
@@ -453,15 +471,42 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   function recordingInfo(day) {
     const record=AUTO_CONDITIONS.days?.[day];
     const manual=Object.keys(NOTES['day:'+day]||{}).some(k=>k.startsWith('mc')||k==='marketGapPoints');
-    if(!record)return `${esc(autoRecordingStatus)}<br>Automatic updates: weekdays at 8 AM, 10 AM, noon, 4 PM and 5 PM New York.`;
+    if(!record)return `${esc(autoRecordingStatus)}<br>Automatic updates: weekdays at 8 AM, 9 AM, 10 AM, noon, 4 PM and 5 PM New York.`;
     return `Daily snapshot recorded ${esc(stampNY(Date.parse(record.recordedAt)))}. Source times are listed below; this is not a live feed.<details><summary>Recorded sources &amp; times</summary><ul>${(record.sources||[]).filter(s=>/^https:\/\//i.test(s.url)).map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> · as of ${esc(stampNY(Date.parse(s.asOf)))}</li>`).join('')||'<li>No verified values available for this session.</li>'}</ul></details>`;
   }
   const ui={marketOpen:false},localNoteEdits=new Map(),saveUi=()=>{},stampNY=ms=>new Date(ms).toLocaleString('en-US',{timeZone:'America/New_York'} )+' NY';
   const wd=day=>D(day).getUTCDay();let marketBase={};
   const saveNote=async(k,value)=>{const next={...NOTES,[k]:{...(NOTES[k]||{}),...value}};localStorage.setItem('nq-market-conditions-v1',JSON.stringify(next));NOTES=next;localNoteEdits.set(k,Date.now());};
-  function applyMarketConditions(){for(const [day,base] of Object.entries(marketBase)){const d=BY[day]=JSON.parse(JSON.stringify(base)),a=marketAssessment(day);if(a.expiry){d.opex=true;d.expiryLabel=a.expiry;d.quadWitching=a.expiry==='Quad witching';d.opexRule=a.plan;}
-    d.conditionsDanger=a.large;d.conditionNote=a.large?a.reasons.find(r=>r.includes('450+')):'';
-    if(['Reduced','High risk'].includes(a.level)&&!['closed','bank'].includes(d.holidayType)){d.score=Math.min(d.score,-1);d.label=d.score===-2?'Sit out':'Light';d.segs=d.segs.map(s=>s[2]==='g'?[s[0],s[1],'y',s[3]+' · market conditions: reduce aggression']:s);d.asia=(d.asia||[]).map(s=>s[2]==='g'?[s[0],s[1],'y',s[3]+' · market conditions: reduce aggression']:s);d.why+=' '+[...a.reasons,a.plan].join(' ');}}
+  function applyMarketConditions(){
+    for(const [day,base] of Object.entries(marketBase)){
+      const d=BY[day]=JSON.parse(JSON.stringify(base));
+      const assessment=marketAssessment(day);
+      if(assessment.expiry){
+        d.opex=true;
+        d.expiryLabel=assessment.expiry;
+        d.quadWitching=assessment.expiry==='Quad witching';
+        d.opexRule=assessment.plan;
+      }
+      d.conditionsDanger=assessment.large;
+      if(assessment.large&&d.holidayType!=='closed'){
+        d.score=-2;
+        d.label='Sit out';
+        const reason='Overnight net move reached 500 points. '+assessment.plan;
+        const block=segments=>segments.map(segment=>[segment[0],segment[1],'r',reason]);
+        d.segs=block(d.segs);
+        d.asia=block(d.asia||[]);
+        d.why=[reason,d.why].join(' ');
+      }else if(assessment.level==='Reduced'&&!['closed','bank'].includes(d.holidayType)){
+        d.score=Math.min(d.score,-1);
+        d.label=d.score===-2?'Sit out':'Light';
+        const reduce=segments=>segments.map(segment=>segment[2]==='g'
+          ?[segment[0],segment[1],'y',segment[3]+' · market conditions: reduce aggression']
+          :segment);
+        d.segs=reduce(d.segs);
+        d.asia=reduce(d.asia||[]);
+        d.why+=' '+[...assessment.reasons,assessment.plan].join(' ');
+      }
+    }
   }
   // Dated observations, saved in the same private, field-merged day records as notes.
   function scheduledExpiry(day){
@@ -487,22 +532,72 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   const riskChip=a=>['Sit out','High risk'].includes(a.level)?'r':['Reduced','Selective'].includes(a.level)?'y':'n';
   function marketSummary(day,editable=true){
     const a=marketAssessment(day);if(!AUTO_CONDITIONS.days?.[day]&&!a.expiry&&!conditionEngine.election(day))return '';
-    return `<section class="market-summary"><div class="market-summary-head"><b>Overall · ${esc(day)}</b><span class="chip ${riskChip(a)}">${a.level}</span></div><p>${esc(a.plan)}</p>${a.reasons.length?`<ul>${a.reasons.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:''}<p class="note">${a.missing.length?a.missing.length+' groups incomplete. ':''}Conclusions use your rules and dated observations, not a probability forecast.</p>${editable?`<button class="btn" data-market-edit-day="${esc(day)}">See evaluation & sources</button>`:''}</section>`;
+    return `<section class="market-summary"><div class="market-summary-head"><b>Overall · ${esc(day)}</b><span class="chip ${riskChip(a)}">${a.level}</span></div><p>${esc(a.plan)}</p>${a.reasons.length?`<ul>${a.reasons.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:''}<p class="note">${a.missing.length?a.missing.length+(a.missing.length===1?' section is incomplete. ':' sections are incomplete. '):''}Assessment based on your trading rules and the recorded readings.</p>${editable?`<button class="btn" data-market-edit-day="${esc(day)}">See evaluation & sources</button>`:''}</section>`;
   }
   let conditionsScope='day';
   function conditionPeriod(scope, selected){
     const m=outlookModel(scope,selected),dates=Object.keys(AUTO_CONDITIONS.days||{}).filter(d=>d>=m.start&&d<=m.end&&d<=NOW.date).sort();
     return {m,records:dates.map(date=>({date,...AUTO_CONDITIONS.days[date]}))};
   }
-  function conditionGroupHTML(g){
-    return `<section class="condition-evaluation"><header><h4>${esc(g.title)}</h4><span class="chip ${g.state==='High risk'?'r':g.state==='Caution'?'y':'n'}">${esc(g.state)}</span></header><p class="condition-reading">${esc(g.reading)}</p><p>${esc(g.meaning)}</p><p class="condition-conclusion"><b>Conclusion:</b> ${esc(g.conclusion)}</p><p class="note">${g.asOf?'Earliest relevant observation: '+esc(stampNY(g.asOf))+'. Field-specific times are linked below.':g.id==='expiry'?'Calculated from the expiry calendar.':'No verified observation time.'}</p>${g.sources.length?`<details><summary>Evidence & observation times</summary><ul>${g.sources.map(source=>`<li><a href="${esc(source.url)}" target="_blank" rel="noopener">${esc(source.title)}</a><br>${esc(stampNY(Date.parse(source.asOf)))}</li>`).join('')}</ul></details>`:''}</section>`;
+  const conditionReferences={
+    volatility:[['Cboe · Reading the VIX','https://cdn.cboe.com/resources/vix_options/sandp_a_practitioners_guide_to_reading_vix.pdf']],
+    tech:[['Schwab · Using breadth to read trend strength','https://www.schwab.com/learn/story/breadth-check-strength-and-weakness-trend-tracker']],
+    macro:[
+      ['Fidelity · How higher yields affect growth stocks','https://institutional.fidelity.com/advisors/insights/series/fidelity-market-signals-weekly/have-bond-yields-gone-too-far-or-just-far-enough'],
+      ['Federal Reserve · How a stronger dollar affects profits','https://www.federalreserve.gov/econresdata/notes/ifdp-notes/2015/how-much-has-dollar-appreciation-affected-us-corporate-profits-20150717.html']
+    ],
+    expiry:[['OCC · Options expiration calendar','https://www.optionseducation.org/referencelibrary/expiration-calendar']]
+  };
+  function conditionGroupSummary(group,assessment){
+    const n=assessment.n;
+    const signed=(value,suffix)=>value==null?'':(value>0?'+':'')+value+suffix;
+    switch(group.id){
+      case 'volatility':
+        return n.mcVix==null?'VIX unavailable':[`VIX ${n.mcVix.toFixed(2)}`,signed(n.mcVixChange,'% vs. prior close')].filter(Boolean).join(' · ');
+      case 'overnight':
+        return assessment.overnight==null?'Awaiting overnight data':signed(assessment.overnight,' NQ pts')+(assessment.preliminary?' · So far':' · Final');
+      case 'range':
+        return [n.mcRange==null?'':`${n.mcRange} pt range`,n.mcPriorRange>0&&n.mcRange!=null?`${Math.round(100*n.mcRange/n.mcPriorRange)}% of prior session`:''].filter(Boolean).join(' · ')||'Awaiting regular session range';
+      case 'tech':
+        return assessment.breadth.aligned==null?assessment.breadth.label:`${assessment.breadth.aligned} of 7 moving with NQ`;
+      case 'macro':
+        return [n.mcYieldLevel==null?'':`10Y ${n.mcYieldLevel}%`,n.mcDxy==null?'':`DXY ${n.mcDxy}`,n.mcMacro==='Headwinds'?'Pressure on tech':''].filter(Boolean).join(' · ')||'Awaiting rates and dollar data';
+      case 'expiry':
+        return assessment.expiry||(n.mcRebalance==='Confirmed'?'Index rebalance confirmed':'No expiry on snapshot date');
+      default:
+        return group.sources.length?`${group.sources.length} source records`:'Awaiting sources';
+    }
+  }
+  function conditionGroupHTML(group,assessment,scope){
+    const tone=group.state==='Sit out'?'r':group.state==='Caution'?'y':'n';
+    const references=(conditionReferences[group.id]||[]).map(([label,url])=>
+      `<li><a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a></li>`).join('');
+    const evidence=group.sources.map(source=>
+      `<li><a href="${esc(source.url)}" target="_blank" rel="noopener">${esc(source.title)}</a><br>${esc(stampNY(Date.parse(source.asOf)))}</li>`).join('');
+    return `<details class="condition-evaluation condition-accordion" data-condition-key="${esc(scope+'-'+assessment.day+'-'+group.id)}">
+      <summary>
+        <span class="condition-heading"><strong>${esc(group.title)}</strong><span class="chip ${tone}">${esc(group.state==='Observed'?'Recorded':group.state)}</span></span>
+        <span class="condition-preview">${esc(conditionGroupSummary(group,assessment))}</span>
+      </summary>
+      <div class="condition-detail">
+        <p class="condition-reading">${esc(group.reading)}</p>
+        <p class="condition-conclusion"><b>Takeaway.</b> ${esc(group.conclusion)}</p>
+        <p>${esc(group.meaning)}</p>
+        ${references?`<ul class="condition-references">${references}</ul>`:''}
+        ${group.asOf?`<p class="note">Earliest reading · ${esc(stampNY(group.asOf))}</p>`:''}
+        ${evidence?`<details><summary>Data sources and times</summary><ul>${evidence}</ul></details>`:''}
+      </div>
+    </details>`;
+  }
+  function conditionGroupsHTML(assessment,scope){
+    return `<div class="condition-evaluations">${assessment.groups.map(group=>conditionGroupHTML(group,assessment,scope)).join('')}</div>`;
   }
   function marketConditionCard(){
     const {m,records}=conditionPeriod(conditionsScope,cursor),day=conditionsScope==='day'?cursor:records.at(-1)?.date||cursor,a=marketAssessment(day),n=a.n;
     const next=[];for(let i=0;i<140&&next.length<4;i++){const date=addDays(cursor,i),label=scheduledExpiry(date);if(label)next.push(date+' · '+label);}
     const measures=[['mcVix','VIX'],['mcYieldLevel','10-year yield (%)'],['mcDxy','DXY']].map(([key,label])=>{const values=records.map(r=>r.values?.[key]).filter(v=>typeof v==='number'&&Number.isFinite(v));return values.length?`<p>${label}: recorded low ${Math.min(...values)} / high ${Math.max(...values)} (${values.length} sessions).</p>`:'';}).join('');
     const selected=marketAssessment(cursor),important=conditionEngine.election(cursor)||selected.large;
-    return `${important?`<aside class="condition-notice" role="note"><b>${esc(cursor)} · ${conditionEngine.election(cursor)?'Election Day restriction':'Large overnight move'}</b><p>${esc(selected.plan)}</p>${selected.large?`<p>${esc(selected.reasons.find(r=>r.includes('450+'))||'')}</p>`:''}</aside>`:''}<details class="card market-conditions" id="market-conditions" ${ui.marketOpen?'open':''}><summary><b>Market conditions</b><span class="chip ${riskChip(a)}">${a.level}</span></summary><div class="bd" tabindex="0" role="region" aria-label="Market conditions details"><div class="market-date"><label class="f">Selected date<input class="txt" id="condition-day" type="date" value="${esc(cursor)}"></label><nav aria-label="Conditions period">${[['month','Monthly'],['week','Weekly'],['day','Daily']].map(([k,label])=>`<button class="btn" data-conditions-scope="${k}" aria-pressed="${conditionsScope===k}">${label}</button>`).join(' ')}</nav></div><h3>${esc(m.title.replace(/outlook/i,'conditions'))}</h3>${conditionsScope!=='day'?`<p>${esc(m.intro)}</p><p class="note">${records.length} recorded sessions in this period. Measurements below summarize snapshots, not full-period extrema. Latest session evaluation: ${esc(day)}.</p>${measures}`:''}${marketSummary(day,false)||'<p class="note">Waiting for verified data. Your calendar restrictions still apply.</p>'}<p class="note">Automatic collections: weekdays at 8 AM, 9 AM, 10 AM, noon, 4 PM and 5 PM NY. This page checks for published updates each minute while open.</p><div class="condition-evaluations">${a.groups.map(conditionGroupHTML).join('')}</div><details class="condition-guide"><summary>Rules, definitions & expiry calendar</summary><p>Overnight net: prior 18:00 NY open to 09:29 close. Before 09:29, “so far” uses the actual completed source minute. Absolute net &gt;200 points triggers your caution rule; ≥450 triggers the stronger red alert. Neither threshold uses the high–low range.</p><p>VIX above 18 is your caution threshold. Expanding means more than +2% versus prior close; contracting below −2%; otherwise stable. These are descriptive thresholds. Behavior labels use net move / session range ≥60% for a trend. A signal is not a validated prediction.</p><p>Broad tech participation: ≥5/7 aligned; divergent: ≥4/7 opposed; otherwise mixed. All moves share one minute and comparable prior RTH-close baselines. Dynamic inputs older than 90 minutes during 08:00–16:30 NY are excluded. Final session measurements retain their original source times.</p><p>Upcoming expiry dates: ${next.map(esc).join(' · ')}.</p><p><a href="https://www.optionseducation.org/referencelibrary/expiration-calendar" target="_blank" rel="noopener">OCC expiry calendar</a> · <a href="https://www.cboe.com/tradable_products/vix/" target="_blank" rel="noopener">Cboe VIX</a></p></details>${n.mcComment?`<p>${esc(n.mcComment)}</p>`:''}${recordingInfo(day)}${conditionsScope!=='day'&&records.length?`<details><summary>Evaluate each recorded session</summary>${records.map(r=>`<p><button class="btn" data-condition-session="${r.date}">${r.date}</button> ${esc(marketAssessment(r.date).level)}</p>`).join('')}</details>`:''}</div></details>`;
+    return `${important?`<aside class="condition-notice" role="note"><b>${esc(cursor)} · ${conditionEngine.election(cursor)?'Election Day restriction':'Large overnight move'}</b><p>${esc(selected.plan)}</p>${selected.large?`<p>${esc(selected.reasons.find(r=>r.includes('500-point sit-out'))||'')}</p>`:''}</aside>`:''}<details class="card market-conditions" id="market-conditions" ${ui.marketOpen?'open':''}><summary><b>Market conditions</b><span class="chip ${riskChip(a)}">${a.level}</span></summary><div class="bd" tabindex="0" role="region" aria-label="Market conditions details"><div class="market-date"><label class="f">Selected date<input class="txt" id="condition-day" type="date" value="${esc(cursor)}"></label><nav aria-label="Conditions period">${[['month','Monthly'],['week','Weekly'],['day','Daily']].map(([k,label])=>`<button class="btn" data-conditions-scope="${k}" aria-pressed="${conditionsScope===k}">${label}</button>`).join(' ')}</nav></div><h3>${esc(m.title.replace(/outlook/i,'conditions'))}</h3>${conditionsScope!=='day'?`<p>${esc(m.intro)}</p><p class="note">${records.length} recorded sessions in this period. Measurements below summarize snapshots, not full-period extrema. Latest session evaluation: ${esc(day)}.</p>${measures}`:''}${marketSummary(day,false)||'<p class="note">Waiting for verified data. Your calendar restrictions still apply.</p>'}<p class="note">Automatic collections: weekdays at 8 AM, 9 AM, 10 AM, noon, 4 PM and 5 PM NY. This page checks for published updates each minute while open.</p>${conditionGroupsHTML(a,'conditions-'+conditionsScope)}<details class="condition-guide"><summary>Rules, definitions & expiry calendar</summary><p>Overnight net: prior 18:00 NY open to 09:29 close. Before 09:29, “so far” uses the actual completed source minute. Sit out at 500 net points or more in either direction. Use the net move from the prior open to the reading.</p><p>VIX above 18 is your caution threshold. Expanding means more than +2% versus prior close; contracting below −2%; otherwise stable. These are descriptive thresholds. Behavior labels use net move / session range ≥60% for a trend. A signal is not a validated prediction.</p><p>Broad tech participation: ≥5/7 aligned; divergent: ≥4/7 opposed; otherwise mixed. All moves share one minute and comparable prior RTH-close baselines. Dynamic inputs older than 90 minutes during 08:00–16:30 NY are excluded. Final session measurements retain their original source times.</p><p>Upcoming expiry dates: ${next.map(esc).join(' · ')}.</p><p><a href="https://www.optionseducation.org/referencelibrary/expiration-calendar" target="_blank" rel="noopener">OCC expiry calendar</a> · <a href="https://www.cboe.com/tradable_products/vix/" target="_blank" rel="noopener">Cboe VIX</a></p></details>${n.mcComment?`<p>${esc(n.mcComment)}</p>`:''}${recordingInfo(day)}${conditionsScope!=='day'&&records.length?`<details><summary>Evaluate each recorded session</summary>${records.map(r=>`<p><button class="btn" data-condition-session="${r.date}">${r.date}</button> ${esc(marketAssessment(r.date).level)}</p>`).join('')}</details>`:''}</div></details>`;
   }
   function refreshConditions(){if(DATA)render();}
   function bindMarketConditions(){
@@ -570,15 +665,17 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
   function tileClass(day){
     if (!day) return "";
-    if (day.holidayType === "closed" || day.holidayType === "bank") return "shol";
+    if (day.holidayType === "closed") return "shol";
+    if (day.conditionsDanger) return LABEL_CLASS(-2)+" condition-danger";
+    if (day.holidayType === "bank") return "shol";
     if (day.holidayType === "half") return "shalf";
-    return LABEL_CLASS(day.score)+(day.conditionsDanger?' condition-danger':'');
+    return LABEL_CLASS(day.score);
   }
   const isElectionDay = day => !!day && !!(day.electionDay || (day.notes || []).some(n => /^(?:Your Election Day rule:|(?:Midterm )?Election Day$)/i.test(n)));
   function topTag(day){
     if (!day) return "";
     if (isElectionDay(day)) return "Election Day";
-    if (day.conditionsDanger) return "Overnight 450+";
+    if (day.conditionsDanger) return "Overnight 500+";
     if (day.opex) return day.expiryLabel||"OPEX";
     if (day.holiday) return day.holidayType === "half" ? "Half" : day.holiday;
     const reds = day.marks.filter(m => m[2] === "news");
@@ -589,11 +686,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   // a bank holiday with futures open is a "fake holiday": say the market is open
   function dayLabel(day){
     if (day.holidayType === "closed") return "Markets closed";
+    if (day.conditionsDanger) return "Sit out";
     if (day.holidayType === "bank") return "Markets open";
     return day.label;
   }
   function dayHeadline(day){
     if (day.holidayType === "closed") return "Markets closed · " + day.holiday;
+    if (day.conditionsDanger) return "Sit out · Overnight 500+";
     if (day.holidayType === "bank") return "Markets open · " + day.holiday;
     return (isElectionDay(day) ? "Election Day · " : "") + (day.opex ? (day.expiryLabel||"OPEX")+" · " : "") + (day.holiday || day.label);
   }
@@ -1211,14 +1310,23 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     if(marketNum(n,'mcRange')!=null)context.push(`Recorded RTH range ${esc(n.mcRange)} NQ points`);
     const breadth=techBreadth(n);if(breadth.label!=='Not recorded')context.push(esc(breadth.detail));
     const sourceLinks=(m.record?.sources||[]).filter(s=>/^https:\/\//i.test(s.url)).map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a> · ${esc(stampNY(Date.parse(s.asOf)))}</li>`).join('');
-    const manual=false;
-    $('view').innerHTML=`<section class="panel outlook"><header class="outlook-head"><div><span class="eyebrow">NQ Planner · Outlook</span><h2>${esc(m.title)}</h2></div><button class="btn" data-outlook-schedule>View schedule</button></header><div class="outlook-tabs" role="group" aria-label="Outlook period">${[['month','Monthly'],['week','Weekly'],['day','Daily']].map(([k,label])=>`<button class="btn" data-outlook-scope="${k}" aria-pressed="${view===k}">${label}</button>`).join('')}</div><p class="outlook-lede">${esc(m.intro)}</p>${m.missing?`<p class="outlook-warning">${m.missing} weekday${m.missing===1?'':'s'} ${m.missing===1?'is':'are'} outside the recorded calendar coverage. This outlook is partial.</p>`:''}<div class="outlook-cols"><section><h3>Key events</h3>${rows||'<p class="outlook-empty">No verified event entries are available for this period.</p>'}</section><aside class="outlook-side"><section><h3>Trading focus</h3>${m.focus.length?`<ul>${m.focus.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:'<p>No day-specific trading plan is recorded for this period.</p>'}</section><section><h3>Recorded market context</h3>${context.length?`<p>${esc(m.contextDay)}${manual?' · includes your manual observations':''}</p><ul>${context.map(t=>`<li>${t}</li>`).join('')}</ul>${sourceLinks?`<ul>${sourceLinks}</ul>`:''}<p>This is a dated snapshot; source observation times are shown above.</p>`:'<p>No verified market context is recorded for this period yet. Earnings, positioning and broader headlines are added only when supported by a dated source.</p>'}</section></aside></div><footer class="outlook-source">Based on the planner calendar, updated ${esc(DATA.updated)}. All release times are New York time. Entries marked “est.” remain estimated.<br>Calendar sources: ${DATA.sources.map(esc).join(' · ')}.</footer></section>`;
+    const weekly=m.scope==='week';
+    const assessment=weekly&&m.contextDay?marketAssessment(m.contextDay):null;
+    const weeklyConditions=weekly?`<section class="outlook-market">
+      <h3>Market conditions</h3>
+      <p class="note">${assessment?`Latest recorded session · ${esc(short(m.contextDay))}`:'Waiting for a recorded session this week. Expand a section to see what it tracks.'}</p>
+      ${assessment?marketSummary(m.contextDay,false):''}
+      ${assessment?.n.mcComment?`<p>${esc(assessment.n.mcComment)}</p>`:''}
+      ${conditionGroupsHTML(assessment||marketAssessment(cursor),'outlook-week')}
+    </section>`:'';
+    $('view').innerHTML=`<section class="panel outlook"><header class="outlook-head"><div><span class="eyebrow">NQ Planner · Outlook</span><h2>${esc(m.title)}</h2></div><button class="btn" data-outlook-schedule>View schedule</button></header><div class="outlook-tabs" role="group" aria-label="Outlook period">${[['month','Monthly'],['week','Weekly'],['day','Daily']].map(([k,label])=>`<button class="btn" data-outlook-scope="${k}" aria-pressed="${view===k}">${label}</button>`).join('')}</div><p class="outlook-lede">${esc(m.intro)}</p>${m.missing?`<p class="outlook-warning">${m.missing} weekday${m.missing===1?'':'s'} ${m.missing===1?'is':'are'} outside the recorded calendar coverage. This outlook is partial.</p>`:''}${weeklyConditions}<div class="outlook-cols"><section><h3>Key events</h3>${rows||'<p class="outlook-empty">No verified event entries are available for this period.</p>'}</section><aside class="outlook-side"><section><h3>Trading focus</h3>${m.focus.length?`<ul>${m.focus.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:'<p>No day-specific trading plan is recorded for this period.</p>'}</section>${weekly?'':`<section><h3>Recorded market context</h3>${context.length?`<p>${esc(m.contextDay)}</p><ul>${context.map(t=>`<li>${t}</li>`).join('')}</ul>${sourceLinks?`<ul>${sourceLinks}</ul>`:''}<p>This is a dated snapshot; source observation times are shown above.</p>`:'<p>No verified market context is recorded for this period yet. Earnings, positioning and broader headlines are added only when supported by a dated source.</p>'}</section>`}</aside></div><footer class="outlook-source">Based on the planner calendar, updated ${esc(DATA.updated)}. All release times are New York time. Entries marked “est.” remain estimated.<br>Calendar sources: ${DATA.sources.map(esc).join(' · ')}.</footer></section>`;
     $('view').querySelectorAll('[data-outlook-scope]').forEach(b=>b.onclick=()=>{view=b.dataset.outlookScope;render();});
     $('view').querySelectorAll('[data-outlook-day]').forEach(b=>b.onclick=()=>{cursor=b.dataset.outlookDay;view='day';render();});
     $('view').querySelector('[data-outlook-schedule]').onclick=()=>{outlookMode=false;render();};
   }
 
   function render(){
+    const openSections=new Set([...document.querySelectorAll('.condition-accordion[open]')].map(section=>section.dataset.conditionKey));
     applyMarketConditions();$("condition-host").innerHTML=marketConditionCard();bindMarketConditions();
     $("condition-host").hidden=outlookMode;$("outlook-toggle").setAttribute('aria-pressed',String(outlookMode));
     $("sheet").hidden = true; miniMonth = null;
@@ -1232,6 +1340,9 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     else if (view === "month") renderMonth(); else if (view === "week") (dk ? renderWeekDesk : renderWeek)(); else (dk ? renderDayDesk : renderDay)();
     if (dk) { renderMini(); renderBrk(); renderUpcoming(); if (view === "month" && !listMode && !outlookMode) $("title").textContent = MON[D(cursor).getUTCMonth()] + ", " + D(cursor).getUTCFullYear(); }
     if (!dk && view !== "day") { $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px"; }
+    document.querySelectorAll('.condition-accordion').forEach(section=>{
+      if(openSections.has(section.dataset.conditionKey))section.open=true;
+    });
     renderNow(); renderNotifications(); writeHash();
   }
 

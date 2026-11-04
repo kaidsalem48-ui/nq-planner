@@ -94,10 +94,11 @@ final overnight/opening-gap/prior-range measurements keep their source times.
 Historical session views remain explicitly dated.
 
 User rules: VIX >18 is caution; VIX >18 and >2% above previous close reduces
-aggression. Absolute overnight net >200 points is caution; >=450 points gets a
-strong red large-move alert. Before 09:29 use `mcOvernightSoFar` with its actual
-source minute and a provisional label. Final `mcOvernight` retains the exact
-18:00-to-09:29 definition. High–low range is never substituted for signed net.
+aggression. A net overnight move of at least 500 points in either direction
+marks the session Sit out, turns the trading windows red, and raises an alert.
+Before the final reading, use `mcOvernightSoFar` with its actual source minute
+and keep a provisional restriction in effect until the final
+`mcOvernight` reading supersedes it and uses the 18:00-to-09:29 definition. Use the signed net move for this rule.
 
 **Updated Election Day rule:** do not trade after 09:30 New York; the user expects
 poor, unpredictable price action. This supersedes the old after-09:30 1:1R rule.

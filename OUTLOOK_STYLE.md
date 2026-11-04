@@ -213,9 +213,9 @@ conclusion. Apply `conditions-engine.js` and RECORDING.md for the exact rules.
 Explain high VIX, overnight magnitude, gap versus range, synchronized tech
 participation, rates/dollar and expiry in plain language. Tie the observations
 to risk and patience without claiming a statistically reliable prediction.
-A 450+ absolute overnight net move warrants a prominent warning on the trading
-date; preserve the existing >200-point caution. Distinguish premarket “so far”
-from the final 09:29 endpoint, and signed net move from high–low range.
+An overnight net move of at least 500 points in either direction means Sit out
+under the user’s rule. Label premarket “so far” readings provisional. The final
+09:29 reading supersedes the provisional reading. Use the net move for the rule.
 Dealer gamma, dealer-hedging claims and inferred inventory are removed.
 Election Day now means **do not trade after 9:30 AM New York** under the user's
 poor-price-action rule. This replaces the former after-9:30 1:1R allowance.
