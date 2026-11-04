@@ -6,10 +6,12 @@ function fixture(values={},date=day){const v={...base,...values};return {recorde
 function assess(values={},options={}){return engine.evaluate(fixture(values),{day,now,calendarKnown:true,...options});}
 assert.equal(assess().level,'Reviewed');
 for(const value of [500,-500,550,-550]){const a=assess({mcOvernight:value});assert.equal(a.level,'Sit out');assert.equal(a.restricted,true);assert(a.alerts.some(i=>i.severity==='danger'&&i.measurement===String(value)));assert(a.groups.find(g=>g.id==='overnight').reading.includes(String(Math.abs(value))));}
+for(const value of [500,-500]){const a=assess({mcOvernight:value},{pmEligible:true});assert.equal(a.level,'AM sit out');assert.equal(a.pmWatch,true);assert(a.plan.includes('1:30–4:00 PM NY'));assert(a.alerts.some(i=>i.severity==='danger'&&i.title.startsWith('AM sit out')));}
 for(const value of [0,499.75,-499.75,450,-450,201,-201]){const a=assess({mcOvernight:value});assert.equal(a.large,false);assert.equal(a.level,'Reviewed');assert(a.alerts.some(alert=>alert.id.endsWith(':overnight-final')&&alert.severity==='info'&&alert.measurement===String(value)));}
 assert.equal(assess({mcOvernight:200}).reasons.length,0);
 assert.equal(assess({mcOvernight:0,mcOvernightRange:600}).large,false,'Range must not substitute for signed net');
 const provisional=fixture({mcOvernight:undefined,mcOvernightSoFar:-500});const p=engine.evaluate(provisional,{day,now,calendarKnown:true});assert(p.preliminary&&p.large&&p.restricted);assert(p.alerts.find(a=>a.severity==='danger').message.includes('Sit out for now'));
+assert.equal(engine.evaluate(provisional,{day,now,calendarKnown:true,pmEligible:true}).pmWatch,false,'No PM watch until final overnight reading');
 assert.equal(engine.evaluate(provisional,{day,now:Date.parse('2026-11-04T12:00:00-05:00')}).level,'Sit out','Premarket restriction persists until the final reading arrives');
 assert.equal(assess({mcOvernight:100,mcOvernightSoFar:-500}).level,'Reviewed','Final measurement supersedes provisional restriction');
 assert.equal(assess({mcVix:25,mcVol:'Expanding'}).level,'Reduced');
@@ -22,7 +24,9 @@ const future=fixture();future.sources.forEach(s=>s.asOf='2026-11-04T11:00:00-05:
 const bad=fixture();bad.sources.forEach(s=>s.url='javascript:alert(1)');assert.equal(engine.evaluate(bad,{day,now}).vix,null);
 const oldGamma=assess({mcGamma:'Short gamma',mcPositioning:'Crowded shorts'});assert.deepEqual(oldGamma.groups.map(({sources,...g})=>g),assess().groups.map(({sources,...g})=>g),'Retired positioning inputs cannot change conclusions');assert.equal(oldGamma.level,assess().level);assert.equal(oldGamma.n.mcGamma,undefined);
 const election=engine.evaluate(fixture({mcOvernight:500},'2026-11-03'),{day:'2026-11-03',now:Date.parse('2026-11-03T10:00:00-05:00'),calendarKnown:true});assert.equal(election.level,'Sit out');assert(election.plan.includes('do not trade after 9:30'));assert(election.alerts.some(a=>a.id.endsWith(':election')));
+assert.equal(engine.evaluate(fixture({mcOvernight:500},'2026-11-03'),{day:'2026-11-03',now:Date.parse('2026-11-03T10:00:00-05:00'),calendarKnown:true,pmEligible:true}).pmWatch,false,'Election Day keeps its stronger restriction');
 assert.equal(assess({}, {expiry:'OPEX'}).level,'Reduced');assert.equal(assess({}, {closed:true}).level,'Sit out');
+assert.equal(assess({mcOvernight:500},{closed:true,pmEligible:true}).pmWatch,false,'Closed market has no PM watch');
 const current=assess({mcOvernight:500}).alerts,seen=Object.fromEntries(current.map(a=>[a.id,true]));assert.equal(engine.unread(current,seen).length,0);assert(engine.unread(assess({mcOvernight:550}).alerts,seen).length>0);
 assert.equal(assess({mcRange:600,mcPriorRange:300}).groups.find(g=>g.id==='range').state,'Caution');
 const noData=engine.evaluate(undefined,{day,now,calendarKnown:false});assert.equal(noData.level,'Incomplete');

@@ -213,9 +213,13 @@ conclusion. Apply `conditions-engine.js` and RECORDING.md for the exact rules.
 Explain high VIX, overnight magnitude, gap versus range, synchronized tech
 participation, rates/dollar and expiry in plain language. Tie the observations
 to risk and patience without claiming a statistically reliable prediction.
-An overnight net move of at least 500 points in either direction means Sit out
-under the user’s rule. Label premarket “so far” readings provisional. The final
-09:29 reading supersedes the provisional reading. Use the net move for the rule.
+An overnight net move of at least 500 points in either direction blocks the
+New York AM session. Label premarket “so far” readings provisional. The final
+09:29 reading supersedes the provisional reading. If the saved calendar allows
+the 13:30–16:00 NY PM segment, show a yellow conditional watch there after a
+choppy AM only when a cleaner setup confirms. Keep original red windows red.
+The illustrative 04:15–07:15 NY chart box shows an early move, not PM trading.
+Use the net move for the 500-point rule.
 Dealer gamma, dealer-hedging claims and inferred inventory are removed.
 Election Day now means **do not trade after 9:30 AM New York** under the user's
 poor-price-action rule. This replaces the former after-9:30 1:1R allowance.

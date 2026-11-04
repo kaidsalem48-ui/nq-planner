@@ -9,7 +9,7 @@
   const signed=v=>(v>0?'+':'')+Number(v.toFixed(2));
   const election=day=>{const d=new Date(day+'T12:00:00Z');return d.getUTCFullYear()%2===0&&d.getUTCMonth()===10&&d.getUTCDay()===2&&d.getUTCDate()>=2&&d.getUTCDate()<=8;};
   function evaluate(record,options){
-    const {day,expiry='',calendarKnown=true,closed=false}=options;
+    const {day,expiry='',calendarKnown=true,closed=false,pmEligible=false}=options;
     const now=options.now??Date.now(),today=nyDate(now),minute=nyMinute(now),live=day===today&&minute>=480&&minute<990;
     const raw=record?.values||{},recordedAt=Date.parse(record?.recordedAt),validSources=(record?.sources||[]).filter(s=>{
       const t=Date.parse(s.asOf);return String(s.url||'').startsWith('https://')&&Array.isArray(s.fields)&&Number.isFinite(t)&&Number.isFinite(recordedAt)&&t<=recordedAt&&recordedAt<=now+60000&&t<=now+60000&&nyDate(t)===day;
@@ -43,17 +43,18 @@
     const preliminary=final===null&&soFar!==null;
     const overnightRange=number('mcOvernightRange',true),overnightType=text('mcOvernightType',['Trend up','Trend down','Balanced','Reversal'],true);
     const large=overnight!==null&&Math.abs(overnight)>=RULES.overnightLarge;
+    const pmWatch=large&&!preliminary&&!closed&&!election(day)&&pmEligible;
     const moveReading=overnight===null?'Waiting for a verified overnight move.':`${preliminary?'Overnight so far':'Final overnight net'}: ${signed(overnight)} NQ points from the prior 6 PM NY open to ${preliminary?'the observation time':'9:29 AM NY'}.`;
-    const overnightPlan=preliminary?'Sit out for now. Recheck when the final 9:29 AM reading is published.':'Sit out this trading day under your 500-point overnight rule.';
+    const overnightPlan=preliminary?'Sit out for now. Recheck when the final 9:29 AM reading is published.':pmWatch?'Sit out the New York AM session. Watch 1:30–4:00 PM NY only if the morning was choppy and a cleaner setup confirms. PM quality is not guaranteed.':'Sit out this trading day under your 500-point overnight rule and existing calendar restrictions.';
     const overnightConclusion=large?overnightPlan:overnight===null?'Wait for a verified reading.':preliminary?'The reading so far is below 500 points. Recheck after 9:29 AM.':'The final move is below 500 points. Use the other conditions and calendar rules to plan the session.';
-    group('overnight','Overnight move',large?'Sit out':overnight===null?'Unknown':'Observed',
+    group('overnight','Overnight move',large?(pmWatch?'AM sit out':'Sit out'):overnight===null?'Unknown':'Observed',
       moveReading+(overnightRange!==null?` High–low range: ${overnightRange} points.`:' Full high–low range unavailable.'),
-      `A net move of 500 points or more in either direction triggers your sit-out rule. The high–low range measures the session’s full span.${overnightType?' Recorded behavior: '+overnightType.toLowerCase()+'.':''}`,
+      `A net move of 500 points or more in either direction blocks the New York AM session. An otherwise eligible 1:30–4:00 PM NY window becomes a conditional watch after the final reading. Other red calendar restrictions still apply. The high–low range measures the session’s full span.${overnightType?' Recorded behavior: '+overnightType.toLowerCase()+'.':''}`,
       overnightConclusion,[final!==null?'mcOvernight':'mcOvernightSoFar','mcOvernightRange','mcOvernightType']);
     if(large){
-      reasons.push(`${preliminary?'Overnight so far':'Overnight net move'} ${signed(overnight)} points meets your 500-point sit-out rule.`);
+      reasons.push(`${preliminary?'Overnight so far':'Overnight net move'} ${signed(overnight)} points meets your 500-point AM sit-out rule.`);
       const stage=preliminary?'provisional':'final';
-      alert('overnight-large-'+stage+'-'+Math.floor(Math.abs(overnight)/50),'Sit out · Overnight '+signed(overnight)+' NQ pts',moveReading+' '+overnightPlan,'danger',String(overnight));
+      alert('overnight-large-'+stage+'-'+Math.floor(Math.abs(overnight)/50),(pmWatch?'AM sit out':'Sit out')+' · Overnight '+signed(overnight)+' NQ pts',moveReading+' '+overnightPlan,'danger',String(overnight));
     }
     if(overnight!==null&&!large){
       const stage=preliminary?'provisional':'final';
@@ -91,10 +92,10 @@
     if(!record&&day===today)alert('missing','Conditions not recorded yet','No verified snapshot for this trading date. The next scheduled collection will update it.');
     const isElection=election(day);
     if(isElection){reasons.unshift('Your Election Day rule: do not trade after 09:30 New York; you expect unreliable price action.');alert('election','Election Day: no trading after 9:30','Your saved rule: do not trade after 9:30 AM New York. You expect poor, unpredictable price action. Existing pre-open restrictions also remain.', 'danger');}
-    const restricted=isElection||closed||large,level=restricted?'Sit out':reasons.length?'Reduced':missingGroups.length||!calendarKnown?'Incomplete':watch.length?'Selective':'Reviewed';
+    const restricted=isElection||closed||large,level=restricted?(pmWatch?'AM sit out':'Sit out'):reasons.length?'Reduced':missingGroups.length||!calendarKnown?'Incomplete':watch.length?'Selective':'Reviewed';
     const plan=closed?'Market closed in the planner. Do not trade the regular session.':isElection?'Election Day: do not trade after 9:30 AM New York under your saved rule. The pre-open restrictions remain.':large?overnightPlan:expiry?'Your expiry plan: target 1:1, no partials; reduce aggression.':reasons.length?'Reduce aggression and wait for clean confirmation. '+reasons[0]:missingGroups.length||!calendarKnown?'Context is incomplete. Wait for verified observations before increasing aggression.':'Available context reviewed. Follow the scheduled restrictions and require confirmation from the setup; this is not an automatic green light.';
     if(typeof raw.mcComment==='string')evidence('mcComment',true);
-    return {day,n,expiry,vix,overnight,breadth,reasons,watch,missing:missingGroups,groups,alerts,level,plan,restricted,large,preliminary,stale};
+    return {day,n,expiry,vix,overnight,breadth,reasons,watch,missing:missingGroups,groups,alerts,level,plan,restricted,large,preliminary,pmWatch,stale};
   }
   function unread(alerts,seen){return alerts.filter(a=>!seen[a.id]);}
   const api={evaluate,unread,RULES,election,nyDate,nyMinute};

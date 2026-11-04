@@ -95,7 +95,13 @@ Historical session views remain explicitly dated.
 
 User rules: VIX >18 is caution; VIX >18 and >2% above previous close reduces
 aggression. A net overnight move of at least 500 points in either direction
-marks the session Sit out, turns the trading windows red, and raises an alert.
+blocks the New York AM session and raises a red alert. Once the final 09:29
+reading is available, an otherwise eligible 13:30–16:00 NY segment becomes a
+yellow PM watch if the AM session was choppy and a cleaner setup confirms.
+This is a conditional observation window, not a claim that PM will trade well.
+Original red calendar windows, Election Day and closed/short sessions remain
+blocked. The illustrated 04:15–07:15 NY move describes the early overnight
+move; it is not the PM trading window.
 Before the final reading, use `mcOvernightSoFar` with its actual source minute
 and keep a provisional restriction in effect until the final
 `mcOvernight` reading supersedes it and uses the 18:00-to-09:29 definition. Use the signed net move for this rule.
@@ -106,12 +112,17 @@ The established pre-open restriction remains. The calendar generator paints
 Election Day NY windows red and assigns Sit out; no claim is made that every
 Election Day must statistically have poor price action.
 
-The Updates control beside Show list has a red unread count and a persistent
+The Updates control beside Market conditions has a red unread count and a persistent
 high-risk indicator. Alerts use stable date/type/threshold identifiers, allowing
 read warnings to stay available without repeatedly becoming new. A materially
 larger overnight bucket (50 points) or final measurement gets a new identifier.
-Mark all read stores acknowledgment on that device. It never clears the risk
-rule or day warning. Each new published snapshot gets its own update entry. Updates also shows the signed overnight net move each trading day. The provisional entry updates as measurements arrive. The final 09:29 NY reading takes its place.
+Opening a specific update marks it read on that device. It never clears the risk
+rule or day warning. The list scrolls after four entries, and the date appears
+in an opened update. Each new published snapshot gets its own update entry.
+Updates also shows the signed overnight net move each trading day. The
+provisional entry updates as measurements arrive. The final 09:29 NY reading
+takes its place. Market conditions is a separate weekly navigation view beside
+Show list, with day-specific recorded readings and source times.
 The page checks the archive every minute while open and on return to the app;
 failed refreshes show a connection warning and retain dated cached readings.
 These are in-app notices about scheduled observations, not OS push notifications

@@ -362,7 +362,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .brand{white-space:nowrap}
 @media (min-width:1100px){
   .ctl .seg3{order:1}
-  #lst{order:2}#prev{order:3}#today{order:4}#next{order:5}
+  #prev{order:3}#today{order:4}#next{order:5}
 }
 .market-conditions{margin:8px 0 12px}.market-conditions>summary{display:flex;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;padding:12px 16px}.market-conditions>summary:before{content:'›';font-size:18px}.market-conditions[open]>summary:before{transform:rotate(90deg)}.market-conditions .bd{border-top:1px solid var(--line)}.market-date{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px}.market-date .f{max-width:200px}.market-summary{border-left:3px solid var(--orange,#d99114);padding:10px 14px;margin:10px 0;background:var(--bg);border-radius:0 8px 8px 0}.market-summary-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.market-summary p{margin:8px 0}.market-summary ul{margin:8px 0;padding-left:20px}.condition-sections{border-top:1px solid var(--line);margin:12px 0}.condition-sections>details{border-bottom:1px solid var(--line);padding:10px 0}.condition-sections summary,.condition-guide summary{cursor:pointer;font-weight:600}.condition-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}.condition-grid input,.condition-grid select{width:100%;min-width:0}.condition-guide{margin-top:12px}.condition-guide p{max-width:75ch}.market-report-picker{max-width:330px;margin:8px 0 12px}@media(max-width:700px){.market-conditions{margin:6px 0 8px}.market-conditions>summary{padding:10px 12px}.condition-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.market-date{gap:8px}.market-summary{padding:10px}.condition-grid .f{font-size:11px}.condition-grid select{font-size:13px}.market-conditions .bd{padding:12px}}
 #condition-host .market-conditions{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin:10px 0}#condition-host .bd{padding:14px}#condition-host .note{font-size:12px;color:#aab3c4}#condition-host .f{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}#condition-host input,#condition-host select,#condition-host textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px;width:100%;min-width:0}#condition-host .chip{font-size:11px;border-radius:5px;padding:3px 7px;background:var(--panel-2);color:var(--fg)}#condition-host .chip.y{background:var(--sy);color:var(--sy-fg)}#condition-host .market-summary{border-color:var(--sy-line)}#condition-host p,#condition-host li{font-size:13px}#condition-host a{color:#a89fff}#condition-host summary:focus-visible,#condition-host input:focus-visible,#condition-host select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}#condition-host .condition-grid .f{min-width:0}@media(max-width:700px){#condition-host .bd{padding:12px}}
@@ -374,6 +374,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 #market-conditions[open] > .bd{max-height:65vh;max-height:65dvh;overflow-y:auto;scrollbar-gutter:stable}.updates-content{max-height:45dvh;overflow-y:auto;overscroll-behavior:contain}.updates-content nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0}.updates-content button:disabled{opacity:.4;cursor:default}.update-row{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left}.update-row:hover{background:var(--panel-2)}.update-row.danger{color:var(--sr-fg)}@media(min-width:1050px){.condition-evaluations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:32px}.condition-evaluations .condition-evaluation{max-width:none;min-width:0;overflow-wrap:anywhere}}#market-updates{position:fixed;z-index:1000;box-sizing:border-box;width:min(480px,calc(100vw - 24px));margin:0;max-height:min(60dvh,calc(100dvh - var(--updates-top,0px) - 12px));overflow:auto;box-shadow:0 12px 32px #0008}
 #market-updates .updates-content{max-height:none;overflow:visible}
+#market-updates .updates-content.is-list{max-height:min(208px,45dvh);overflow-y:auto;scrollbar-gutter:stable}
+#market-updates .update-row{box-sizing:border-box;min-height:52px;height:52px;padding:8px 4px;align-items:center}
+#market-updates .update-row strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;font-size:.86rem;line-height:1.3}
+.update-date{display:block;margin:4px 0;color:var(--muted);font-size:.78rem}
 
 .condition-evaluations{display:grid;gap:8px;align-items:start;margin:14px 0 20px}
 .condition-evaluations .condition-accordion{padding:0;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);max-width:none;min-width:0}
@@ -392,6 +396,21 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .outlook-market{margin:0 0 24px}
 .outlook-market>.note{margin:0 0 10px;color:var(--muted)}
 @media(min-width:1050px){.condition-evaluations{column-gap:12px}}
+
+.outlook-weekly h2{font-size:1.35rem;margin:0}
+.weekly-brief{max-width:90ch;margin-bottom:24px;font-size:1rem;line-height:1.68}
+.weekly-brief p{margin:0 0 15px}
+.weekly-brief a{color:#b7adff;font-size:.82em}
+.weekly-support{max-width:90ch;margin:0 0 10px;border-top:1px solid var(--line)}
+.weekly-support>summary{padding:11px 0;cursor:pointer;font-weight:700}
+.weekly-support>.outlook-day{margin-left:12px}
+.conditions-page{padding:clamp(18px,3vw,34px);margin-top:12px}
+.conditions-page h2{margin:0 0 8px;font-size:clamp(1.45rem,3vw,2rem)}
+.conditions-page .conditions-intro{max-width:72ch;color:var(--muted);margin:0 0 18px;line-height:1.5}
+.conditions-page .conditions-days{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px}
+.conditions-page .conditions-days button[aria-pressed=true],#conditions-toggle[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.conditions-page .condition-evaluations{grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr))}
+@media(max-width:639px){.navrow #outlook-toggle{grid-column:1 / 3}.navrow #today{grid-column:3}.navrow .list-updates{grid-column:1 / -1;grid-row:2;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}.list-updates #lst,.list-updates #conditions-toggle{width:100%;white-space:nowrap}.list-updates .updates-toggle{grid-column:1 / -1;justify-content:center}.navrow .nav-arrows{grid-row:3}.navrow .title{grid-row:3}.list-updates .update-label{display:inline}}
 </style>
 </head>
 <body>
@@ -417,7 +436,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     </div>
     <div class="navrow">
       <button class="btn" id="outlook-toggle" aria-pressed="false">Outlook</button>
-      <span class="list-updates"><button class="btn" id="lst" aria-pressed="false">Show list</button><button class="btn updates-toggle" id="updates-toggle" aria-expanded="false" aria-controls="market-updates" aria-label="Market condition updates"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="update-label">Updates</span><span id="update-count" hidden></span></button></span>
+      <span class="list-updates"><button class="btn" id="lst" aria-pressed="false">Show list</button><button class="btn" id="conditions-toggle" aria-pressed="false">Market conditions</button><button class="btn updates-toggle" id="updates-toggle" aria-expanded="false" aria-controls="market-updates" aria-label="Updates"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="update-label">Updates</span><span id="update-count" hidden></span></button></span>
       <button class="btn" id="today">Today</button>
       <span class="nav-arrows"><button class="arrow" id="prev" aria-label="Previous">&#8249;</button>
       <button class="arrow" id="next" aria-label="Next">&#8250;</button></span>
@@ -425,7 +444,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     </div>
   </section>
 
-  <section id="market-updates" class="market-updates" aria-label="Market updates" hidden></section>
+  <section id="market-updates" class="market-updates" aria-label="Updates" hidden></section>
   <div id="updates-live" class="sr-only" role="status" aria-live="polite"></div>
   <div id="condition-host"></div>
   <main id="view"></main>
@@ -460,7 +479,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   }
   let NOW = nyNow();
 
-  let DATA, BY = {}, view = "month", cursor = NOW.date, listMode = false, outlookMode = false;
+  let DATA, BY = {}, view = "month", cursor = NOW.date, listMode = false, outlookMode = false, conditionsMode = false;
   let expanded = false; try { expanded = localStorage.getItem("nq-expanded") === "1"; } catch (e) {}
   const setExpanded = v => { expanded = v; try { localStorage.setItem("nq-expanded", v ? "1" : "0"); } catch (e) {} };
 
@@ -482,12 +501,19 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
         d.opexRule=assessment.plan;
       }
       d.conditionsDanger=assessment.large;
+      d.conditionsPmWatch=assessment.pmWatch;
       if(assessment.large&&d.holidayType!=='closed'){
         d.score=-2;
-        d.label='Sit out';
+        d.label=assessment.pmWatch?'AM sit out · PM watch':'Sit out';
         const reason='Overnight net move reached 500 points. '+assessment.plan;
-        const block=segments=>segments.map(segment=>[segment[0],segment[1],'r',reason]);
-        d.segs=block(d.segs);
+        const windowReason='500+ overnight points · '+(assessment.pmWatch?'AM sit out':'Sit out');
+        const block=segments=>segments.map(segment=>[segment[0],segment[1],'r',segment[2]==='r'?segment[3]+' · '+windowReason:windowReason]);
+        d.segs=assessment.pmWatch?d.segs.flatMap(segment=>{
+          const [start,end,color,note]=segment,pmStart=13*60+30;
+          if(color==='r'||toMin(end)<=pmStart)return [[start,end,'r',color==='r'?note+' · '+windowReason:windowReason]];
+          const pmNote=note+' · PM watch after 500+ overnight points. Require a cleaner setup.';
+          return toMin(start)<pmStart?[[start,'13:30','r',windowReason],['13:30',end,'y',pmNote]]:[[start,end,'y',pmNote]];
+        }):block(d.segs);
         d.asia=block(d.asia||[]);
         d.why=[reason,d.why].join(' ');
       }else if(assessment.level==='Reduced'&&!['closed','bank'].includes(d.holidayType)){
@@ -514,8 +540,11 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   }
   function expiryForDay(day){const override=marketRecord(day).mcExpiry;return override==='None'?'':override||scheduledExpiry(day);}
   const conditionEngine=window.NQConditions;
-  function marketAssessment(day){return conditionEngine.evaluate(AUTO_CONDITIONS.days?.[day],{day,now:Date.now(),expiry:scheduledExpiry(day),calendarKnown:!!BY[day],closed:BY[day]?.holidayType==='closed'});}
-  const riskChip=a=>['Sit out','High risk'].includes(a.level)?'r':['Reduced','Selective'].includes(a.level)?'y':'n';
+  function marketAssessment(day){
+    const base=marketBase[day]||BY[day],pmEligible=!!base&&base.score!==-2&&!['closed','half','bank'].includes(base.holidayType)&&base.segs?.some(segment=>segment[2]!=='r'&&toMin(segment[0])<960&&toMin(segment[1])>810);
+    return conditionEngine.evaluate(AUTO_CONDITIONS.days?.[day],{day,now:Date.now(),expiry:scheduledExpiry(day),calendarKnown:!!BY[day],closed:base?.holidayType==='closed',pmEligible});
+  }
+  const riskChip=a=>['Sit out','AM sit out','High risk'].includes(a.level)?'r':['Reduced','Selective'].includes(a.level)?'y':'n';
   function marketSummary(day){
     const a=marketAssessment(day);if(!AUTO_CONDITIONS.days?.[day]&&!a.expiry&&!conditionEngine.election(day))return '';
     return `<section class="market-summary"><div class="market-summary-head"><b>Overall · ${esc(day)}</b><span class="chip ${riskChip(a)}">${a.level}</span></div><p>${esc(a.plan)}</p>${a.reasons.length?`<ul>${a.reasons.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:''}<p class="note">${a.missing.length?a.missing.length+(a.missing.length===1?' section is incomplete. ':' sections are incomplete. '):''}Assessment based on your trading rules and the recorded readings.</p></section>`;
@@ -577,7 +606,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const assessment=marketAssessment(day);
     if(!conditionEngine.election(day)&&!assessment.large)return '';
     const title=conditionEngine.election(day)?'Election Day restriction':'Large overnight move';
-    const reason=assessment.reasons.find(item=>item.includes('500-point sit-out'));
+    const reason=assessment.reasons.find(item=>item.includes('500-point AM sit-out'));
     return `<aside class="condition-notice" role="note"><b>${esc(day)} · ${title}</b><p>${esc(assessment.plan)}</p>${reason?`<p>${esc(reason)}</p>`:''}</aside>`;
   }
   let updatesOpen=false,selectedUpdate=null,seenUpdates={};try{seenUpdates=JSON.parse(localStorage.getItem('nq-condition-updates-seen-v1')||'{}');if(!seenUpdates||Array.isArray(seenUpdates)||typeof seenUpdates!=='object')seenUpdates={};}catch{}
@@ -609,13 +638,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   });
   function renderNotifications(){
     if(!DATA)return;const items=conditionUpdates(),unread=conditionEngine.unread(items,seenUpdates),danger=items.some(i=>i.severity==='danger'),button=$('updates-toggle');
-    button.classList.toggle('has-unread',unread.length>0);button.classList.toggle('has-danger',danger);button.setAttribute('aria-expanded',String(updatesOpen));button.setAttribute('aria-label',`Market updates: ${unread.length} unread${danger?', high-risk condition present':''}`);
+    button.classList.toggle('has-unread',unread.length>0);button.classList.toggle('has-danger',danger);button.setAttribute('aria-expanded',String(updatesOpen));button.setAttribute('aria-label',`Updates: ${unread.length} unread${danger?', high-risk condition present':''}`);
     $('update-count').hidden=!unread.length;$('update-count').textContent=String(unread.length);$('market-updates').hidden=!updatesOpen;positionUpdates();
-    const ids=unread.map(i=>i.id).join('|');if(ids!==lastUnread){$('updates-live').textContent=unread.length?`${unread.length} unread market updates. ${unread[0].title}.`:'';lastUnread=ids;}
+    const ids=unread.map(i=>i.id).join('|');if(ids!==lastUnread){$('updates-live').textContent=unread.length?`${unread.length} unread updates. ${unread[0].title}.`:'';lastUnread=ids;}
     const activeIndex=items.findIndex(item=>item.id===selectedUpdate);
     const active=items[activeIndex];
-    $('market-updates').innerHTML=`<header><h3>Market updates · ${esc(NOW.date)}</h3><button class="btn" id="updates-mark-read">Mark all read</button><button class="btn" id="updates-close" aria-label="Close market updates">Close</button></header>
-    <div class="updates-content">${active?`<nav aria-label="Browse updates"><button class="btn" data-update-back>All updates</button><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav><article class="market-update ${active.severity}"><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">Open weekly outlook</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span aria-hidden="true">›</span></button>`).join('')||'<p>No market updates for this date.</p>'}</div>`;
+    $('market-updates').innerHTML=`<header><h3>Updates</h3><button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
+    <div class="updates-content${active?'':' is-list'}">${active?`<nav aria-label="Browse updates"><button class="btn" data-update-back>All updates</button><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav><article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">Open market conditions</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span aria-hidden="true">›</span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
     $('market-updates').querySelectorAll('[data-update-index]').forEach(button=>button.onclick=()=>{
       selectedUpdate=items[Number(button.dataset.updateIndex)]?.id;
       if(selectedUpdate){
@@ -627,16 +656,16 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     });
     const back=$('market-updates').querySelector('[data-update-back]');
     if(back)back.onclick=()=>{selectedUpdate=null;renderNotifications();$('market-updates').querySelector('.update-row')?.focus();};
-    $('updates-mark-read').onclick=()=>{for(const item of items)seenUpdates[item.id]=Date.now();const keys=Object.keys(seenUpdates);for(const key of keys.slice(0,Math.max(0,keys.length-500)))delete seenUpdates[key];try{localStorage.setItem('nq-condition-updates-seen-v1',JSON.stringify(seenUpdates));}catch{}renderNotifications();};
     $('updates-close').onclick=()=>{updatesOpen=false;renderNotifications();button.focus();};
     $('market-updates').querySelectorAll('[data-update-day]').forEach(button=>button.onclick=()=>{
       cursor=button.dataset.updateDay;
       view='week';
-      outlookMode=true;
+      outlookMode=false;
+      conditionsMode=true;
       listMode=false;
       updatesOpen=false;
       render();
-      document.querySelector('.outlook-market')?.scrollIntoView({block:'start'});
+      $('view').scrollTo({top:0,behavior:'smooth'});
     });
   }
   $('updates-toggle').onclick=()=>{updatesOpen=!updatesOpen;selectedUpdate=null;renderNotifications();};
@@ -669,34 +698,35 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   // a bank holiday with futures open is a "fake holiday": say the market is open
   function dayLabel(day){
     if (day.holidayType === "closed") return "Markets closed";
-    if (day.conditionsDanger) return "Sit out";
+    if (day.conditionsDanger) return day.conditionsPmWatch?"AM sit out · PM watch":"Sit out";
     if (day.holidayType === "bank") return "Markets open";
     return day.label;
   }
   function dayHeadline(day){
     if (day.holidayType === "closed") return "Markets closed · " + day.holiday;
-    if (day.conditionsDanger) return "Sit out · Overnight 500+";
+    if (day.conditionsDanger) return day.conditionsPmWatch?"AM sit out · PM watch · Overnight 500+":"Sit out · Overnight 500+";
     if (day.holidayType === "bank") return "Markets open · " + day.holiday;
     return (isElectionDay(day) ? "Election Day · " : "") + (day.opex ? (day.expiryLabel||"OPEX")+" · " : "") + (day.holiday || day.label);
   }
 
   /* ---------- routing ---------- */
   function readHash(){
-    const m = location.hash.match(/^#(outlook-)?(month|week|day|list)-(\d{4}-\d{2}-\d{2})$/);
-    if (m) { outlookMode=!!m[1]; listMode = !outlookMode && m[2] === "list"; if (m[2] !== "list") view = m[2]; cursor = m[3]; }
+    const m = location.hash.match(/^#(outlook-|conditions-)?(month|week|day|list)-(\d{4}-\d{2}-\d{2})$/);
+    if (m) { outlookMode=m[1]==='outlook-'; conditionsMode=m[1]==='conditions-'; listMode = !outlookMode&&!conditionsMode && m[2] === "list"; if (m[2] !== "list") view = m[2]; cursor = m[3]; }
   }
-  function writeHash(){ history.replaceState(null, "", "#" + (outlookMode ? "outlook-" : "") + (listMode ? "list" : view) + "-" + cursor); }
+  function writeHash(){ history.replaceState(null, "", "#" + (conditionsMode?'conditions-':outlookMode?'outlook-':'') + (listMode ? "list" : view) + "-" + cursor); }
 
-  function setView(v){ view = v; listMode = false; render(); }
+  function setView(v){ view = v; listMode = false; conditionsMode=false; render(); }
   ["month","week","day"].forEach(v => $("v-" + v).onclick = () => setView(v));
-  $("outlook-toggle").onclick = () => {outlookMode=!outlookMode;listMode=false;render();};
+  $("outlook-toggle").onclick = () => {outlookMode=!outlookMode;conditionsMode=false;listMode=false;render();};
+  $("conditions-toggle").onclick = () => {conditionsMode=!conditionsMode;outlookMode=false;listMode=false;view='week';render();};
   $("today").onclick = () => { cursor = NOW.date; render(); };
   $("prev").onclick = () => step(-1);
   $("next").onclick = () => step(1);
-  $("lst").onclick = () => { outlookMode=false;listMode = !listMode; render(); };
+  $("lst").onclick = () => { outlookMode=false;conditionsMode=false;listMode = !listMode; render(); };
   $("brand").onclick = () => { $("brand").classList.add("spin"); setTimeout(() => location.reload(), 250); };
   function step(n){
-    if (listMode) cursor = addDays(monday(cursor), 7*n);
+    if (conditionsMode||listMode) cursor = addDays(monday(cursor), 7*n);
     else if (view === "month") { const d = D(cursor); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth()+n); cursor = iso(d); }
     else if (view === "week") cursor = addDays(monday(cursor), 7*n);
     else { let s = cursor; do { s = addDays(s, n); } while ([0,6].includes(D(s).getUTCDay())); cursor = s; }
@@ -1240,7 +1270,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       end=iso(new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0,12)));
       title=`${MON[d.getUTCMonth()]} ${d.getUTCFullYear()} outlook`;
     }else if(scope==='week'){
-      start=monday(selected);end=addDays(start,4);title=`${short(start)}–${short(end)} outlook`;
+      start=monday(selected);
+      end=addDays(start,5);
+      const endLabel=start.slice(0,7)===end.slice(0,7)?Number(end.slice(8)):short(end);
+      title=`${short(start)}–${endLabel} Outlook`;
     }else title=`${dow(selected)} · ${short(selected)} outlook`;
     const days=Object.values(BY).filter(d=>d.date>=start&&d.date<=end).sort((a,b)=>a.date.localeCompare(b.date));
     let expected=0;for(let s=start;s<=end;s=addDays(s,1))if(![0,6].includes(D(s).getUTCDay()))expected++;
@@ -1277,6 +1310,43 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     const contextDay=scope==='day'?selected:contextDates.at(-1),record=contextDay?AUTO_CONDITIONS.days?.[contextDay]:null;
     return {scope,start,end,title,days,keyDays,missing,intro,focus,contextDay,record};
   }
+  function weeklyBrief(m){
+    const releases=m.days.flatMap(day=>(day.news||[]).map(event=>({day:day.date,...event})));
+    const priorities=[
+      [/FOMC.*(?:rate|decision)|Rate Decision/i,'Fed week','The decision and the Fed’s guidance can move rate expectations. Price can react again during the press conference.'],
+      [/\bCPI\b|Consumer Price/i,'Inflation week','A hotter or cooler print can reset rate expectations. Watch the reaction in yields and NQ around the release.'],
+      [/Non.?farm|payroll/i,'Jobs week','A surprise in hiring or unemployment can shift rate expectations quickly. Be ready for sharp moves in either direction around the release.'],
+      [/\bPCE\b/i,'Inflation week','The inflation reading gives traders another check on the path of prices and interest rates.'],
+      [/\bGDP\b/i,'Growth week','The report can change how markets read the pace of growth. Check the release window before planning entries.']
+    ];
+    const priority=priorities.find(([pattern])=>releases.some(event=>pattern.test(event.name)));
+    const lead=priority?releases.find(event=>priority[0].test(event.name)):releases.find(event=>event.impact==='red')||releases[0];
+    const paragraphs=[];
+    const election=m.days.find(isElectionDay);
+    const electionNote=election?` <strong>Election Day</strong> on ${esc(short(election.date))} adds headline risk.`:'';
+    if(lead){
+      const weekday=D(lead.day).toLocaleDateString('en-US',{weekday:'long',timeZone:'UTC'});
+      const time=toMin(lead.time);
+      const hour=Math.floor(time/60);
+      const clock=`${hour%12||12}:${String(time%60).padStart(2,'0')} ${hour<12?'AM':'PM'} NY`;
+      paragraphs.push(m.start==='2026-11-02'
+        ?'<strong>Jobs week.</strong> <strong>Nonfarm Payrolls</strong> arrives Friday at <strong>8:30 AM NY</strong> and sets the tone for the week, with the <strong>midterm elections</strong> on Tuesday in the middle. Watch for consolidation ahead of the release. The first minutes after payrolls can move hard in either direction.'
+        :`<strong>${priority?.[1]||'This week'}.</strong> <strong>${esc(lead.name)}</strong> lands ${weekday} at <strong>${clock}</strong>.${electionNote} ${priority?.[2]||'Use the release time to plan your trading window.'}`);
+    }else{
+      paragraphs.push(esc(m.intro));
+    }
+    if(m.start==='2026-11-02'){
+      paragraphs.push('New York clocks moved back on Sunday, Nov 1. Release times stay the same in New York. Check your local conversion if you trade from another time zone. <a href="https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst">NIST timing note</a>');
+      paragraphs.push('September added <strong>29,000 jobs</strong> and unemployment was <strong>4.2%</strong>. FactSet’s October payroll forecast was <strong>65,000</strong> as reported on Nov 3. Friday’s read is about whether hiring improves and what the unemployment rate says alongside it. <a href="https://www.bls.gov/news.release/archives/empsit_10022026.htm">September jobs report</a> · <a href="https://apnews.com/article/4f6f06216c943fc2f8306306fd3056e3">Nov 3 forecast</a>');
+    }
+    const plan=[];
+    if(election)plan.push(`Stay out after 9:30 AM NY on ${esc(short(election.date))} under your Election Day rule.`);
+    if(m.days.some(day=>/Day before NFP/.test(day.why||'')))plan.push('Keep the day before payrolls Light.');
+    if(m.days.some(day=>day.conditionsPmWatch))plan.push('After a verified 500-point overnight move, sit out the New York AM session. Watch 1:30–4:00 PM NY only if the morning was choppy and a cleaner setup confirms.');
+    if(m.days.some(day=>day.conditionsDanger&&!day.conditionsPmWatch))plan.push('Respect any full-session block from the overnight and calendar rules.');
+    if(plan.length)paragraphs.push('<strong>Trading plan.</strong> '+plan.join(' '));
+    return `<div class="weekly-brief">${paragraphs.map(paragraph=>`<p>${paragraph}</p>`).join('')}</div>`;
+  }
   function renderOutlook(){
     const m=outlookModel(view,cursor);$('title').textContent=m.title;
     const rows=m.keyDays.map(d=>{
@@ -1285,34 +1355,40 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
       return `<article class="outlook-day"><div class="outlook-date"><button data-outlook-day="${d.date}" aria-label="Daily outlook for ${d.date}">${esc(dow(d.date))}</button><small>${esc(short(d.date))}</small><small>${esc(dayLabel(d))}</small></div><div>${special.length?`<p class="outlook-special">${special.map(esc).join(' · ')}</p>`:''}${items?`<ul class="outlook-events">${items}</ul>`:'<p class="outlook-special">No economic releases listed in the planner for this day.</p>'}</div></article>`;
     }).join('');
     const weekly=m.scope==='week';
-    const assessment=weekly&&m.contextDay?marketAssessment(m.contextDay):null;
-    const weeklyConditions=weekly?`<section class="outlook-market">
-      <h3>Market conditions</h3>
-      <p class="note">${assessment?`Latest recorded session · ${esc(short(m.contextDay))}`:'Waiting for a recorded session this week. Expand a section to see what it tracks.'}</p>
-      ${assessment?marketSummary(m.contextDay):''}
-      ${assessment?.n.mcComment?`<p>${esc(assessment.n.mcComment)}</p>`:''}
-      ${conditionGroupsHTML(assessment||marketAssessment(cursor),'outlook-week')}
-    </section>`:'';
-    $('view').innerHTML=`<section class="panel outlook"><header class="outlook-head"><div><span class="eyebrow">NQ Planner · Outlook</span><h2>${esc(m.title)}</h2></div><button class="btn" data-outlook-schedule>View schedule</button></header><div class="outlook-tabs" role="group" aria-label="Outlook period">${[['month','Monthly'],['week','Weekly'],['day','Daily']].map(([k,label])=>`<button class="btn" data-outlook-scope="${k}" aria-pressed="${view===k}">${label}</button>`).join('')}</div><p class="outlook-lede">${esc(m.intro)}</p>${m.missing?`<p class="outlook-warning">${m.missing} weekday${m.missing===1?'':'s'} ${m.missing===1?'is':'are'} outside the recorded calendar coverage. This outlook is partial.</p>`:''}${weeklyConditions}<div class="outlook-cols"><section><h3>Key events</h3>${rows||'<p class="outlook-empty">No verified event entries are available for this period.</p>'}</section><aside class="outlook-side"><section><h3>Trading focus</h3>${m.focus.length?`<ul>${m.focus.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:'<p>No day-specific trading plan is recorded for this period.</p>'}</section></aside></div><footer class="outlook-source">Based on the planner calendar, updated ${esc(DATA.updated)}. All release times are New York time. Entries marked “est.” remain estimated.<br>Calendar sources: ${DATA.sources.map(esc).join(' · ')}.</footer></section>`;
+    const eventList=rows||'<p class="outlook-empty">No verified event entries are available for this period.</p>';
+    const weeklyDetails=`<details class="weekly-support"><summary>Key events · ${m.keyDays.length} days</summary>${eventList}</details>`;
+    const standardDetails=`<div class="outlook-cols"><section><h3>Key events</h3>${eventList}</section><aside class="outlook-side"><section><h3>Trading focus</h3>${m.focus.length?`<ul>${m.focus.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:'<p>No day-specific trading plan is recorded for this period.</p>'}</section></aside></div>`;
+    $('view').innerHTML=`<section class="panel outlook${weekly?' outlook-weekly':''}"><header class="outlook-head"><div>${weekly?'':'<span class="eyebrow">NQ Planner · Outlook</span>'}<h2>${esc(m.title)}</h2></div><button class="btn" data-outlook-schedule>View schedule</button></header><div class="outlook-tabs" role="group" aria-label="Outlook period">${[['month','Monthly'],['week','Weekly'],['day','Daily']].map(([k,label])=>`<button class="btn" data-outlook-scope="${k}" aria-pressed="${view===k}">${label}</button>`).join('')}</div>${weekly?weeklyBrief(m):`<p class="outlook-lede">${esc(m.intro)}</p>`}${m.missing?`<p class="outlook-warning">${m.missing} weekday${m.missing===1?'':'s'} ${m.missing===1?'is':'are'} outside the recorded calendar coverage. This outlook is partial.</p>`:''}${weekly?weeklyDetails:standardDetails}<footer class="outlook-source">Based on the planner calendar, updated ${esc(DATA.updated)}. All release times are New York time. Entries marked “est.” remain estimated.<br>Calendar sources: ${DATA.sources.map(esc).join(' · ')}.</footer></section>`;
     $('view').querySelectorAll('[data-outlook-scope]').forEach(b=>b.onclick=()=>{view=b.dataset.outlookScope;render();});
     $('view').querySelectorAll('[data-outlook-day]').forEach(b=>b.onclick=()=>{cursor=b.dataset.outlookDay;view='day';render();});
     $('view').querySelector('[data-outlook-schedule]').onclick=()=>{outlookMode=false;render();};
   }
 
+  function renderConditions(){
+    const m=outlookModel('week',cursor);
+    const selected=BY[cursor]?cursor:m.contextDay||m.days[0]?.date||cursor;
+    const assessment=marketAssessment(selected);
+    $('title').textContent='Market conditions';
+    const buttons=m.days.map(day=>`<button class="btn" data-condition-day="${esc(day.date)}" aria-pressed="${day.date===selected}">${esc(dow(day.date))} ${esc(short(day.date))}</button>`).join('');
+    $('view').innerHTML=`<section class="panel conditions-page"><h2>Market conditions</h2><p class="conditions-intro">${esc(short(m.start))}–${esc(short(m.end))} · Select a day to see the recorded conditions, what each reading means, and its source time.</p><nav class="conditions-days" aria-label="Trading day">${buttons}</nav><h3>${esc(dow(selected))} · ${esc(short(selected))}</h3>${marketSummary(selected)||'<p class="outlook-empty">No verified market snapshot is recorded for this day yet. Calendar restrictions still apply.</p>'}${assessment.n.mcComment?`<p>${esc(assessment.n.mcComment)}</p>`:''}${conditionGroupsHTML(assessment,'conditions')}</section>`;
+    $('view').querySelectorAll('[data-condition-day]').forEach(button=>button.onclick=()=>{cursor=button.dataset.conditionDay;render();});
+  }
+
   function render(){
-    const openSections=new Set([...document.querySelectorAll('.condition-accordion[open]')].map(section=>section.dataset.conditionKey));
+    const openSections=new Set([...document.querySelectorAll('[data-condition-key][open]')].map(section=>section.dataset.conditionKey));
     applyMarketConditions();$("condition-host").innerHTML=tradingRestrictionNotice(cursor);
-    $("condition-host").hidden=outlookMode;$("outlook-toggle").setAttribute('aria-pressed',String(outlookMode));
+    $("condition-host").hidden=outlookMode||conditionsMode;$("outlook-toggle").setAttribute('aria-pressed',String(outlookMode));$("conditions-toggle").setAttribute('aria-pressed',String(conditionsMode));
     $("sheet").hidden = true; miniMonth = null;
     ["month","week","day"].forEach(v => $("v-" + v).setAttribute("aria-pressed", String(!listMode && v === view)));
     $("lst").setAttribute("aria-pressed", String(listMode));
     $("lst").textContent = listMode ? "Show schedule" : "Show list";
     $("view").removeAttribute("style");
     const dk = DESK();
-    if (outlookMode) renderOutlook();
+    if (conditionsMode) renderConditions();
+    else if (outlookMode) renderOutlook();
     else if (listMode) renderList();
     else if (view === "month") renderMonth(); else if (view === "week") (dk ? renderWeekDesk : renderWeek)(); else (dk ? renderDayDesk : renderDay)();
-    if (dk) { renderMini(); renderBrk(); renderUpcoming(); if (view === "month" && !listMode && !outlookMode) $("title").textContent = MON[D(cursor).getUTCMonth()] + ", " + D(cursor).getUTCFullYear(); }
+    if (dk) { renderMini(); renderBrk(); renderUpcoming(); if (view === "month" && !listMode && !outlookMode&&!conditionsMode) $("title").textContent = MON[D(cursor).getUTCMonth()] + ", " + D(cursor).getUTCFullYear(); }
     if (!dk && view !== "day") { $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px"; }
     document.querySelectorAll('.condition-accordion').forEach(section=>{
       if(openSections.has(section.dataset.conditionKey))section.open=true;
