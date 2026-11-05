@@ -1,11 +1,12 @@
 # Cloud recorder: runs the same collector as the PC task, commits market-conditions.json,
 # and Vercel deploys the push. GitHub cron is UTC and can start a few minutes late;
-# 12:00-22:30 UTC covers 8:00 AM-5:00 PM New York in both EST and EDT.
+# 11:07-22:37 UTC is 6:07 AM-5:37 PM New York in EST and 7:07 AM-6:37 PM in EDT.
+# Minutes 7 and 37 avoid the top/half hour, when GitHub drops or delays scheduled runs.
 name: Record market conditions
 
 on:
   schedule:
-    - cron: "*/30 12-22 * * 1-5"
+    - cron: "7,37 11-22 * * 1-5"
   workflow_dispatch:
 
 concurrency:
