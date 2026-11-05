@@ -30,15 +30,18 @@ jobs:
       - name: Collect and merge into the archive
         run: python collect_market_conditions.py
 
+      - name: Push new updates to the phone (ntfy)
+        run: node notify_updates.cjs
+
       - name: Commit and push if anything changed
         run: |
-          if git diff --quiet -- market-conditions.json; then
+          if git diff --quiet -- market-conditions.json notified.json; then
             echo "No change to record"; exit 0
           fi
           # Vercel only deploys commits from the account owner, so commit as him.
           git config user.name "kaidsalem48-ui"
           git config user.email "kaidsalem48@gmail.com"
-          git add market-conditions.json
+          git add market-conditions.json notified.json
           git commit -m "Record sourced market conditions for $(TZ=America/New_York date +%F) (cloud)"
           for i in 1 2 3; do
             git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0
