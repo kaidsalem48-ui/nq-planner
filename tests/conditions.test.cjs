@@ -30,7 +30,7 @@ assert.deepEqual([m({}).long,m({}).short],['Normal partials, small runner','Part
 const hw=m({...down,mcMacro:'Headwinds'});assert.deepEqual([hw.long,hw.short],['Partials early, no runner','Leave a runner, light partials']);
 const st=m({...down,mcMacro:'Headwinds',mcRange:600});assert.equal(st.short,'Normal partials, small runner');assert(st.why.some(w=>w.includes('2.0×')));
 assert.equal(m({mcRange:undefined}).preOpen,true);
-assert(assess({...down,mcMacro:'Headwinds'}).alerts.some(a=>a.id.endsWith(':mgmt:Partials early, no runner|Leave a runner, light partials')&&a.title.startsWith('Runners & partials · Longs: partials early')));}
+assert(assess({...down,mcMacro:'Headwinds'}).alerts.some(a=>a.id.endsWith(':mgmt:Partials early, no runner|Leave a runner, light partials')&&a.title==='Longs: partials early, no runner · Shorts: leave a runner, light partials'));}
 assert(!assess({mcVix:20,mcVol:'Stable'}).alerts.some(a=>a.id.endsWith(':vix-very-volatile')));}
 const divergent=assess({mcAAPL:-1,mcMSFT:-1,mcNVDA:-1,mcAMZN:-1});assert.equal(divergent.breadth.label,'Divergent');
 const unsync=fixture();unsync.sources[0].fields=unsync.sources[0].fields.filter(k=>k!=='mcAAPL');unsync.sources.push({title:'Different minute',url:'https://example.com/aapl',asOf:'2026-11-04T09:34:00-05:00',fields:['mcAAPL']});assert.equal(engine.evaluate(unsync,{day,now}).breadth.label,'Not recorded');
