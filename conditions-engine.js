@@ -98,7 +98,19 @@
     const aligned=techReady&&direction!=='Flat'?moves.filter(v=>direction==='Up'?v>0:v<0).length:null,opposed=techReady&&direction!=='Flat'?moves.filter(v=>direction==='Up'?v<0:v>0).length:null;
     const breadth={aligned,opposed,label:!techReady?'Not recorded':direction==='Flat'?'NQ flat':aligned>=5?'Broad participation':opposed>=4?'Divergent':'Narrow / mixed',detail:!techReady?'Awaiting all seven stock moves and NQ direction at the exact same minute.':direction==='Flat'?'NQ is flat versus its prior RTH close; no directional alignment tally.':`${aligned}/7 align with NQ ${direction.toLowerCase()}; ${opposed}/7 oppose. Equal-count comparison, not index-weighted contribution.`};
     group('tech','Big-tech participation',!techReady?'Unknown':['Divergent','Narrow / mixed'].includes(breadth.label)?'Caution':'Observed',breadth.detail+(techReady?' '+TECH.map((k,i)=>k+' '+signed(moves[i])+'%').join(' · '):''),'All seven names and NQ must share one observation minute and a prior RTH-close baseline. Five or more aligned names count as broad; four or more opposing count as divergent.',!techReady?'No breadth conclusion until data is complete and synchronized.':direction==='Flat'?'NQ is flat; watch for a direction to develop.':breadth.label==='Broad participation'?'More of the tracked tech stocks are moving with NQ. That gives the move broader support within this group.':'Fewer tracked stocks support the NQ move. Wait for clearer confirmation before chasing it.',techKeys);
-    if(techReady&&['Divergent','Narrow / mixed'].includes(breadth.label)){reasons.push('Big-tech participation is narrow or divergent.');alert('tech-'+breadth.label,'Tech participation weakened',breadth.detail+' Extra selectivity is needed.');}
+    if(techReady&&['Divergent','Narrow / mixed'].includes(breadth.label))reasons.push('Big-tech participation is narrow or divergent.');
+    // Daily big-tech update: all in / split / one leading. A new category gets a new id, so it notifies again.
+    if(techReady&&direction!=='Flat'){
+      const sign=direction==='Up'?1:-1,word=direction.toLowerCase();
+      const with_=TECH.map((k,i)=>({k,v:moves[i]})).filter(x=>x.v*sign>0).sort((a,b)=>Math.abs(b.v)-Math.abs(a.v));
+      const lead=with_[0],second=with_[1];
+      const leading=lead&&aligned<=4&&Math.abs(lead.v)>=2&&(!second||Math.abs(lead.v)>=2*Math.abs(second.v));
+      const kind=aligned>=6?'all':leading?'leading':'split';
+      const list=TECH.map((k,i)=>({k,v:moves[i]})).sort((a,b)=>b.v*sign-a.v*sign).map(x=>x.k+' '+signed(x.v)+'%').join(' · ');
+      const title=kind==='all'?`Big tech: all in · ${aligned}/7 ${word} with NQ`:kind==='leading'?`Big tech: one leading · ${lead.k} ${signed(lead.v)}%`:`Big tech: split · ${aligned}/7 ${word} with NQ`;
+      const meaning=kind==='all'?'Broad participation: the move has real support, so trends tend to hold and trading with them is safest.':kind==='leading'?`${lead.k} is carrying NQ while the others lag. Moves driven by one name are fragile and can reverse quickly.`:`${opposed}/7 are moving against NQ. Expect chop and fake breakouts; wait for clearer confirmation.`;
+      alert('tech-daily:'+kind,title,`${list}. ${meaning}`,kind==='all'?'info':'caution');
+    }
     const yieldLevel=number('mcYieldLevel'),dxy=number('mcDxy'),yields=text('mcYields',['Rising','Falling','Flat']),dollar=text('mcDollar',['Rising','Falling','Flat']);
     const yieldChange=number('mcYieldChangeBp'),dxyChange=number('mcDxyChange');
     let macro=text('mcMacro',['Supportive','Mixed','Headwinds']);

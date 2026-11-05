@@ -20,6 +20,10 @@ assert(assess({mcVix:19,mcVol:'Contracting'}).groups.find(g=>g.id==='volatility'
 {const v=assess({mcVix:21.4,mcVol:'Stable'}),g=v.groups.find(g=>g.id==='volatility'),a=v.alerts.find(a=>a.id.endsWith(':vix-very-volatile'));
 assert.equal(g.state,'Very volatile');assert(g.reading.includes('very volatile'));assert(a&&a.severity==='danger');assert.equal(assess({mcVix:25.82,mcVol:'Expanding',mcVixChange:55.45}).alerts.find(a=>a.id.endsWith(':vix-very-volatile')).title,'VIX 25.82 · very volatile · +55% vs. yesterday');
 assert(assess({mcVix:25.82,mcVol:'Expanding',mcVixChange:55.45,mcOvernightClose:28280.5}).alerts.find(a=>a.id.endsWith(':vix-very-volatile')).message.includes('about ±570 points'));
+{const t=o=>assess(o).alerts.find(a=>a.id.includes(':tech-daily:'));
+assert.equal(t({}).title,'Big tech: all in · 7/7 up with NQ');assert.equal(t({}).severity,'info');
+assert.equal(t({mcNVDA:5.1,mcMSFT:0.4,mcAAPL:-0.5,mcAMZN:-0.3,mcGOOGL:-0.2,mcMETA:0.3,mcTSLA:-1}).title,'Big tech: one leading · NVDA +5.1%');
+assert.equal(t({mcAAPL:-0.5,mcAMZN:-0.3,mcGOOGL:-0.2}).title,'Big tech: split · 4/7 up with NQ');}
 assert(!assess({mcVix:20,mcVol:'Stable'}).alerts.some(a=>a.id.endsWith(':vix-very-volatile')));}
 const divergent=assess({mcAAPL:-1,mcMSFT:-1,mcNVDA:-1,mcAMZN:-1});assert.equal(divergent.breadth.label,'Divergent');
 const unsync=fixture();unsync.sources[0].fields=unsync.sources[0].fields.filter(k=>k!=='mcAAPL');unsync.sources.push({title:'Different minute',url:'https://example.com/aapl',asOf:'2026-11-04T09:34:00-05:00',fields:['mcAAPL']});assert.equal(engine.evaluate(unsync,{day,now}).breadth.label,'Not recorded');
