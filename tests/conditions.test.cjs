@@ -19,6 +19,7 @@ assert.equal(assess({mcVix:25,mcVol:'Expanding'}).level,'Reduced');
 assert(assess({mcVix:19,mcVol:'Contracting'}).groups.find(g=>g.id==='volatility').conclusion.includes('remains elevated'));
 {const v=assess({mcVix:21.4,mcVol:'Stable'}),g=v.groups.find(g=>g.id==='volatility'),a=v.alerts.find(a=>a.id.endsWith(':vix-very-volatile'));
 assert.equal(g.state,'Very volatile');assert(g.reading.includes('very volatile'));assert(a&&a.severity==='danger');assert.equal(assess({mcVix:25.82,mcVol:'Expanding',mcVixChange:55.45}).alerts.find(a=>a.id.endsWith(':vix-very-volatile')).title,'VIX 25.82 · very volatile · +55% vs. yesterday');
+assert(assess({mcVix:25.82,mcVol:'Expanding',mcVixChange:55.45,mcOvernightClose:28280.5}).alerts.find(a=>a.id.endsWith(':vix-very-volatile')).message.includes('about ±570 points'));
 assert(!assess({mcVix:20,mcVol:'Stable'}).alerts.some(a=>a.id.endsWith(':vix-very-volatile')));}
 const divergent=assess({mcAAPL:-1,mcMSFT:-1,mcNVDA:-1,mcAMZN:-1});assert.equal(divergent.breadth.label,'Divergent');
 const unsync=fixture();unsync.sources[0].fields=unsync.sources[0].fields.filter(k=>k!=='mcAAPL');unsync.sources.push({title:'Different minute',url:'https://example.com/aapl',asOf:'2026-11-04T09:34:00-05:00',fields:['mcAAPL']});assert.equal(engine.evaluate(unsync,{day,now}).breadth.label,'Not recorded');
