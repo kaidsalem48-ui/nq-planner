@@ -38,7 +38,7 @@
     if(vix!==null&&vix>18&&vol==='Expanding')reasons.push('VIX is above 18 and expanding versus prior close.');
     else if(veryVolatile)watch.push('VIX is above 20: very volatile.');
     else if(vix!==null&&vix>18)watch.push('VIX is above your 18 threshold.');
-    if(veryVolatile)alert('vix-very-volatile','VIX above 20 · very volatile',vixReading+(vol==='Expanding'?' Reduce aggression under your saved rule.':' Expect fast, wide swings.'),'danger');
+    if(veryVolatile)alert('vix-very-volatile',`VIX ${vix.toFixed(2)} · very volatile${vixChange!==null?' · '+(vixChange>0?'+':'')+Math.round(vixChange)+'% vs. yesterday':''}`,vixReading+(vol==='Expanding'?' Reduce aggression under your saved rule.':' Expect fast, wide swings.'),'danger');
     else if(vix!==null&&vix>18&&vol==='Expanding')alert('vix-expanding','Elevated and expanding VIX',vixReading+' Reduce aggression under your saved rule.');
     const final=number('mcOvernight',true);
     const provisionalNet=numeric(raw,'mcOvernightSoFar');
