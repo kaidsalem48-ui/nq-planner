@@ -172,7 +172,7 @@
       ]
     },
     "2026-11-04": {
-      "recordedAt": "2026-11-04T22:00:04.249985+00:00",
+      "recordedAt": "2026-11-05T00:37:27.144695+00:00",
       "values": {
         "mcVix": 16.61,
         "mcVixChange": -20.2592,
@@ -180,8 +180,8 @@
         "mcYieldLevel": 4.894,
         "mcYieldChangeBp": -5.8,
         "mcYields": "Falling",
-        "mcDxy": 101.525,
-        "mcDxyChange": -0.342,
+        "mcDxy": 101.492,
+        "mcDxyChange": -0.074,
         "mcDollar": "Falling",
         "mcPriorRange": 227.75,
         "mcOvernight": -193.0,
@@ -193,9 +193,9 @@
         "mcGOOGL": 3.244,
         "mcMETA": 1.44,
         "mcTSLA": -3.244,
-        "mcMacro": "Supportive",
+        "mcMacro": "Mixed",
         "mcMacroYieldChangeBp": -5.8,
-        "mcMacroDxyChange": -0.301,
+        "mcMacroDxyChange": 0.0,
         "mcOvernightRange": 896.25,
         "mcOvernightType": "Balanced",
         "mcRange": 564.0,
@@ -232,7 +232,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-04T21:49:59+00:00",
+          "asOf": "2026-11-04T23:04:58+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -242,7 +242,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-03 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-04T21:50:00+00:00",
+          "asOf": "2026-11-05T00:27:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -346,7 +346,7 @@
           ]
         },
         {
-          "title": "Macro heuristic at synchronized minute: yield falling, dollar falling; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
+          "title": "Macro heuristic at synchronized minute: yield falling, dollar flat; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
           "asOf": "2026-11-04T19:59:00+00:00",
           "fields": [
@@ -355,7 +355,7 @@
           ]
         },
         {
-          "title": "Macro heuristic at synchronized minute: yield falling, dollar falling; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
+          "title": "Macro heuristic at synchronized minute: yield falling, dollar flat; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
           "asOf": "2026-11-04T19:59:00+00:00",
           "fields": [
@@ -366,5 +366,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-04T22:00:04.406683+00:00"
+  "updatedAt": "2026-11-05T00:37:27.544971+00:00"
 }
