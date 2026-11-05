@@ -16,7 +16,10 @@ assert.equal(engine.evaluate(provisional,{day,now,calendarKnown:true,pmEligible:
 assert.equal(engine.evaluate(provisional,{day,now:Date.parse('2026-11-04T12:00:00-05:00')}).level,'Sit out','Premarket restriction persists until the final reading arrives');
 assert.equal(assess({mcOvernight:100,mcOvernightSoFar:-500}).level,'Reviewed','Final measurement supersedes provisional restriction');
 assert.equal(assess({mcVix:25,mcVol:'Expanding'}).level,'Reduced');
-assert(assess({mcVix:25,mcVol:'Contracting'}).groups.find(g=>g.id==='volatility').conclusion.includes('remains elevated'));
+assert(assess({mcVix:19,mcVol:'Contracting'}).groups.find(g=>g.id==='volatility').conclusion.includes('remains elevated'));
+{const v=assess({mcVix:21.4,mcVol:'Stable'}),g=v.groups.find(g=>g.id==='volatility'),a=v.alerts.find(a=>a.id.endsWith(':vix-very-volatile'));
+assert.equal(g.state,'Very volatile');assert(g.reading.includes('very volatile'));assert(a&&a.severity==='danger'&&a.title.includes('very volatile'));
+assert(!assess({mcVix:20,mcVol:'Stable'}).alerts.some(a=>a.id.endsWith(':vix-very-volatile')));}
 const divergent=assess({mcAAPL:-1,mcMSFT:-1,mcNVDA:-1,mcAMZN:-1});assert.equal(divergent.breadth.label,'Divergent');
 const unsync=fixture();unsync.sources[0].fields=unsync.sources[0].fields.filter(k=>k!=='mcAAPL');unsync.sources.push({title:'Different minute',url:'https://example.com/aapl',asOf:'2026-11-04T09:34:00-05:00',fields:['mcAAPL']});assert.equal(engine.evaluate(unsync,{day,now}).breadth.label,'Not recorded');
 const stale=assess({}, {now:Date.parse('2026-11-04T12:00:00-05:00')});assert.equal(stale.vix,null);assert.equal(stale.overnight,100,'Final overnight survives dynamic freshness cutoff');assert.equal(stale.level,'Incomplete');

@@ -2,7 +2,7 @@
 (function(root){
   'use strict';
   const TECH=['AAPL','MSFT','NVDA','AMZN','GOOGL','META','TSLA'];
-  const RULES=Object.freeze({vix:18,overnightLarge:500,maxAgeMinutes:90});
+  const RULES=Object.freeze({vix:18,vixVery:20,overnightLarge:500,maxAgeMinutes:90});
   const numeric=(n,k)=>typeof n[k]==='number'&&Number.isFinite(n[k])?n[k]:null;
   const nyDate=t=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(t));
   const nyMinute=t=>{const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date(t)).map(x=>[x.type,x.value]));return (+p.hour%24)*60+(+p.minute);};
@@ -31,11 +31,15 @@
     function alert(key,title,message,severity='caution',measurement=''){alerts.push({id:day+':'+key,day,title,message,severity,measurement});}
     const vix=number('mcVix'),vol=text('mcVol',['Expanding','Contracting','Stable']);
     const vixChange=number('mcVixChange');
-    const volState=vix===null?'Unknown':vix>RULES.vix?'Caution':'Observed';
-    const vixReading=vix===null?'No current verified VIX observation.':`VIX ${vix.toFixed(2)} · ${vix>18?'above':vix<18?'below':'at'} your 18 threshold${vol?' · '+vol.toLowerCase()+' versus prior close':''}${vixChange!==null?' ('+signed(vixChange)+'%)':''}.`;
-    group('volatility','Volatility',volState,vixReading,'Cboe’s VIX measures the swings S&P 500 options imply over the next 30 days. A higher reading points to wider expected swings in either direction.',vix===null?'Wait for a current observation. Missing VIX is not a low-risk reading.':vix>18?`Above your 18 threshold. Allow for faster or wider swings.${vol==='Expanding'?' Reduce aggression under your rising VIX rule.':' Stay selective while the level remains elevated.'}`:'Your VIX caution rule is clear at this reading. Check the other conditions before trading.',['mcVix','mcVol','mcVixChange']);
-    if(vix!==null&&vix>18&&vol==='Expanding'){reasons.push('VIX is above 18 and expanding versus prior close.');alert('vix-expanding','Elevated and expanding VIX',vixReading+' Reduce aggression under your saved rule.');}
+    const veryVolatile=vix!==null&&vix>RULES.vixVery;
+    const volState=vix===null?'Unknown':veryVolatile?'Very volatile':vix>RULES.vix?'Caution':'Observed';
+    const vixReading=vix===null?'No current verified VIX observation.':`VIX ${vix.toFixed(2)} · ${veryVolatile?'above 20, very volatile':vix>18?'above your 18 threshold':vix<18?'below your 18 threshold':'at your 18 threshold'}${vol?' · '+vol.toLowerCase()+' versus prior close':''}${vixChange!==null?' ('+signed(vixChange)+'%)':''}.`;
+    group('volatility','Volatility',volState,vixReading,'Cboe’s VIX measures the swings S&P 500 options imply over the next 30 days. A higher reading points to wider expected swings in either direction.',vix===null?'Wait for a current observation. Missing VIX is not a low-risk reading.':veryVolatile?`Very volatile: VIX is above 20. Expect fast, wide swings in either direction.${vol==='Expanding'?' Reduce aggression under your rising VIX rule.':' Stay selective and size down.'}`:vix>18?`Above your 18 threshold. Allow for faster or wider swings.${vol==='Expanding'?' Reduce aggression under your rising VIX rule.':' Stay selective while the level remains elevated.'}`:'Your VIX caution rule is clear at this reading. Check the other conditions before trading.',['mcVix','mcVol','mcVixChange']);
+    if(vix!==null&&vix>18&&vol==='Expanding')reasons.push('VIX is above 18 and expanding versus prior close.');
+    else if(veryVolatile)watch.push('VIX is above 20: very volatile.');
     else if(vix!==null&&vix>18)watch.push('VIX is above your 18 threshold.');
+    if(veryVolatile)alert('vix-very-volatile','VIX above 20 · very volatile',vixReading+(vol==='Expanding'?' Reduce aggression under your saved rule.':' Expect fast, wide swings.'),'danger');
+    else if(vix!==null&&vix>18&&vol==='Expanding')alert('vix-expanding','Elevated and expanding VIX',vixReading+' Reduce aggression under your saved rule.');
     const final=number('mcOvernight',true);
     const provisionalNet=numeric(raw,'mcOvernightSoFar');
     // Keep a sourced early-window sit-out in force while waiting for the 02:00 boundary.

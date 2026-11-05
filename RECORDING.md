@@ -100,7 +100,8 @@ final overnight/opening-gap/prior-range measurements keep their source times.
 Historical session views remain explicitly dated.
 
 User rules: VIX >18 is caution; VIX >18 and >2% above previous close reduces
-aggression. A net overnight move of at least 500 points in either direction
+aggression. VIX >20 (2026-11-05) labels Volatility "Very volatile" and raises a red
+"VIX above 20 · very volatile" update. A net overnight move of at least 500 points in either direction
 blocks the New York AM session and raises a red alert. Once the final 02:00
 reading is available, an otherwise eligible 13:30–16:00 NY segment becomes a
 yellow PM watch if the AM session was choppy and a cleaner setup confirms.

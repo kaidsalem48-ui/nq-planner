@@ -643,7 +643,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     }
   }
   function conditionGroupHTML(group,assessment,scope){
-    const tone=group.state==='Sit out'?'r':['Caution','Last reading'].includes(group.state)?'y':'n';
+    const tone=['Sit out','Very volatile'].includes(group.state)?'r':['Caution','Last reading'].includes(group.state)?'y':'n';
     const references=(conditionReferences[group.id]||[]).map(([label,url])=>
       `<li><a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a></li>`).join('');
     const evidence=group.sources.map(source=>
