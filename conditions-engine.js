@@ -99,6 +99,7 @@
     const breadth={aligned,opposed,label:!techReady?'Not recorded':direction==='Flat'?'NQ flat':aligned>=5?'Broad participation':opposed>=4?'Divergent':'Narrow / mixed',detail:!techReady?'Awaiting all seven stock moves and NQ direction at the exact same minute.':direction==='Flat'?'NQ is flat versus its prior RTH close; no directional alignment tally.':`${aligned}/7 align with NQ ${direction.toLowerCase()}; ${opposed}/7 oppose. Equal-count comparison, not index-weighted contribution.`};
     group('tech','Big-tech participation',!techReady?'Unknown':['Divergent','Narrow / mixed'].includes(breadth.label)?'Caution':'Observed',breadth.detail+(techReady?' '+TECH.map((k,i)=>k+' '+signed(moves[i])+'%').join(' · '):''),'All seven names and NQ must share one observation minute and a prior RTH-close baseline. Five or more aligned names count as broad; four or more opposing count as divergent.',!techReady?'No breadth conclusion until data is complete and synchronized.':direction==='Flat'?'NQ is flat; watch for a direction to develop.':breadth.label==='Broad participation'?'More of the tracked tech stocks are moving with NQ. That gives the move broader support within this group.':'Fewer tracked stocks support the NQ move. Wait for clearer confirmation before chasing it.',techKeys);
     if(techReady&&['Divergent','Narrow / mixed'].includes(breadth.label))reasons.push('Big-tech participation is narrow or divergent.');
+    let techCall=null;
     // Daily big-tech update: all in / split / one leading. A new category gets a new id, so it notifies again.
     if(techReady&&direction!=='Flat'){
       const sign=direction==='Up'?1:-1,word=direction.toLowerCase();
@@ -106,6 +107,7 @@
       const lead=with_[0],second=with_[1];
       const leading=lead&&aligned<=4&&Math.abs(lead.v)>=2&&(!second||Math.abs(lead.v)>=2*Math.abs(second.v));
       const kind=aligned>=6?'all':leading?'leading':'split';
+      techCall={kind,direction,aligned,lead:lead?lead.k:''};
       const list=TECH.map((k,i)=>({k,v:moves[i]})).sort((a,b)=>b.v*sign-a.v*sign).map(x=>x.k+' '+signed(x.v)+'%').join(' · ');
       const title=kind==='all'?`Big tech: all in · ${aligned}/7 ${word} with NQ`:kind==='leading'?`Big tech: one leading · ${lead.k} ${signed(lead.v)}%`:`Big tech: split · ${aligned}/7 ${word} with NQ`;
       const meaning=kind==='all'?'Broad participation: the move has real support, so trends tend to hold and trading with them is safest.':kind==='leading'?`${lead.k} is carrying NQ while the others lag. Moves driven by one name are fragile and can reverse quickly.`:`${opposed}/7 are moving against NQ. Expect chop and fake breakouts; wait for clearer confirmation.`;
@@ -119,6 +121,24 @@
     if(macro!==null&&(new Set(macroSources.map(s=>s.url)).size<2||new Set(macroSources.map(s=>s.asOf)).size!==1)){macro=null;delete n.mcMacro;issues.set('mcMacro','Synchronized evidence required');}
     group('macro','Rates & dollar',macro==='Headwinds'?'Caution':macro===null?'Unknown':'Observed',`US 10Y yield ${yieldLevel===null?'unavailable':yieldLevel.toFixed(3)+'%'}${yields?' · '+yields.toLowerCase():''}${yieldChange!==null?' ('+signed(yieldChange)+' bp)':''}. DXY ${dxy===null?'unavailable':dxy.toFixed(3)}${dollar?' · '+dollar.toLowerCase():''}${dxyChange!==null?' ('+signed(dxyChange)+' points)':''}.${macroYieldChange!==null&&macroDollarChange!==null?' Combined observation: yield '+signed(macroYieldChange)+' bp; dollar '+signed(macroDollarChange)+' points.':''}`,'Headwinds means pressure that can make a tech rally harder. Higher yields can weigh on growth stock valuations. A stronger dollar can reduce the reported dollar value of overseas earnings. The planner compares both at the same minute.',macro===null?'No combined conclusion until a verified synchronized comparison is available.':macro==='Headwinds'?'Yields and the dollar rose together. That can add pressure on tech, so your plan calls for lower aggression and clearer confirmation from price.':macro==='Supportive'?'Yields and the dollar fell together. That can ease pressure on tech. Look for price and participation to confirm.':'Rates and the dollar are giving mixed signals. Let price and tech participation guide your read.',['mcMacroYieldChangeBp','mcMacroDxyChange','mcYieldLevel','mcYields','mcYieldChangeBp','mcDxy','mcDollar','mcDxyChange','mcMacro']);
     if(macro==='Headwinds'){reasons.push('Rising yields and a stronger dollar can add pressure on tech.');alert('macro-headwinds','Rates and dollar pressure','Both rose at the same observation time. That can make it harder for tech to rally.');}
+    // Runners & partials (user's design, 2026-11-05): score longs and shorts separately.
+    // Rates & dollar wind ±1, big tech all in ±1 (split/one leading −1 both), range ≥1.5× prior −1 both. VIX is left out.
+    // Before 9:30 there is no session range, so the pre-open call uses rates/dollar and big tech only.
+    const management=(()=>{
+      const score={long:0,short:0},why=[];
+      if(macro==='Supportive'){score.long++;score.short--;why.push('Rates & dollar both down: wind behind longs, against shorts.');}
+      else if(macro==='Headwinds'){score.long--;score.short++;why.push('Rates & dollar both up: wind behind shorts, against longs.');}
+      else if(macro==='Mixed')why.push('Rates & dollar mixed: no wind either way.');
+      if(techCall){
+        if(techCall.kind==='all'){const w=techCall.direction==='Up'?'long':'short';score[w]++;score[w==='long'?'short':'long']--;why.push(`Big tech all in ${techCall.direction.toLowerCase()} (${techCall.aligned}/7): the move has support.`);}
+        else{score.long--;score.short--;why.push(techCall.kind==='leading'?`Big tech: only ${techCall.lead} leading, so moves are fragile.`:`Big tech split (${techCall.aligned}/7 with NQ): expect chop.`);}
+      }
+      if(ratio!==null&&ratio>=1.5){score.long--;score.short--;why.push(`Session range already ${ratio.toFixed(1)}× yesterday's: the move may be stretched.`);}
+      if(!why.length||(macro===null&&!techCall))return null;
+      const label=s=>s>=2?'Leave a runner, light partials':s===1?'Normal partials, small runner':s===0?'Manage normally':'Partials early, no runner';
+      return {long:label(score.long),short:label(score.short),score,why,preOpen:ratio===null};
+    })();
+    if(management)alert('mgmt:'+management.long+'|'+management.short,`Runners & partials${management.preOpen?' (pre-open)':''} · Longs: ${management.long.toLowerCase()} · Shorts: ${management.short.toLowerCase()}`,management.why.join(' ')+' Trade management only: your chart and rules still decide entries and stops.','info');
     const rebalance=text('mcRebalance',['Confirmed','Possible','None confirmed'],true),upcoming=(options.upcomingExpiry||[]).map(x=>' '+x).join('');
     group('expiry','Expiry & scheduled flows',expiry||rebalance==='Confirmed'?'Caution':calendarKnown?'Observed':'Unknown',`${expiry?expiry+' today.':'No monthly or quarterly expiry today.'}${upcoming}${rebalance?' Index rebalance: '+rebalance+'.':''}`,'Monthly and quarterly expiries follow the exchange calendar with holiday adjustments. A quarterly window alone does not establish a confirmed index rebalance or dealer hedging flow.',expiry?'Your expiry plan applies: 1:1 targets, no partials, and lower aggression.':!calendarKnown?'Calendar coverage is missing; verify the session before planning.':'No expiry restriction today. Special index changes require a direct announcement.',['mcRebalance']);
     if(expiry){reasons.push(expiry+': your lower-aggression, 1:1/no-partials plan applies.');alert('expiry',expiry+' today','Your expiry plan: target 1:1, no partials, and reduce aggression.');}
@@ -151,7 +171,7 @@
     const restricted=isElection||closed||large,level=restricted?(pmWatch?'AM sit out':'Sit out'):reasons.length?'Reduced':missingGroups.length||!calendarKnown?'Incomplete':watch.length?'Selective':'Reviewed';
     const plan=closed?'Market closed in the planner. Do not trade the regular session.':isElection?'Election Day: do not trade after 9:30 AM New York under your saved rule. The pre-open restrictions remain.':large?overnightPlan:expiry?'Your expiry plan: target 1:1, no partials; reduce aggression.':reasons.length?'Reduce aggression and wait for clean confirmation. '+reasons[0]:missingGroups.length||!calendarKnown?'Context is incomplete. Wait for verified observations before increasing aggression.':'Available context reviewed. Follow the scheduled restrictions and require confirmation from the setup; this is not an automatic green light.';
     if(typeof raw.mcComment==='string')evidence('mcComment',true);
-    return {day,n,expiry,vix,overnight,breadth,reasons,watch,missing:missingGroups,groups,alerts,level,plan,restricted,large,preliminary,pmWatch,stale,last};
+    return {day,n,expiry,vix,overnight,breadth,management,reasons,watch,missing:missingGroups,groups,alerts,level,plan,restricted,large,preliminary,pmWatch,stale,last};
   }
   function unread(alerts,seen){return alerts.filter(a=>!seen[a.id]);}
   const api={evaluate,unread,RULES,election,nyDate,nyMinute};
