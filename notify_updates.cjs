@@ -7,7 +7,9 @@
 const fs = require('fs'), path = require('path');
 const engine = require('./conditions-engine.js');
 const here = (...p) => path.join(__dirname, ...p);
-const TOPIC = (process.env.NTFY_TOPIC || fs.readFileSync(here('ntfy-topic.txt'), 'utf8')).trim();
+// The channel name is private: a GitHub secret in the cloud, a file outside the repo on the PC.
+const TOPIC = (process.env.NTFY_TOPIC || '').trim();
+if (!TOPIC) { console.log('notify: NTFY_TOPIC not set, skipping'); process.exit(0); }
 const SITE = 'https://nq-planner.vercel.app/';
 const SKIP = [':stale', ':missing', ':connection']; // housekeeping, not market news
 

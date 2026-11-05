@@ -1,0 +1,51 @@
+# Self-running cloud recorder. GitHub's cron barely fires for this repo, so one job stays
+# up for ~5h40m, records at :07 and :37 past each hour on weekdays 6:07 AM-5:37 PM New York,
+# then starts the next job itself. Free on a public repo. Runs around the clock so the chain
+# never breaks; the rare cron below only restarts it if it ever stops.
+name: Recorder loop
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */4 * * *"
+
+concurrency:
+  group: recorder-loop
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Record every 30 minutes during the trading day
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          end=$(( $(date +%s) + 340*60 ))
+          while [ "$(date +%s)" -lt "$end" ]; do
+            dow=$(TZ=America/New_York date +%u)          # 1=Mon .. 7=Sun
+            hm=$((10#$(TZ=America/New_York date +%H)*60 + 10#$(TZ=America/New_York date +%M)))
+            min=$((10#$(TZ=America/New_York date +%M)))
+            if [ "$dow" -le 5 ] && [ "$hm" -ge $((6*60)) ] && [ "$hm" -le $((17*60+40)) ] && { [ "$min" -eq 7 ] || [ "$min" -eq 37 ]; }; then
+              echo "=== $(TZ=America/New_York date '+%F %H:%M') NY"
+              bash scripts/record-once.sh
+              sleep 60
+            fi
+            sleep 20
+          done
+      - name: Start the next loop
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run recorder-loop.yml --ref main

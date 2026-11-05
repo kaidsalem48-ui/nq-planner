@@ -1,7 +1,5 @@
-# Cloud recorder: runs the same collector as the PC task, commits market-conditions.json,
-# and Vercel deploys the push. GitHub cron is UTC and can start a few minutes late;
-# 11:07-22:37 UTC is 6:07 AM-5:37 PM New York in EST and 7:07 AM-6:37 PM in EDT.
-# Minutes 7 and 37 avoid the top/half hour, when GitHub drops or delays scheduled runs.
+# One-off cloud recording (manual "Run workflow" button, plus a backup schedule).
+# The real schedule is recorder-loop.yml, because GitHub's cron barely fires for this repo.
 name: Record market conditions
 
 on:
@@ -22,29 +20,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Collect and merge into the archive
-        run: python collect_market_conditions.py
-
-      - name: Push new updates to the phone (ntfy)
-        run: node notify_updates.cjs
-
-      - name: Commit and push if anything changed
-        run: |
-          if git diff --quiet -- market-conditions.json notified.json; then
-            echo "No change to record"; exit 0
-          fi
-          # Vercel only deploys commits from the account owner, so commit as him.
-          git config user.name "kaidsalem48-ui"
-          git config user.email "kaidsalem48@gmail.com"
-          git add market-conditions.json notified.json
-          git commit -m "Record sourced market conditions for $(TZ=America/New_York date +%F) (cloud)"
-          for i in 1 2 3; do
-            git pull --rebase -q origin main && git push -q origin HEAD:main && exit 0
-            sleep 10
-          done
-          exit 1
+      - name: Record, notify, commit
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: bash scripts/record-once.sh
