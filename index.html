@@ -689,9 +689,11 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     return out;
   }
   const conditionEngine=window.NQConditions;
+  let OVERNIGHT_HISTORY={};
+  fetch('overnight-history.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ranges){OVERNIGHT_HISTORY=j.ranges;if(DATA)render();}}).catch(()=>{});
   function marketAssessment(day){
     const base=marketBase[day]||BY[day],pmEligible=!!base&&base.score!==-2&&!['closed','half','bank'].includes(base.holidayType)&&base.segs?.some(segment=>segment[2]!=='r'&&toMin(segment[0])<960&&toMin(segment[1])>810);
-    return conditionEngine.evaluate(AUTO_CONDITIONS.days?.[day],{day,now:Date.now(),expiry:scheduledExpiry(day),upcomingExpiry:upcomingExpiry(day),calendarKnown:!!BY[day],closed:base?.holidayType==='closed',pmEligible});
+    return conditionEngine.evaluate(AUTO_CONDITIONS.days?.[day],{day,now:Date.now(),recentRanges:conditionEngine.recentOvernightRanges(AUTO_CONDITIONS,OVERNIGHT_HISTORY,day),expiry:scheduledExpiry(day),upcomingExpiry:upcomingExpiry(day),calendarKnown:!!BY[day],closed:base?.holidayType==='closed',pmEligible});
   }
   const riskChip=a=>['Sit out','AM sit out','High risk'].includes(a.level)?'r':['Reduced','Selective'].includes(a.level)?'y':'n';
   function marketSummary(day){
@@ -728,7 +730,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     }
   }
   function conditionGroupHTML(group,assessment,scope){
-    const tone=['Sit out','Very volatile'].includes(group.state)?'r':['Caution','Last reading'].includes(group.state)?'y':'n';
+    const tone=['Sit out','Very volatile'].includes(group.state)?'r':['Caution','Last reading','Light size'].includes(group.state)?'y':'n';
     const references=(conditionReferences[group.id]||[]).map(([label,url])=>
       `<li><a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)}</a></li>`).join('');
     const evidence=group.sources.map(source=>

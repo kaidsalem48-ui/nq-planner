@@ -7,6 +7,18 @@ function assess(values={},options={}){return engine.evaluate(fixture(values),{da
 assert.equal(assess().level,'Reviewed');
 for(const value of [500,550]){const a=assess({mcOvernightRange:value});assert.equal(a.level,'Sit out');assert.equal(a.restricted,true);assert(a.alerts.some(i=>i.severity==='danger'&&i.measurement===String(value)));assert(a.groups.find(g=>g.id==='overnight').reading.includes(String(Math.abs(value))));}
 for(const value of [500,550]){const a=assess({mcOvernightRange:value},{pmEligible:true});assert.equal(a.level,'AM sit out');assert.equal(a.pmWatch,true);assert(a.plan.includes('1:30–4:00 PM NY'));assert(a.alerts.some(i=>i.severity==='danger'&&i.title.startsWith('AM sit out')));}
+{const R=(...v)=>v.map((range,i)=>({day:'2026-10-'+String(20+i),range}));
+// No 500+ night in the previous 5: the usual sit-out.
+let a=assess({mcOvernightRange:600},{recentRanges:R(300,250,220,310,280)});assert.equal(a.level,'Sit out');assert.equal(a.large,true);
+// 1-2 of the last 5 at 500+: light size, never sit out.
+for(const r of [R(520,250,220,310,280),R(896,500,220,310,280)]){a=assess({mcOvernightRange:600},{recentRanges:r,pmEligible:true});assert.equal(a.large,false);assert.equal(a.restricted,false);assert.equal(a.level,'Reduced');assert.equal(a.groups.find(g=>g.id==='overnight').state,'Light size');const al=a.alerts.find(x=>x.id.endsWith(':overnight-1800-0200-light-final'));assert(al&&al.severity==='caution'&&al.title.startsWith('Light size'));}
+// 3+ of the last 5: 500 is normal.
+a=assess({mcOvernightRange:600},{recentRanges:R(896,500,620,310,280)});assert.equal(a.large,false);assert.equal(a.level,'Selective');assert.equal(a.groups.find(g=>g.id==='overnight').state,'Normal lately');assert(a.alerts.some(x=>x.id.endsWith(':overnight-1800-0200-normal-final')&&x.severity==='info'));
+// Back to 200-300 nights: the sit-out returns.
+a=assess({mcOvernightRange:600},{recentRanges:R(250,300,220,310,280,900)});assert.equal(a.level,'Sit out');
+// Only the previous 5 trading nights count, and the archive beats the backfill.
+const rr=engine.recentOvernightRanges({days:{'2026-11-05':{values:{mcOvernightRange:500.75}},'2026-11-06':{values:{mcOvernightRange:792.75}}}},{'2026-11-05':453,'2026-11-04':896.25,'2026-11-03':222.75,'2026-11-02':219.25,'2026-10-30':358.5,'2026-10-29':311.75},'2026-11-06');
+assert.deepEqual(rr.map(x=>x.range),[500.75,896.25,222.75,219.25,358.5]);}
 for(const value of [0,499.75,450,201]){const a=assess({mcOvernight:0,mcOvernightRange:value});assert.equal(a.large,false);assert.equal(a.level,'Reviewed');assert(a.alerts.some(alert=>alert.id.endsWith(':overnight-1800-0200-final')&&alert.severity==='info'&&alert.measurement===String(value)));}
 const oldWindow=fixture();oldWindow.sources[1].asOf=day+'T09:29:00-05:00';assert.equal(engine.evaluate(oldWindow,{day,now,calendarKnown:true}).overnight,null,'Old 9:29 measurements cannot be presented as 2 AM readings');
 assert.equal(assess({mcOvernight:200}).reasons.length,0);

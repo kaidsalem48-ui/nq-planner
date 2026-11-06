@@ -160,7 +160,9 @@ async function main() {
   // Same PM-watch eligibility as the site.
   const pmEligible = !!base && base.score !== -2 && !['closed', 'half', 'bank'].includes(base.holidayType)
     && (base.segs || []).some(s => s[2] !== 'r' && toMin(s[0]) < 960 && toMin(s[1]) > 810);
-  const a = engine.evaluate(record, { day, now, expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', pmEligible });
+  const archive = JSON.parse(fs.readFileSync(here('market-conditions.json'), 'utf8'));
+  const history = fs.existsSync(here('overnight-history.json')) ? JSON.parse(fs.readFileSync(here('overnight-history.json'), 'utf8')).ranges : {};
+  const a = engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, history, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', pmEligible });
   const fresh = a.alerts.filter(x => !done.has(x.id) && !SKIP.some(s => x.id.endsWith(s)) && (live.length || ALWAYS(x.id)))
     .sort((x, y) => ({ danger: 0, caution: 1, info: 2 }[x.severity] - { danger: 0, caution: 1, info: 2 }[y.severity]));
   for (const x of fresh) {
