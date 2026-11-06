@@ -1,16 +1,22 @@
-# Self-running cloud recorder. GitHub's cron barely fires for this repo, so one job stays
-# up for ~5h40m, records at :07 and :37 past each hour on weekdays 6:07 AM-5:37 PM New York,
-# then starts the next job itself. Free on a public repo. Runs around the clock so the chain
-# never breaks; the rare cron below only restarts it if it ever stops.
+# Self-running cloud recorder. GitHub's cron barely fires for this repo (and fires hours late
+# when it does), so one job stays up for ~5h40m, records at :07 and :37 past each hour on
+# weekdays 6:07 AM-5:37 PM New York, then starts the next job itself. Free on a public repo.
+# Runs around the clock so the chain never breaks. The cron below and the watchdog in
+# record-market-conditions.yml restart it if it ever stops.
 name: Recorder loop
 
 on:
   workflow_dispatch:
+    inputs:
+      minutes:
+        description: "How long this job keeps looping (340 normally; a small number only for testing the handoff)"
+        default: "340"
   schedule:
     - cron: "23 */4 * * *"
 
+# Short test runs get their own group so they never queue behind the real loop.
 concurrency:
-  group: recorder-loop
+  group: recorder-loop${{ (inputs.minutes || '340') != '340' && '-test' || '' }}
   cancel-in-progress: false
 
 permissions:
@@ -20,7 +26,7 @@ permissions:
 jobs:
   loop:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,8 +37,10 @@ jobs:
       - name: Record every 30 minutes during the trading day
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          MINUTES: ${{ inputs.minutes || '340' }}
         run: |
-          end=$(( $(date +%s) + 340*60 ))
+          end=$(( $(date +%s) + MINUTES*60 ))
+          echo "Looping for $MINUTES minutes"
           while [ "$(date +%s)" -lt "$end" ]; do
             dow=$(TZ=America/New_York date +%u)          # 1=Mon .. 7=Sun
             hm=$((10#$(TZ=America/New_York date +%H)*60 + 10#$(TZ=America/New_York date +%M)))
@@ -48,4 +56,9 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run recorder-loop.yml --ref main
+        run: |
+          for i in 1 2 3 4 5; do
+            gh workflow run recorder-loop.yml --ref main -R "$GITHUB_REPOSITORY" && echo "Next loop started" && exit 0
+            sleep 15
+          done
+          echo "Could not start the next loop"; exit 1

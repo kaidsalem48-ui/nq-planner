@@ -43,7 +43,7 @@
     else if(veryVolatile)watch.push('VIX is above 20: very volatile. Size down.');
     else if(vix!==null&&vix>18)watch.push('VIX is above your 18 threshold.');
     if(veryVolatile)alert('vix-very-volatile',`Size down · VIX ${vix.toFixed(2)} · very volatile${vixChange!==null?' · '+(vixChange>0?'+':'')+Math.round(vixChange)+'% vs. yesterday':''}`,'Size down: trade smaller than usual today. '+vixReading+moveText+(vol==='Expanding'?' Reduce aggression under your saved rule.':' Expect fast, wide swings.'),'danger');
-    else if(vix!==null&&vix>18&&vol==='Expanding')alert('vix-expanding',`Size down · VIX ${vix.toFixed(2)} · elevated and rising`,'Size down: trade smaller than usual today. '+vixReading+moveText+' Reduce aggression under your saved rule.');
+    else if(vix!==null&&vix>18&&vol==='Expanding')alert('vix-expanding',`VIX ${vix.toFixed(2)} · rising`,vixReading+moveText+' Reduce aggression under your saved rule.');
     const final=number('mcOvernight',true);
     const provisionalNet=numeric(raw,'mcOvernightSoFar');
     // Keep a sourced early-window sit-out in force while waiting for the 02:00 boundary.

@@ -1,10 +1,14 @@
-# One-off cloud recording (manual "Run workflow" button, plus a backup schedule).
-# The real schedule is recorder-loop.yml, because GitHub's cron barely fires for this repo.
+# Watchdog plus one-off recording. The real schedule is recorder-loop.yml, because GitHub's
+# cron barely fires for this repo and often fires hours late.
+# Whenever this runs it (1) restarts the recorder loop if no loop is running or queued, and
+# (2) records once, but only inside the trading-day window and only if no cloud recording
+# landed in the last 25 minutes (a late cron used to record at night).
+# The manual "Run workflow" button always records.
 name: Record market conditions
 
 on:
   schedule:
-    - cron: "7,37 11-22 * * 1-5"
+    - cron: "7,37 * * * *"
   workflow_dispatch:
 
 concurrency:
@@ -13,6 +17,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   record:
@@ -20,10 +25,31 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Restart the recorder loop if it stopped
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          live=$(gh run list -R "$GITHUB_REPOSITORY" --workflow recorder-loop.yml --limit 20 --json status \
+            --jq '[.[] | select(.status=="in_progress" or .status=="queued" or .status=="pending" or .status=="waiting")] | length')
+          echo "Recorder loops running or queued: $live"
+          if [ "$live" = "0" ]; then gh workflow run recorder-loop.yml --ref main -R "$GITHUB_REPOSITORY" && echo "Loop restarted"; fi
       - name: Record, notify, commit
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-        run: bash scripts/record-once.sh
+        run: |
+          if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
+            dow=$(TZ=America/New_York date +%u)
+            hm=$((10#$(TZ=America/New_York date +%H)*60 + 10#$(TZ=America/New_York date +%M)))
+            if [ "$dow" -gt 5 ] || [ "$hm" -lt $((6*60)) ] || [ "$hm" -gt $((17*60+45)) ]; then
+              echo "Outside the trading-day window, not recording"; exit 0
+            fi
+            if [ -n "$(git log -1 --since='25 minutes ago' --grep='(cloud)' --format=%h origin/main)" ]; then
+              echo "Cloud recorded in the last 25 minutes, not recording"; exit 0
+            fi
+          fi
+          bash scripts/record-once.sh
