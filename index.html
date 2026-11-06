@@ -386,6 +386,19 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .bell{position:relative;width:42px;height:42px;padding:0;border-radius:12px;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center;color:var(--fg);flex:none}
 .bell:hover{background:var(--panel-2)}
 .bell.has-danger{color:#ffb2b5;border-color:#ef5b61}
+.plan-box{display:flex;flex-direction:column;gap:8px;padding:10px 0 12px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.plan-h{display:flex;align-items:center;justify-content:space-between;gap:8px}.plan-h b{font-size:.95rem}
+.plan-h nav{display:flex;align-items:center;gap:6px}.plan-h nav span{font-size:.82rem;font-weight:700;min-width:84px;text-align:center}
+.plan-h nav .btn{padding:3px 10px}
+.plan-note{margin:0;font-size:.8rem !important;color:var(--muted);font-weight:600}
+.plan-seg{display:grid;grid-template-columns:96px 1fr auto;gap:8px;align-items:center;text-align:left;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);font-size:.82rem}
+.plan-seg .t{font-family:var(--f-mono);font-size:.72rem;font-weight:700;padding:2px 6px;border-radius:6px;text-align:center}
+.plan-seg .t.g{background:var(--sg);color:var(--sg-fg)}.plan-seg .t.y{background:var(--sy);color:var(--sy-fg)}.plan-seg .t.r{background:var(--sr);color:var(--sr-fg)}
+.plan-seg .pb{font-size:.72rem;font-weight:800;color:var(--muted);white-space:nowrap}
+.plan-seg.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.plan-seg.on .pb{color:#b4abff}
+.plan-topic{display:flex;gap:6px}.plan-topic input{flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--fg);font:inherit;font-size:.85rem}
+.plan-status{margin:0;font-size:.76rem !important;color:var(--muted)}
+[data-seg].picked{outline:2px solid var(--accent);outline-offset:-2px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b4abff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px top 8px;background-size:14px}
 .bell #update-count{position:absolute;top:-6px;right:-6px;min-width:19px;height:19px;padding:0 5px;border-radius:10px;font-size:11px;line-height:19px;text-align:center;box-shadow:0 0 0 2px var(--bg)}
 .sm-only{display:none}
 /* ===== collapsible restriction notice ===== */
@@ -520,6 +533,80 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   const toMin = s => { const [h,m] = s.split(":").map(Number); return h*60+m; };
   const fmt = m => { let h = Math.floor(m/60) % 24, mm = m%60; const ap = h >= 12 ? "p" : "a"; h = h%12 || 12; return h + (mm ? ":" + String(mm).padStart(2,"0") : "") + ap; };
   const fmtR = (a,b) => fmt(a) + "–" + fmt(b);
+  /* ---------- phone alert plan: which blocks get phone notifications ----------
+     Picks live on this device and are published to a private ntfy channel (<your channel>-plan),
+     which the cloud recorder reads and keeps (encrypted with your channel name) in plan.json.
+     The phone only gets updates during picked blocks, from 30 minutes before each starts. */
+  const PLAN_KEY = "nq-phone-plan-v1";
+  let PLAN = (() => { try { return JSON.parse(localStorage.getItem(PLAN_KEY)) || {}; } catch { return {}; } })();
+  if (!PLAN.days || typeof PLAN.days !== "object") PLAN.days = {};
+  let planSync = "", planDay = null;
+  const planSave = () => { try { localStorage.setItem(PLAN_KEY, JSON.stringify(PLAN)); } catch {} };
+  const planBlocks = d => (PLAN.days[d] && PLAN.days[d].blocks) || [];
+  const planStart = k => toMin(k.split("-")[0]);
+  function segKey(d, B){ const seg = ((BY[d] && BY[d].segs) || []).find(x => toMin(x[1]) === +B); return seg ? seg[0] + "-" + seg[1] : null; }
+  function planMerge(d, e){ const cur = PLAN.days[d]; if (e && Array.isArray(e.blocks) && (!cur || (e.at || 0) > (cur.at || 0))) { PLAN.days[d] = { blocks: e.blocks.filter(k => typeof k === "string"), at: e.at || 0 }; return true; } return false; }
+  const b64d = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
+  async function loadPlan(){
+    if (!PLAN.topic) return;
+    let changed = false;
+    try {
+      const r = await fetch("plan.json?refresh=" + Date.now(), { cache: "no-store" });
+      if (r.ok) {
+        const j = await r.json();
+        const raw = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("nq-plan:" + PLAN.topic));
+        const key = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
+        const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64d(j.iv) }, key, b64d(j.data));
+        const days = JSON.parse(new TextDecoder().decode(plain)).days || {};
+        for (const d in days) changed = planMerge(d, days[d]) || changed;
+      }
+    } catch {}
+    try {
+      const r = await fetch("https://ntfy.sh/" + encodeURIComponent(PLAN.topic + "-plan") + "/json?poll=1&since=all", { cache: "no-store" });
+      if (!r.ok) throw new Error();
+      for (const line of (await r.text()).split("\n")) { try { const m = JSON.parse(line); if (m.event === "message") { const e = JSON.parse(m.message); if (e.date) changed = planMerge(e.date, e) || changed; } } catch {} }
+      if (!planSync || planSync === "Could not sync") planSync = "Synced with your phone alerts";
+    } catch { planSync = "Could not sync"; }
+    if (changed) planSave();
+    markPicks(document); renderNotifications();
+  }
+  async function publishPlan(d){
+    planSync = "Saving…"; renderNotifications();
+    const e = { date: d, blocks: planBlocks(d), at: (PLAN.days[d] && PLAN.days[d].at) || Date.now() };
+    try { const r = await fetch("https://ntfy.sh/" + encodeURIComponent(PLAN.topic + "-plan"), { method: "POST", body: JSON.stringify(e) }); planSync = r.ok ? "Saved · your phone follows these picks" : "Could not save, tap again"; }
+    catch { planSync = "Could not save, tap again"; }
+    renderNotifications();
+  }
+  function togglePlan(d, k){
+    if (!PLAN.topic) { planDay = d; updatesOpen = true; selectedUpdate = null; $("sheet").hidden = true; renderNotifications(); setTimeout(() => $("plan-topic") && $("plan-topic").focus(), 0); return; }
+    const set = new Set(planBlocks(d)); set.has(k) ? set.delete(k) : set.add(k);
+    PLAN.days[d] = { blocks: [...set].sort((a, b) => planStart(a) - planStart(b)), at: Date.now() };
+    planSave(); markPicks(document); publishPlan(d);
+  }
+  function markPicks(root){
+    (root || document).querySelectorAll("[data-seg]").forEach(el => { const [d, , B] = el.dataset.seg.split("|"); const k = segKey(d, B); el.classList.toggle("picked", !!k && planBlocks(d).includes(k)); });
+  }
+  function planDefaultDay(){
+    const days = Object.keys(BY).sort();
+    if (BY[NOW.date] && ![0,6].includes(D(NOW.date).getUTCDay()) && NOW.min < 960) return NOW.date;
+    return days.find(d => d > NOW.date && ![0,6].includes(D(d).getUTCDay())) || NOW.date;
+  }
+  function planStep(n){
+    const days = Object.keys(BY).filter(d => ![0,6].includes(D(d).getUTCDay())).sort();
+    const i = days.indexOf(planDay); const j = Math.max(0, Math.min(days.length - 1, (i < 0 ? 0 : i) + n)); planDay = days[j];
+  }
+  function planHTML(){
+    if (!planDay || !BY[planDay]) planDay = planDefaultDay();
+    const d = planDay, dd = BY[d];
+    const head = `<div class="plan-h"><b>Phone alerts</b><nav aria-label="Pick a day"><button class="btn" data-plan-step="-1" aria-label="Previous day">‹</button><span>${dd ? dow(d).slice(0,3) + " " + short(d) : esc(d)}</span><button class="btn" data-plan-step="1" aria-label="Next day">›</button></nav></div>`;
+    if (!PLAN.topic) return `<section class="plan-box">${head}<p class="plan-note">Paste your ntfy channel name once on this device. Then pick the blocks you'll trade, and your phone only gets updates during them.</p><form class="plan-topic" id="plan-form"><input id="plan-topic" autocomplete="off" spellcheck="false" placeholder="nq-planner-…" aria-label="ntfy channel name"><button class="btn">Save</button></form></section>`;
+    if (!dd) return `<section class="plan-box">${head}<p class="plan-note">No schedule for this day yet.</p></section>`;
+    const picks = planBlocks(d);
+    const segs = dd.segs.filter(x => !(x[2] === "r" && toMin(x[1]) <= T8));
+    const rows = segs.map(([a, b, k, n]) => { const key = a + "-" + b, on = picks.includes(key); return `<button class="plan-seg${on ? " on" : ""}" data-plan-key="${esc(key)}" aria-pressed="${on}"><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span><span class="pb">${on ? "🔔 On" : "Off"}</span></button>`; }).join("");
+    const status = picks.length ? `Phone updates ${dow(d).slice(0,3)}: ${picks.map(k => fmtR(planStart(k), toMin(k.split("-")[1]))).join(", ")}, from 30 min before each block.` : `Nothing picked: no phone updates this day.`;
+    return `<section class="plan-box">${head}<p class="plan-note">Pick the blocks you'll trade. Your phone only gets updates then; tap a notification to see why the block is graded the way it is.</p>${rows}<p class="plan-status">${esc(status)}${planSync ? " · " + esc(planSync) : ""}</p></section>`;
+  }
   const D = iso => new Date(iso + "T12:00:00Z");
   const iso = d => d.toISOString().slice(0,10);
   const addDays = (s, n) => { const d = D(s); d.setUTCDate(d.getUTCDate()+n); return iso(d); };
@@ -716,7 +803,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const markAll=!active&&unread.length?`<button class="btn updates-markall" data-mark-all>Mark all read</button>`:'';
     const updatesNav=active?`<nav class="updates-nav" aria-label="Browse updates"><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav>`:'';
     $('market-updates').innerHTML=`<header>${updatesTitle}${updatesNav}${markAll}<button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
-    <div class="updates-content${active?'':' is-list'}">${active?`<article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">Open market conditions</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span aria-hidden="true">›</span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
+    <div class="updates-content${active?'':' is-list'}">${active?'':planHTML()}${active?`<article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">Open market conditions</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span aria-hidden="true">›</span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
     $('market-updates').querySelectorAll('[data-update-index]').forEach(button=>button.onclick=()=>{
       selectedUpdate=items[Number(button.dataset.updateIndex)]?.id;
       if(selectedUpdate){
@@ -726,6 +813,10 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       renderNotifications();
       $('market-updates').querySelector('[data-update-back]')?.focus();
     });
+    $('market-updates').querySelectorAll('[data-plan-step]').forEach(b=>b.onclick=()=>{planStep(Number(b.dataset.planStep));renderNotifications();});
+    $('market-updates').querySelectorAll('[data-plan-key]').forEach(b=>b.onclick=()=>togglePlan(planDay,b.dataset.planKey));
+    const planForm=$('plan-form');
+    if(planForm)planForm.onsubmit=e=>{e.preventDefault();const t=$('plan-topic').value.trim();if(!/^[A-Za-z0-9_-]{8,64}$/.test(t)){$('plan-topic').setCustomValidity('Use the channel name from the ntfy app');$('plan-topic').reportValidity();return;}PLAN.topic=t;planSave();planSync='';renderNotifications();loadPlan();};
     const markAllButton=$('market-updates').querySelector('[data-mark-all]');
     if(markAllButton)markAllButton.onclick=()=>{
       const now=Date.now();items.forEach(item=>{if(!seenUpdates[item.id])seenUpdates[item.id]=now;});
@@ -905,8 +996,9 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const cls = k === "g" ? "s2" : k === "y" ? "s-1" : "s-2";
     sh.innerHTML = `<div class="shc ${cls}"><div class="shh"><b>${st}</b><span>${rangeLong(A, B).replace(/<\/?small>/g, "")}</span></div>
       <p><b>${esc(reason)}</b></p><p>${esc(segWhy(reason, dd))}</p>
-      <div class="shb"><button class="btn" id="sh-close">Close</button></div></div>`;
+      <div class="shb">${segKey(s, B) ? `<button class="btn" id="sh-plan">${planBlocks(s).includes(segKey(s, B)) ? "🔔 Phone alerts on" : "Phone alerts off"}</button>` : ""}<button class="btn" id="sh-close">Close</button></div></div>`;
     sh.hidden = false;
+    if ($("sh-plan")) $("sh-plan").onclick = e => { e.stopPropagation(); togglePlan(s, segKey(s, B)); if (PLAN.topic) $("sh-plan").textContent = planBlocks(s).includes(segKey(s, B)) ? "🔔 Phone alerts on" : "Phone alerts off"; };
     $("sh-close").onclick = () => sh.hidden = true;
     sh.onclick = e => { if (e.target === sh) sh.hidden = true; };
   }
@@ -916,6 +1008,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       explainSeg(s, +A, +B, k, el.dataset.reason);
       placePop(el.getBoundingClientRect());
     });
+    markPicks(root);
   }
   function placePop(r){
     const sh = $("sheet");
@@ -1480,10 +1573,10 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     d.days.forEach(x => x.news.forEach(n => { if (/sentiment|consumer confidence/i.test(n.name)) n.impact = "red"; }));
     $("upd").textContent = "Updated " + short(d.updated);
     $("foot").innerHTML = `<p>All times New York. Green = good to trade · yellow = risky / light size · red = don't trade.</p><p>Calendar sources: ${d.sources.map(esc).join(", ")}. Dates marked "est." are confirmed each Sunday.</p>`;
-    marketBase=Object.fromEntries(d.days.map(x=>[x.date,JSON.parse(JSON.stringify(x))]));readHash(); render();
+    marketBase=Object.fromEntries(d.days.map(x=>[x.date,JSON.parse(JSON.stringify(x))]));readHash(); render(); loadPlan();
     setInterval(() => { NOW = nyNow(); renderNow(); refreshConditionArchive(); }, 60000);
-    window.addEventListener("focus",refreshConditionArchive);
-    document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshConditionArchive();});
+    window.addEventListener("focus",()=>{refreshConditionArchive();loadPlan();});
+    document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshConditionArchive();loadPlan();}});
   }).catch(error => { console.error("Planner initialization failed",error); $("view").innerHTML = `<section class="panel err">Couldn't load the schedule. Check your connection and reload.</section>`; });
   window.addEventListener("hashchange", () => { readHash(); render(); });
   let rz, lastW = innerWidth; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (DATA && (innerWidth !== lastW || DESK())) { lastW = innerWidth; render(); } }, 150); });

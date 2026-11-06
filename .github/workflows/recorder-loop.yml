@@ -49,6 +49,9 @@ jobs:
               echo "=== $(TZ=America/New_York date '+%F %H:%M') NY"
               bash scripts/record-once.sh
               sleep 60
+            elif [ "$min" -eq 22 ] || [ "$min" -eq 52 ]; then
+              bash scripts/sync-plan.sh   # phone alert picks, any day and hour
+              sleep 60
             fi
             sleep 20
           done
