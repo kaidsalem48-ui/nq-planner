@@ -560,13 +560,13 @@
       ]
     },
     "2026-11-06": {
-      "recordedAt": "2026-11-06T13:37:08.997424+00:00",
+      "recordedAt": "2026-11-06T14:07:15.982024+00:00",
       "values": {
-        "mcVix": 27.19,
-        "mcVixChange": -3.5131,
+        "mcVix": 26.35,
+        "mcVixChange": -6.494,
         "mcVol": "Contracting",
-        "mcDxy": 102.079,
-        "mcDxyChange": 0.532,
+        "mcDxy": 102.22,
+        "mcDxyChange": 0.673,
         "mcDollar": "Rising",
         "mcPriorRange": 1510.25,
         "mcOvernight": 346.0,
@@ -579,25 +579,25 @@
         "mcOvernightHighMin": 230,
         "mcOvernightLowMin": 19,
         "mcDirection": "Up",
-        "mcAAPL": -1.118,
-        "mcMSFT": -0.874,
-        "mcNVDA": 4.463,
-        "mcAMZN": 0.495,
-        "mcGOOGL": 0.301,
-        "mcMETA": -0.004,
-        "mcTSLA": 1.885,
-        "mcYieldLevel": 4.876,
-        "mcYieldChangeBp": 3.9,
+        "mcAAPL": -1.136,
+        "mcMSFT": -1.01,
+        "mcNVDA": 4.441,
+        "mcAMZN": 0.151,
+        "mcGOOGL": 0.021,
+        "mcMETA": -0.464,
+        "mcTSLA": 2.588,
+        "mcYieldLevel": 4.868,
+        "mcYieldChangeBp": 3.1,
         "mcYields": "Rising",
         "mcMacro": "Headwinds",
-        "mcMacroYieldChangeBp": 3.9,
-        "mcMacroDxyChange": 0.493
+        "mcMacroYieldChangeBp": 3.3,
+        "mcMacroDxyChange": 0.645
       },
       "sources": [
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:22:01+00:00",
+          "asOf": "2026-11-06T13:52:01+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -607,7 +607,7 @@
         {
           "title": "^TNX quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:22:06+00:00",
+          "asOf": "2026-11-06T13:52:06+00:00",
           "fields": [
             "mcYieldLevel",
             "mcYieldChangeBp",
@@ -617,7 +617,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:06+00:00",
+          "asOf": "2026-11-06T13:57:13+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -627,7 +627,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-05 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:00+00:00",
+          "asOf": "2026-11-06T13:57:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -659,7 +659,7 @@
         {
           "title": "NQZ26.CME direction vs prior RTH close; synchronized minute",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:00+00:00",
+          "asOf": "2026-11-06T13:57:00+00:00",
           "fields": [
             "mcDirection"
           ]
@@ -667,7 +667,7 @@
         {
           "title": "AAPL synchronized change vs prior RTH close 2026-11-05",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:00+00:00",
+          "asOf": "2026-11-06T13:57:00+00:00",
           "fields": [
             "mcAAPL"
           ]
@@ -675,7 +675,7 @@
         {
           "title": "MSFT synchronized change vs prior RTH close 2026-11-05",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:00+00:00",
+          "asOf": "2026-11-06T13:57:00+00:00",
           "fields": [
             "mcMSFT"
           ]
@@ -683,7 +683,7 @@
         {
           "title": "NVDA synchronized change vs prior RTH close 2026-11-05",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:00+00:00",
+          "asOf": "2026-11-06T13:57:00+00:00",
           "fields": [
             "mcNVDA"
           ]
@@ -691,7 +691,7 @@
         {
           "title": "AMZN synchronized change vs prior RTH close 2026-11-05",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:00+00:00",
+          "asOf": "2026-11-06T13:57:00+00:00",
           "fields": [
             "mcAMZN"
           ]
@@ -699,7 +699,7 @@
         {
           "title": "GOOGL synchronized change vs prior RTH close 2026-11-05",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/GOOGL?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:00+00:00",
+          "asOf": "2026-11-06T13:57:00+00:00",
           "fields": [
             "mcGOOGL"
           ]
@@ -707,7 +707,7 @@
         {
           "title": "META synchronized change vs prior RTH close 2026-11-05",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/META?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:00+00:00",
+          "asOf": "2026-11-06T13:57:00+00:00",
           "fields": [
             "mcMETA"
           ]
@@ -715,7 +715,7 @@
         {
           "title": "TSLA synchronized change vs prior RTH close 2026-11-05",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:27:00+00:00",
+          "asOf": "2026-11-06T13:57:00+00:00",
           "fields": [
             "mcTSLA"
           ]
@@ -723,7 +723,7 @@
         {
           "title": "Macro heuristic at synchronized minute: yield rising, dollar rising; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:21:00+00:00",
+          "asOf": "2026-11-06T13:51:00+00:00",
           "fields": [
             "mcMacro",
             "mcMacroYieldChangeBp"
@@ -732,7 +732,7 @@
         {
           "title": "Macro heuristic at synchronized minute: yield rising, dollar rising; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-06T13:21:00+00:00",
+          "asOf": "2026-11-06T13:51:00+00:00",
           "fields": [
             "mcMacro",
             "mcMacroDxyChange"
@@ -741,5 +741,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-06T13:37:09.132527+00:00"
+  "updatedAt": "2026-11-06T14:07:16.033252+00:00"
 }
