@@ -40,10 +40,10 @@
     const moveText=expectedMove===null?'':` Expected NQ move today: about ±${expectedMove} points (about 2 days in 3 stay inside it). That is NQ ${Math.round(nqPrice).toLocaleString('en-US')} × VIX ${vix.toFixed(2)}% × 1.25 (Nasdaq usually swings about 25% more than the S&P) ÷ 16. A rough size estimate from options pricing, not a direction.`;
     group('volatility','Volatility',volState,vixReading+moveText,'Cboe’s VIX measures the swings S&P 500 options imply over the next 30 days. A higher reading points to wider expected swings in either direction.',vix===null?'Wait for a current observation. Missing VIX is not a low-risk reading.':veryVolatile?`Very volatile: VIX is above 20. Expect fast, wide swings in either direction.${vol==='Expanding'?' Reduce aggression under your rising VIX rule.':' Stay selective and size down.'}`:vix>18?`Above your 18 threshold. Allow for faster or wider swings.${vol==='Expanding'?' Reduce aggression under your rising VIX rule.':' Stay selective while the level remains elevated.'}`:'Your VIX caution rule is clear at this reading. Check the other conditions before trading.',['mcVix','mcVol','mcVixChange']);
     if(vix!==null&&vix>18&&vol==='Expanding')reasons.push('VIX is above 18 and expanding versus prior close.');
-    else if(veryVolatile)watch.push('VIX is above 20: very volatile.');
+    else if(veryVolatile)watch.push('VIX is above 20: very volatile. Size down.');
     else if(vix!==null&&vix>18)watch.push('VIX is above your 18 threshold.');
-    if(veryVolatile)alert('vix-very-volatile',`VIX ${vix.toFixed(2)} · very volatile${vixChange!==null?' · '+(vixChange>0?'+':'')+Math.round(vixChange)+'% vs. yesterday':''}`,vixReading+moveText+(vol==='Expanding'?' Reduce aggression under your saved rule.':' Expect fast, wide swings.'),'danger');
-    else if(vix!==null&&vix>18&&vol==='Expanding')alert('vix-expanding','Elevated and expanding VIX',vixReading+moveText+' Reduce aggression under your saved rule.');
+    if(veryVolatile)alert('vix-very-volatile',`Size down · VIX ${vix.toFixed(2)} · very volatile${vixChange!==null?' · '+(vixChange>0?'+':'')+Math.round(vixChange)+'% vs. yesterday':''}`,'Size down: trade smaller than usual today. '+vixReading+moveText+(vol==='Expanding'?' Reduce aggression under your saved rule.':' Expect fast, wide swings.'),'danger');
+    else if(vix!==null&&vix>18&&vol==='Expanding')alert('vix-expanding',`Size down · VIX ${vix.toFixed(2)} · elevated and rising`,'Size down: trade smaller than usual today. '+vixReading+moveText+' Reduce aggression under your saved rule.');
     const final=number('mcOvernight',true);
     const provisionalNet=numeric(raw,'mcOvernightSoFar');
     // Keep a sourced early-window sit-out in force while waiting for the 02:00 boundary.

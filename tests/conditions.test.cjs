@@ -18,7 +18,8 @@ assert.equal(assess({mcOvernight:100,mcOvernightSoFar:-500}).level,'Reviewed','F
 assert.equal(assess({mcVix:25,mcVol:'Expanding'}).level,'Reduced');
 assert(assess({mcVix:19,mcVol:'Contracting'}).groups.find(g=>g.id==='volatility').conclusion.includes('remains elevated'));
 {const v=assess({mcVix:21.4,mcVol:'Stable'}),g=v.groups.find(g=>g.id==='volatility'),a=v.alerts.find(a=>a.id.endsWith(':vix-very-volatile'));
-assert.equal(g.state,'Very volatile');assert(g.reading.includes('very volatile'));assert(a&&a.severity==='danger');assert.equal(assess({mcVix:25.82,mcVol:'Expanding',mcVixChange:55.45}).alerts.find(a=>a.id.endsWith(':vix-very-volatile')).title,'VIX 25.82 · very volatile · +55% vs. yesterday');
+assert.equal(g.state,'Very volatile');assert(g.reading.includes('very volatile'));assert(a&&a.severity==='danger');assert.equal(assess({mcVix:25.82,mcVol:'Expanding',mcVixChange:55.45}).alerts.find(a=>a.id.endsWith(':vix-very-volatile')).title,'Size down · VIX 25.82 · very volatile · +55% vs. yesterday');
+{const e=assess({mcVix:19.4,mcVol:'Expanding',mcVixChange:8}).alerts.find(a=>a.id.endsWith(':vix-expanding'));assert.equal(e.title,'Size down · VIX 19.40 · elevated and rising');assert(e.message.startsWith('Size down'));}
 assert(assess({mcVix:25.82,mcVol:'Expanding',mcVixChange:55.45,mcOvernightClose:28280.5}).alerts.find(a=>a.id.endsWith(':vix-very-volatile')).message.includes('about ±570 points'));
 {const t=o=>assess(o).alerts.find(a=>a.id.includes(':tech-daily:'));
 assert.equal(t({}).title,'Big tech: all in · 7/7 up with NQ');assert.equal(t({}).severity,'info');
