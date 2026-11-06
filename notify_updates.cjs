@@ -99,12 +99,19 @@ async function scheduleNews(now) {
   const days = JSON.parse(fs.readFileSync(here('data.json'), 'utf8')).days || [];
   const horizon = [0, 1, 2].map(i => nyDay(now + i * 864e5));
   let changed = false;
+  // Never book twice, even if notified.json lost a booking: skip times already queued on ntfy.
+  const queued = new Set();
+  try {
+    const res = await fetch(`https://ntfy.sh/${encodeURIComponent(TOPIC)}/json?poll=1&since=all&scheduled=1`);
+    for (const line of (await res.text()).split(/\r?\n/)) { try { const m = JSON.parse(line); if (m.title === 'News in 2 min') queued.add(m.time); } catch {} }
+  } catch {}
   for (const dd of days.filter(d => horizon.includes(d.date) && d.holidayType !== 'closed')) {
     const byTime = {};
     for (const n of dd.news || []) (byTime[n.time] = byTime[n.time] || []).push(n);
     for (const [time, list] of Object.entries(byTime)) {
       const id = `${dd.date}:news:${time}`, at = nyEpoch(dd.date, toMin(time)) - NEWS_LEAD * 6e4;
       if ((sent[dd.date] || []).includes(id) || at < now + 30e3) continue;
+      if (queued.has(Math.floor(at / 1000))) { (sent[dd.date] = sent[dd.date] || []).push(id); changed = true; continue; }
       const red = list.some(n => n.impact === 'red' || /sentiment|consumer confidence/i.test(n.name));
       const ok = await push({
         title: 'News in 2 min',
