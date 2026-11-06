@@ -78,9 +78,50 @@ async function push(body) {
   return res.ok;
 }
 
+// ---------- "News in 2 min": scheduled ahead with ntfy's delayed delivery ----------
+// Every run (recordings and the around-the-clock plan sync) books a push for each news time
+// today and the next two days, 2 minutes before it. ntfy holds it and delivers on time, so it
+// does not depend on a recording landing at that minute. Sent whatever blocks are picked.
+// Booked ids ("DAY:news:8:30") live in notified.json so nothing is booked twice.
+const NEWS_LEAD = 2;
+function nyEpoch(day, m) { // NY wall time -> epoch ms (handles EST/EDT)
+  const [y, mo, d] = day.split('-').map(Number);
+  let t = Date.UTC(y, mo - 1, d, Math.floor(m / 60), m % 60) + 5 * 36e5;
+  for (let i = 0; i < 3; i++) {
+    const dd = nyDay(t), diff = (dd === day ? 0 : dd < day ? 1440 : -1440) + m - nyMin(t);
+    if (!diff) break; t += diff * 6e4;
+  }
+  return t;
+}
+async function scheduleNews(now) {
+  const file = here('notified.json');
+  const sent = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
+  const days = JSON.parse(fs.readFileSync(here('data.json'), 'utf8')).days || [];
+  const horizon = [0, 1, 2].map(i => nyDay(now + i * 864e5));
+  let changed = false;
+  for (const dd of days.filter(d => horizon.includes(d.date) && d.holidayType !== 'closed')) {
+    const byTime = {};
+    for (const n of dd.news || []) (byTime[n.time] = byTime[n.time] || []).push(n);
+    for (const [time, list] of Object.entries(byTime)) {
+      const id = `${dd.date}:news:${time}`, at = nyEpoch(dd.date, toMin(time)) - NEWS_LEAD * 6e4;
+      if ((sent[dd.date] || []).includes(id) || at < now + 30e3) continue;
+      const red = list.some(n => n.impact === 'red' || /sentiment|consumer confidence/i.test(n.name));
+      const ok = await push({
+        title: 'News in 2 min',
+        message: `${clock(toMin(time))} · ${list.map(n => `${n.name}${n.impact === 'red' || /sentiment|consumer confidence/i.test(n.name) ? ' (red folder)' : ''}`).join(', ')}`,
+        click: `${SITE}#day-${dd.date}`, priority: red ? 4 : 3, tags: [red ? 'red_circle' : 'orange_circle'],
+        delay: String(Math.floor(at / 1000)),
+      });
+      if (ok) { (sent[dd.date] = sent[dd.date] || []).push(id); changed = true; console.log(`notify: booked "News in 2 min" for ${dd.date} ${time}`); }
+    }
+  }
+  if (changed) fs.writeFileSync(file, JSON.stringify(sent, null, 2) + '\n');
+}
+
 async function main() {
   const now = Date.now(), day = nyDay(now), min = nyMin(now);
   const plan = await syncPlan(now);
+  await scheduleNews(now);
   if (process.argv.includes('--sync-only')) return;
 
   const base = (JSON.parse(fs.readFileSync(here('data.json'), 'utf8')).days || []).find(d => d.date === day);
