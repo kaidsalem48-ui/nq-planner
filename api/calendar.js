@@ -5,6 +5,12 @@
 // Per trading day: an all-day event with the day's grade and why (plus Sit out / Light size from
 // the latest market conditions), one event per green or yellow block, and one per news time.
 // Red "don't trade" blocks are left out to keep the calendar readable.
+//
+// Apple Calendar gives every event in one subscribed calendar the same colour, so ?show= splits
+// the feed into separate calendars, each subscribed once and coloured on its own:
+//   green  = Great/Good days + green blocks      yellow = OK/Light days + yellow blocks
+//   red    = Sit out / closed days               news   = news times
+// No ?show= gives everything in one calendar.
 'use strict';
 const data = require('../data.json');
 const archive = require('../market-conditions.json');
@@ -39,12 +45,14 @@ function fold(line) {
 const clock = m => { let h = Math.floor(m / 60) % 24; const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return `${h}:${String(m % 60).padStart(2, '0')} ${ap}`; };
 const GRADE = { g: '🟢 Trade', y: '🟡 Risky / light size' };
 
+const FEEDS = { green: ['NQ Good', '#34C759'], yellow: ['NQ Light / risky', '#FFCC00'], red: ['NQ Sit out', '#FF3B30'], news: ['NQ News', '#AF52DE'] };
 module.exports = (req, res) => {
   const now = Date.now(), today = engine.nyDate(now), from = addDays(today, -14);
+  const show = FEEDS[new URL(req.url || '/', 'https://x').searchParams.get('show')] ? new URL(req.url, 'https://x').searchParams.get('show') : null;
   const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//NQ Planner//Schedule//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
-    'X-WR-CALNAME:NQ Planner', 'X-WR-TIMEZONE:America/New_York', 'X-WR-CALDESC:NQ trading schedule: day grades\\, trade windows and news (New York times).',
+    `X-WR-CALNAME:${show ? FEEDS[show][0] : 'NQ Planner'}`, ...(show ? [`X-APPLE-CALENDAR-COLOR:${FEEDS[show][1]}`] : []), 'X-WR-TIMEZONE:America/New_York', 'X-WR-CALDESC:NQ trading schedule: day grades\\, trade windows and news (New York times).',
     'REFRESH-INTERVAL;VALUE=DURATION:PT1H', 'X-PUBLISHED-TTL:PT1H'];
-  const event = (uid, fields) => { lines.push('BEGIN:VEVENT', `UID:${uid}@nq-planner`, `DTSTAMP:${stamp(now)}`, ...fields, 'END:VEVENT'); };
+  const event = (cls, uid, fields) => { if (show && show !== cls) return; lines.push('BEGIN:VEVENT', `UID:${uid}@nq-planner`, `DTSTAMP:${stamp(now)}`, ...fields, 'END:VEVENT'); };
 
   for (const dd of (data.days || []).filter(d => d.date >= from)) {
     const day = dd.date, link = `${SITE}#day-${day}`;
@@ -54,7 +62,7 @@ module.exports = (req, res) => {
       try {
         const a = engine.evaluate(record, { day, now, calendarKnown: true, closed: dd.holidayType === 'closed', recentRanges: engine.recentOvernightRanges(archive, history, day),
           pmEligible: dd.score !== -2 && !['closed', 'half', 'bank'].includes(dd.holidayType) && (dd.segs || []).some(s => s[2] !== 'r' && toMin(s[0]) < 960 && toMin(s[1]) > 810) });
-        if (a.restricted) extra = ' · ' + a.level;
+        if (a.restricted && a.level !== dd.label) extra = ' · ' + a.level;
         else if (a.overnightTrend?.desens === 'light') extra = ' · Light size';
         note = '\n\nMarket conditions: ' + a.plan;
       } catch (e) {}
@@ -62,27 +70,28 @@ module.exports = (req, res) => {
     const blocks = (dd.segs || []).map(([a, b, k, n]) => `${clock(toMin(a))}–${clock(toMin(b))}  ${k === 'g' ? 'Trade' : k === 'y' ? 'Risky' : 'No trade'} · ${n}`).join('\n');
     const news = (dd.news || []).map(n => `${n.time} ${n.name}${n.impact === 'red' ? ' (red folder)' : ''}`).join('\n');
     const next = addDays(day, 1).replace(/-/g, '');
-    event(`day-${day}`, [`DTSTART;VALUE=DATE:${day.replace(/-/g, '')}`, `DTEND;VALUE=DATE:${next}`, 'TRANSP:TRANSPARENT',
+    const dayCls = dd.holidayType === 'closed' || dd.score === -2 || /sit out/i.test(extra) ? 'red' : dd.score >= 1 && !extra ? 'green' : 'yellow';
+    event(dayCls, `day-${day}`, [`DTSTART;VALUE=DATE:${day.replace(/-/g, '')}`, `DTEND;VALUE=DATE:${next}`, 'TRANSP:TRANSPARENT',
       `SUMMARY:${esc(`NQ ${dd.label || ''}${extra}`)}`,
       `DESCRIPTION:${esc(`${dd.why || ''}${note}\n\nNews:\n${news || 'No scheduled news'}\n\nBlocks (New York):\n${blocks}\n\n${link}`)}`, `URL:${link}`]);
     if (dd.holidayType === 'closed') continue;
     for (const [a, b, k, n] of dd.segs || []) {
       if (!GRADE[k]) continue;
-      event(`seg-${day}-${a}-${b}`, [`DTSTART:${stamp(nyEpoch(day, toMin(a)))}`, `DTEND:${stamp(nyEpoch(day, toMin(b)))}`, 'TRANSP:TRANSPARENT',
+      event(k === 'g' ? 'green' : 'yellow', `seg-${day}-${a}-${b}`, [`DTSTART:${stamp(nyEpoch(day, toMin(a)))}`, `DTEND:${stamp(nyEpoch(day, toMin(b)))}`, 'TRANSP:TRANSPARENT',
         `SUMMARY:${esc(`${GRADE[k]} · ${n}`)}`, `DESCRIPTION:${esc(`${dd.label || ''} day. ${dd.why || ''}\n\n${link}`)}`, `URL:${link}`]);
     }
     // Asia & London: these blocks belong to this trading day but run the evening before.
     const eve = addDays(day, -1);
     for (const [a, b, k, n] of dd.asia || []) {
       if (!GRADE[k]) continue;
-      event(`asia-${day}-${a}-${b}`, [`DTSTART:${stamp(nyEpoch(eve, toMin(a)))}`, `DTEND:${stamp(nyEpoch(eve, toMin(b)))}`, 'TRANSP:TRANSPARENT',
+      event(k === 'g' ? 'green' : 'yellow', `asia-${day}-${a}-${b}`, [`DTSTART:${stamp(nyEpoch(eve, toMin(a)))}`, `DTEND:${stamp(nyEpoch(eve, toMin(b)))}`, 'TRANSP:TRANSPARENT',
         `SUMMARY:${esc(`${GRADE[k]} · ${n}`)}`, `DESCRIPTION:${esc(`Overnight session for ${day}.\n\n${link}`)}`, `URL:${link}`]);
     }
     const times = {};
     for (const n of dd.news || []) (times[n.time] = times[n.time] || []).push(n);
     for (const [time, list] of Object.entries(times)) {
       const t = nyEpoch(day, toMin(time)), red = list.some(n => n.impact === 'red');
-      event(`news-${day}-${time}`, [`DTSTART:${stamp(t)}`, `DTEND:${stamp(t + 5 * 6e4)}`, 'TRANSP:TRANSPARENT',
+      event('news', `news-${day}-${time}`, [`DTSTART:${stamp(t)}`, `DTEND:${stamp(t + 5 * 6e4)}`, 'TRANSP:TRANSPARENT',
         `SUMMARY:${esc(`${red ? '🔴' : '🟠'} ${list.map(n => n.name).join(', ')}`)}`, `DESCRIPTION:${esc(`${time} New York news.\n\n${link}`)}`, `URL:${link}`]);
     }
   }
