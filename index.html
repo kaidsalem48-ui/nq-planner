@@ -111,7 +111,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .t.g{background:var(--sg);color:var(--sg-fg)}.t.y{background:var(--sy);color:var(--sy-fg)}.t.r{background:var(--sr);color:var(--sr-fg)}
 .notes{font-size:.82rem;color:var(--muted);margin:0;padding:0 2px}
 
-.tl{touch-action:pan-y pinch-zoom}
+.tl.dayswipe{touch-action:pan-y pinch-zoom}
 .tl.swiping{overflow:hidden}
 .swtrack{display:flex;align-items:flex-start;will-change:transform}
 .swpane{flex:0 0 100%;min-width:0}
@@ -1163,6 +1163,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   function neighbourDay(d, n){ let x = d; do { x = addDays(x, n); } while ([0,6].includes(D(x).getUTCDay())); return BY[x] ? x : null; }
   function bindDaySwipe(host){
     if (!host) return;
+    host.classList.add("dayswipe"); // only the day view; the week view's hours scroll sideways
     let x0 = null, y0 = 0, t0 = 0, lock = null, track = null, W = 0, prev = null, next = null, dx = 0;
     const pane = () => { const p = document.createElement("div"); p.className = "swpane"; return p; };
     function build(){
