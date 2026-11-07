@@ -1061,9 +1061,12 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   function bindTiles(){
     $("view").querySelectorAll(".tile[data-d]").forEach(b => {
       let timer = null, long = false;
-      const start = () => { long = false; timer = setTimeout(() => { long = true; explain(b.dataset.d); }, 450); };
+      let px = 0, py = 0;
+      const start = e => { long = false; px = e.clientX; py = e.clientY; timer = setTimeout(() => { long = true; explain(b.dataset.d); }, 450); };
       const stop = () => clearTimeout(timer);
       b.addEventListener("pointerdown", start);
+      // A finger that moves is swiping months, not holding for the reasoning.
+      b.addEventListener("pointermove", e => { if (Math.abs(e.clientX - px) > 8 || Math.abs(e.clientY - py) > 8) stop(); });
       ["pointerup","pointerleave","pointercancel"].forEach(ev => b.addEventListener(ev, stop));
       b.addEventListener("contextmenu", e => e.preventDefault());
       b.onclick = e => { if (long) { e.preventDefault(); return; } cursor = b.dataset.d; view = "day"; render(); };
@@ -1071,9 +1074,17 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   }
 
   /* ---------- month ---------- */
+  function monthShift(c, n){ const d = D(c); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() + n); return iso(d); }
   function renderMonth(){
-    const d = D(cursor); const y = d.getUTCFullYear(), m = d.getUTCMonth();
-    $("title").textContent = MON[m] + " " + y;
+    const d = D(cursor);
+    $("title").textContent = MON[d.getUTCMonth()] + " " + d.getUTCFullYear();
+    $("view").innerHTML = `<section class="panel cal">${monthInner(cursor)}</section>`;
+    bindTiles();
+    // Swipe the month grid left/right for the next/previous month (phone).
+    bindStrip($("view").querySelector(".cal"), monthShift(cursor, -1), monthShift(cursor, 1), (pane, c) => { pane.innerHTML = monthInner(c); });
+  }
+  function monthInner(c){
+    const d = D(c); const y = d.getUTCFullYear(), m = d.getUTCMonth();
     const first = iso(new Date(Date.UTC(y, m, 1, 12)));
     let start = monday(first);
     const lastDay = new Date(Date.UTC(y, m+1, 0, 12));
@@ -1095,14 +1106,12 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       const lb = dayLabel(dd);
       return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(dayHeadline(dd))}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span><span class="win">${esc(dd.opex ? "1:1 · no partials" : winText(dd))}</span></span>${asiaBadge(s)}</button>`;
     }).join("");
-    $("view").innerHTML = `<section class="panel cal">
+    return `
       <div class="calhead"><h2>${MON[m]}</h2><div class="counts">${counts}</div></div>
       <div class="dow"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span></div>
       <div class="grid5">${tiles}</div>
       <div class="legend"><span class="s2">Great</span><span class="s1">Good</span><span class="s0">OK</span><span class="s-1">Light</span><span class="s-2">Sit out</span><span class="shol">Holiday</span><span class="shalf">Half day</span><span style="background:var(--panel-2);display:inline-flex;align-items:center;gap:6px"><i class="a8" style="position:static;box-shadow:none">8</i>8 PM Asia good</span></div>
-      <p class="notes" style="padding:10px 4px 0">Tap a day to open it. Press and hold for the reasoning.</p>
-    </section>`;
-    bindTiles();
+      <p class="notes" style="padding:10px 4px 0">Tap a day to open it. Press and hold for the reasoning. Swipe for other months.</p>`;
   }
 
   /* ---------- week ---------- */
@@ -1162,18 +1171,23 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   // together as one strip under your finger, and letting go glides the strip onto the new day.
   function neighbourDay(d, n){ let x = d; do { x = addDays(x, n); } while ([0,6].includes(D(x).getUTCDay())); return BY[x] ? x : null; }
   function bindDaySwipe(host){
+    bindStrip(host, neighbourDay(cursor, -1), neighbourDay(cursor, 1), (pane, d) => dayBlocks(pane, d));
+  }
+  // Apple-Calendar-style swipe shared by the day hours and the month grid: the previous and next
+  // page sit attached beside this one, the strip follows your finger, and letting go past a third
+  // of the width (or a flick) glides onto the neighbour; otherwise it springs back.
+  function bindStrip(host, prev, next, fill){
     if (!host) return;
-    host.classList.add("dayswipe"); // only the day view; the week view's hours scroll sideways
-    let x0 = null, y0 = 0, t0 = 0, lock = null, track = null, W = 0, prev = null, next = null, dx = 0;
+    host.classList.add("dayswipe"); // pan-y: we own sideways drags here (the week hours keep native scroll)
+    let x0 = null, y0 = 0, t0 = 0, lock = null, track = null, W = 0, dx = 0;
     const pane = () => { const p = document.createElement("div"); p.className = "swpane"; return p; };
     function build(){
-      prev = neighbourDay(cursor, -1); next = neighbourDay(cursor, 1);
       track = document.createElement("div"); track.className = "swtrack";
       const a = pane(), b = pane(), c = pane();
       [...host.childNodes].forEach(n => b.appendChild(n));
-      if (prev) dayBlocks(a, prev); if (next) dayBlocks(c, next);
+      if (prev) fill(a, prev); if (next) fill(c, next);
       track.append(a, b, c); host.appendChild(track); host.classList.add("swiping");
-      W = b.offsetWidth; // one pane = the panel's content width
+      W = b.offsetWidth;
       track.style.transform = `translateX(${-W}px)`;
     }
     function unbuild(){ if (!track) return; const b = track.children[1]; [...b.childNodes].forEach(n => host.appendChild(n)); track.remove(); track = null; host.classList.remove("swiping"); }
