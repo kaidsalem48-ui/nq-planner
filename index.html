@@ -111,6 +111,10 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .t.g{background:var(--sg);color:var(--sg-fg)}.t.y{background:var(--sy);color:var(--sy-fg)}.t.r{background:var(--sr);color:var(--sr-fg)}
 .notes{font-size:.82rem;color:var(--muted);margin:0;padding:0 2px}
 
+.tl.swipe-in-r{animation:swr .22s ease-out}.tl.swipe-in-l{animation:swl .22s ease-out}
+@keyframes swr{from{transform:translateX(36px);opacity:.3}to{transform:none;opacity:1}}
+@keyframes swl{from{transform:translateX(-36px);opacity:.3}to{transform:none;opacity:1}}
+.tl{touch-action:pan-y pinch-zoom}
 .expand{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:14px;border:1px solid var(--line);background:var(--panel-2);font-weight:800;font-size:.95rem}
 .expand .chev{transition:transform .2s}
 .expand[aria-expanded="true"] .chev{transform:rotate(180deg)}
@@ -1147,8 +1151,27 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     $("view").style.display = "flex"; $("view").style.flexDirection = "column"; $("view").style.gap = "12px";
     $("exp").onclick = () => { setExpanded(!expanded); renderDay(); };
     bindSegs($("view"));
-    if (expanded) dayBlocks($("tl"), s);
+    if (expanded) { dayBlocks($("tl"), s); bindDaySwipe($("tl")); }
     renderPlan();
+  }
+
+  /* ---------- day: swipe the hours left/right to change day (phone) ----------
+     Only on the hour blocks. A mostly sideways swipe of 60px or more moves one trading day;
+     vertical scrolling and taps are left alone. */
+  let swipeIn = 0;
+  function bindDaySwipe(host){
+    if (!host) return;
+    if (swipeIn) { host.classList.add(swipeIn > 0 ? "swipe-in-r" : "swipe-in-l"); swipeIn = 0; }
+    let x0 = null, y0 = 0, t0 = 0;
+    host.addEventListener("touchstart", e => { if (e.touches.length !== 1) { x0 = null; return; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now(); }, { passive: true });
+    host.addEventListener("touchend", e => {
+      if (x0 === null) return;
+      const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0; x0 = null;
+      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5 || Date.now() - t0 > 800) return;
+      $("sheet").hidden = true;
+      swipeIn = dx < 0 ? 1 : -1;
+      const keep = scrollY; step(dx < 0 ? 1 : -1); scrollTo(0, keep);
+    }, { passive: true });
   }
 
   /* ---------- day: compact hour blocks ---------- */
