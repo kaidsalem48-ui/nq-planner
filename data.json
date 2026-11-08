@@ -691,12 +691,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "y",
      "Bank holiday, thin volume"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -714,7 +714,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "Columbus Day: bonds/banks closed, futures open with thin volume. No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better.",
+   "why": "Columbus Day: bonds/banks closed, futures open with thin volume. No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better.",
    "notes": []
   },
   {
@@ -1108,8 +1108,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": -1,
-   "label": "Light",
+   "score": 0,
+   "label": "OK",
    "segs": [
     [
      "2:00",
@@ -1131,12 +1131,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "g",
-     "9:30-10:10 window"
+     "9:30-10:00 window"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -1154,7 +1154,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better.",
    "notes": []
   },
   {
@@ -1526,8 +1526,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": -1,
-   "label": "Light",
+   "score": 0,
+   "label": "OK",
    "segs": [
     [
      "2:00",
@@ -1549,12 +1549,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "g",
-     "9:30-10:10 window"
+     "9:30-10:00 window"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -1572,7 +1572,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
    "notes": []
   },
   {
@@ -2980,8 +2980,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": -1,
-   "label": "Light",
+   "score": 0,
+   "label": "OK",
    "segs": [
     [
      "2:00",
@@ -3003,12 +3003,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "g",
-     "9:30-10:10 window"
+     "9:30-10:00 window"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -3026,7 +3026,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
    "notes": []
   },
   {
@@ -3414,8 +3414,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": -1,
-   "label": "Light",
+   "score": 0,
+   "label": "OK",
    "segs": [
     [
      "2:00",
@@ -3437,12 +3437,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "g",
-     "9:30-10:10 window"
+     "9:30-10:00 window"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -3460,7 +3460,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
    "notes": []
   },
   {
@@ -3825,8 +3825,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": -1,
-   "label": "Light",
+   "score": 0,
+   "label": "OK",
    "segs": [
     [
      "2:00",
@@ -3848,12 +3848,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "g",
-     "9:30-10:10 window"
+     "9:30-10:00 window"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -3871,7 +3871,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
    "notes": []
   },
   {
@@ -4299,8 +4299,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": -1,
-   "label": "Light",
+   "score": 0,
+   "label": "OK",
    "segs": [
     [
      "2:00",
@@ -4322,12 +4322,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "g",
-     "9:30-10:10 window"
+     "9:30-10:00 window"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -4345,7 +4345,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better.",
    "notes": []
   },
   {
@@ -4731,8 +4731,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": -1,
-   "label": "Light",
+   "score": 0,
+   "label": "OK",
    "segs": [
     [
      "2:00",
@@ -4754,12 +4754,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "g",
-     "9:30-10:10 window"
+     "9:30-10:00 window"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -4777,7 +4777,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.",
    "notes": []
   },
   {
@@ -5173,8 +5173,8 @@
      "London kill zone, risky"
     ]
    ],
-   "score": -1,
-   "label": "Light",
+   "score": 0,
+   "label": "OK",
    "segs": [
     [
      "2:00",
@@ -5196,12 +5196,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "g",
-     "9:30-10:10 window"
+     "9:30-10:00 window"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -5219,7 +5219,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better.",
    "notes": []
   },
   {
@@ -5577,12 +5577,12 @@
     ],
     [
      "9:30",
-     "10:10",
+     "10:00",
      "y",
      "Day after holiday, sloppy"
     ],
     [
-     "10:10",
+     "10:00",
      "10:30",
      "y",
      "No-news Monday, light"
@@ -5600,7 +5600,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better. Days after bank holidays usually have bad price action.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Days after bank holidays usually have bad price action.",
    "notes": []
   },
   {

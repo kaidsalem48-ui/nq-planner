@@ -219,11 +219,12 @@ def main():
             why.append("Day before NFP: light only, the market waits on the jobs number.")
             notes.append("NFP tomorrow: if today's price action is good, tomorrow is likely bad.")
         if d.weekday() == 0 and not reds and "cpi" not in kinds(nxt):
+            # His rule (2026-11-07): a regular Monday is OK, with 9:30-10:00 good.
             day.recolor("g", "y", "No-news Monday, light")
-            day.paint(570, 610, "g", "9:30-10:10 window")
+            day.paint(570, 600, "g", "9:30-10:00 window")
             day.paint(720, 960, "r", "Bad AM won't get better")
-            score = min(score, -1)
-            why = ["No-news Monday: only 9:30-10:10 is worth it. If AM is bad, lunch and PM won't be much better."]
+            score = min(score, 0)
+            why = ["No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better."]
             if red(nxt):
                 day.paint(480, 565, "g", "Pre-open setups OK")
                 why.append("Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.")
