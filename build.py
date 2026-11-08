@@ -72,7 +72,7 @@ def monthly_opex(year, month, holidays):
 
 
 def main():
-    src = json.loads((HERE / "events.json").read_text())
+    src = json.loads((HERE / "events.json").read_text(encoding="utf-8"))
     hol = src["holidays"]
     notes_in = src.get("notes", {})
     by_date = {}

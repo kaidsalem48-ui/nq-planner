@@ -193,7 +193,7 @@ body{overflow-x:clip}
   .cal .tile .lb{white-space:normal;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
   .cal .tile .lb.small{font-size:.7rem;line-height:1.05}
   .cal .tile .tag{text-overflow:ellipsis}
-  .cal .tile.election .tag{top:24px;white-space:normal;line-height:1;max-height:20px;text-overflow:clip}
+  .cal .tile.election .tag,.cal .tile.tag2 .tag{top:24px;white-space:normal;line-height:1;max-height:22px;text-overflow:clip}
   .cal .tile:has(.a8) .lb{padding-right:0}
   .cal .tile .a8{right:auto;bottom:auto;left:6px;top:6px;width:16px;height:16px;font-size:.6rem}
 }
@@ -1123,7 +1123,9 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       const past = s < NOW.date ? " past" : "", today = (s === NOW.date ? " today" : "") + (isElectionDay(dd) ? " election" : "");
       const tag = topTag(dd);
       const lb = dayLabel(dd);
-      return `<button class="tile ${tileClass(dd)}${past}${today}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(dayHeadline(dd))}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span><span class="win">${esc(dd.opex ? "1:1 · no partials" : winText(dd))}</span></span>${asiaBadge(s)}</button>`;
+      // Multi-word tags too long for one line ("Quad witching") wrap under the date on phones.
+      const t2 = tag && tag.length > 9 && tag.includes(" ") ? " tag2" : "";
+      return `<button class="tile ${tileClass(dd)}${past}${today}${t2}" data-d="${s}" aria-label="${dow(s)} ${short(s)}: ${esc(dayHeadline(dd))}">${tag ? `<span class="tag">${esc(tag)}</span>` : ""}<span class="dn">${D(s).getUTCDate()}</span><span><span class="lb${lb.length > 6 ? " small" : ""}">${esc(lb)}</span><span class="win">${esc(dd.opex ? "1:1 · no partials" : winText(dd))}</span></span>${asiaBadge(s)}</button>`;
     }).join("");
     return `
       <div class="calhead"><h2>${MON[m]}</h2><div class="counts">${counts}</div></div>
