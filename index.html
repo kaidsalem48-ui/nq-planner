@@ -477,6 +477,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
 .outlook-weekly h2{font-size:1.35rem;margin:0}
 .weekly-brief{max-width:90ch;margin-bottom:24px;font-size:1rem;line-height:1.68}
 .weekly-brief p{margin:0 0 15px}
+.written-events{margin:-6px 0 15px;padding-left:20px}.written-events li{margin:0 0 6px}
 .weekly-brief a{color:#b7adff;font-size:.82em}
 .weekly-support{max-width:90ch;margin:0 0 10px;border-top:1px solid var(--line)}
 .weekly-support>summary{padding:11px 0;cursor:pointer;font-weight:700}
@@ -1574,7 +1575,26 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const contextDay=scope==='day'?selected:contextDates.at(-1),record=contextDay?AUTO_CONDITIONS.days?.[contextDay]:null;
     return {scope,start,end,title,days,keyDays,missing,intro,focus,contextDay,record};
   }
+  // Hand-written weekly outlooks, keyed by the week's Monday. They replace the generated text.
+  const WRITTEN_WEEKS={
+    '2026-11-09':{
+      paras:[
+        '<strong>Inflation week.</strong> <strong>CPI</strong> lands Tuesday at <strong>8:30 AM NY</strong>. It is the last inflation print the Fed sees before its December meeting, so it carries more weight than usual. Price may consolidate into Tuesday; once it hits, a hot or soft print can run hard in either direction in the first few minutes.',
+        '<strong>Wednesday is Veterans Day</strong>, a US bank holiday. Futures are open, but with banks closed volume can be thinner, so be careful chasing moves. <strong>PPI</strong> follows Friday morning and closes out the week’s inflation picture.'
+      ],
+      events:[
+        'Mon 10:00 AM · Wholesale Inventories (quietest day of the week)',
+        'Tue 8:30 AM · <strong>Consumer Price Index (CPI)</strong> + Real Earnings',
+        'Wed · <strong>Veterans Day</strong> (US bank holiday, markets open)',
+        'Thu 8:30 AM · Initial Jobless Claims · 10:00 AM Existing Home Sales',
+        'Fri 8:30 AM · <strong>Producer Price Index (PPI)</strong> · 10:00 AM UMich Sentiment (est.)'
+      ],
+      plan:'Monday stays Light as the day before CPI. Tuesday: nothing before the 8:30 print. Wednesday’s bank holiday and Thursday after it are light-size days. Friday: stay out the 10 minutes before PPI and UMich.'
+    }
+  };
   function weeklyBrief(m){
+    const w=WRITTEN_WEEKS[m.start];
+    if(w)return `<div class="weekly-brief">${w.paras.map(x=>`<p>${x}</p>`).join('')}<p><strong>🔴 Key events</strong></p><ul class="written-events">${w.events.map(x=>`<li>${x}</li>`).join('')}</ul>${w.plan?`<p><strong>Trading plan.</strong> ${w.plan}</p>`:''}</div>`;
     const releases=m.days.flatMap(day=>(day.news||[]).map(event=>({day:day.date,...event})));
     const priorities=[
       [/FOMC.*(?:rate|decision)|Rate Decision/i,'Fed week','The decision and the Fed’s guidance can move rate expectations. Price can react again during the press conference.'],
