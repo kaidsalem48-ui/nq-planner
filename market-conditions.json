@@ -754,7 +754,7 @@
       ]
     },
     "2026-11-09": {
-      "recordedAt": "2026-11-09T14:37:16.340056+00:00",
+      "recordedAt": "2026-11-09T14:38:08.886515+00:00",
       "values": {
         "mcVix": 23.21,
         "mcVixChange": -9.4774,
@@ -776,7 +776,8 @@
         "mcYields": "Falling",
         "mcMacro": "Supportive",
         "mcMacroYieldChangeBp": -2.8,
-        "mcMacroDxyChange": -0.496
+        "mcMacroDxyChange": -0.496,
+        "mcComment": "Inflation week. Tuesday's 8:30 AM NY CPI is the main catalyst, with Friday's 8:30 AM PPI next. September CPI rose 0.6% for the month and 3.7% over the year. A firmer October reading could renew rate pressure on tech; a cooler one could ease it. These are scenarios, not price forecasts. Stay selective around the releases and follow the saved red windows."
       },
       "sources": [
         {
@@ -898,9 +899,25 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "BLS November 2026 release schedule: October CPI Nov 10 and PPI Nov 13, 8:30 AM ET; observed Nov 9",
+          "url": "https://www.bls.gov/schedule/2026/11_sched_list.htm",
+          "asOf": "2026-11-09T14:38:08.886515+00:00",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "BLS September 2026 CPI release: monthly and annual readings; observed Nov 9",
+          "url": "https://www.bls.gov/news.release/archives/cpi_10142026.htm",
+          "asOf": "2026-11-09T14:38:08.886515+00:00",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-09T14:37:16.530465+00:00"
+  "updatedAt": "2026-11-09T14:38:09.720469+00:00"
 }
