@@ -932,7 +932,7 @@
       ]
     },
     "2026-11-10": {
-      "recordedAt": "2026-11-10T13:57:57.345538+00:00",
+      "recordedAt": "2026-11-10T13:59:05.826793+00:00",
       "values": {
         "mcVix": 21.48,
         "mcVixChange": 7.8313,
@@ -964,7 +964,7 @@
         "mcGOOGL": -0.021,
         "mcMETA": -0.151,
         "mcTSLA": -1.606,
-        "mcComment": "Inflation day. October CPI at 8:30 AM NY is the main catalyst. September headline CPI rose 0.6% for the month and 3.7% over the year, so today's release tests whether price pressure stayed firm. A hotter print could add rate pressure on tech; a cooler one could ease it. Either can bring sharp two-way moves. Follow the CPI red window and wait for price to confirm before chasing the first move.",
+        "mcComment": "CPI is out. October headline prices rose 0.4% for the month, down from September's 0.6%; core rose 0.3%, the same as September. The headline pace cooled, while core stayed firm. BLS could not publish the headline 12-month rate because October 2025 data are missing. Watch whether rates, the dollar and big-tech participation confirm the market's first reaction. Keep the CPI red window and wait for a cleaner setup.",
         "mcYieldLevel": 4.94,
         "mcYieldChangeBp": 7.6,
         "mcYields": "Rising",
@@ -973,22 +973,6 @@
         "mcMacroDxyChange": 0.376
       },
       "sources": [
-        {
-          "title": "BLS CPI release schedule: October 2026 CPI due Nov 10 at 8:30 AM ET; observed Nov 10",
-          "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-          "asOf": "2026-11-10T13:02:13.599082+00:00",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "BLS September 2026 CPI release: monthly and annual readings; observed Nov 10",
-          "url": "https://www.bls.gov/news.release/archives/cpi_10142026.htm",
-          "asOf": "2026-11-10T13:02:13.599082+00:00",
-          "fields": [
-            "mcComment"
-          ]
-        },
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
@@ -1145,9 +1129,17 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "BLS October 2026 CPI release: headline +0.4%, core +0.3%, missing annual comparison; observed Nov 10",
+          "url": "https://www.bls.gov/news.release/archives/cpi_11102026.htm",
+          "asOf": "2026-11-10T13:59:05.826793+00:00",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-10T13:57:57.595169+00:00"
+  "updatedAt": "2026-11-10T13:59:06.481612+00:00"
 }
