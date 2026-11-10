@@ -32,7 +32,8 @@
     "2026-11-10:mgmt:Partials early, no runner|Manage normally",
     "2026-11-10:block:9:30-12:00",
     "2026-11-10:tech-daily:all",
-    "2026-11-10:mgmt:Partials early, no runner|Leave a runner, light partials"
+    "2026-11-10:mgmt:Partials early, no runner|Leave a runner, light partials",
+    "2026-11-10:tech-daily:leading"
   ],
   "2026-11-09": [
     "2026-11-09:block:9:30-10:30",
