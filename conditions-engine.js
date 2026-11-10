@@ -102,6 +102,24 @@
       const label=preliminary?'Overnight so far':'Overnight final';
       alert('overnight-1800-0200-'+stage,label+' · '+moveLabel+' NQ pts',moveReading,'info',String(useRange?overnightRange:overnight));
     }
+    // Seek & destroy (his rule, 2026-11-09): when London runs both the Asia high and low, New York
+    // tends to run London's high and low back and forth: stop runs, not clean targets. Size down at
+    // least, if trading at all. Pushed by 8 AM whatever blocks are picked (ids hold ':overnight-').
+    const lTook=text('mcLondonTook',['both','high','low','none'],true),lHi=number('mcLondonHigh',true),lLo=number('mcLondonLow',true);
+    const aHi=number('mcLondonAsiaHigh',true),aLo=number('mcLondonAsiaLow',true),lTo=raw.mcLondonThrough||'';
+    let seekDestroy=false;
+    if(lTook!==null&&lHi!==null&&lLo!==null&&aHi!==null&&aLo!==null){
+      const p2=v=>Number(v.toFixed(2)).toLocaleString('en-US',{maximumFractionDigits:2});
+      const through=lTo?` (2:00 to ${(+lTo.slice(0,2))%12||12}:${lTo.slice(3)} AM NY)`:'';
+      const reading=`London${through}: high ${p2(lHi)}, low ${p2(lLo)}. Asia (6 PM–2 AM): high ${p2(aHi)}, low ${p2(aLo)}.`;
+      seekDestroy=lTook==='both';
+      const sdPlan='Seek & destroy conditions: New York often runs London’s high and low back and forth, stop runs on both sides instead of clean targets. Size down at least, if trading at all.';
+      group('london','London vs Asia',seekDestroy?'Seek & destroy':lTook==='none'?'Inside Asia':lTook==='high'?'Took Asia high':'Took Asia low',reading,
+        'When London takes both the Asia high and low, New York tends to do the same to London’s high and low: back-and-forth stop runs. Common on no-news Mondays and the day before NFP or CPI.',
+        seekDestroy?sdPlan:lTook==='none'?'London stayed inside the Asia range.':`London ran only the Asia ${lTook}. One-sided, not seek & destroy.`,['mcLondonTook','mcLondonHigh','mcLondonLow']);
+      if(seekDestroy){reasons.push('Seek & destroy: London took both the Asia high and low. Size down at least.');alert('overnight-london-both','Seek & destroy · London took Asia high & low',reading+' '+sdPlan,'caution');}
+      else if(lTook!=='none')alert('overnight-london-'+lTook,`London took the Asia ${lTook}`,reading+` Only one side so far; if London also takes the Asia ${lTook==='high'?'low':'high'} it becomes seek & destroy.`,'info');
+    }
     const range=number('mcRange'),prior=number('mcPriorRange',true),gap=number('marketGapPoints',true),behavior=text('marketType',['Trend up','Trend down','Range','Reversal','Choppy']);
     const ratio=range!==null&&prior>0?range/prior:null;
     const beforeOpen=day===today&&minute<570,gapText=gap===null?(beforeOpen?'N/A until the 9:30 AM open':'not yet verified'):gap===0?'N/A (opened at the prior close)':signed(gap)+' points'+(gap>0?' (gap up)':' (gap down)');
@@ -187,7 +205,7 @@
     const restricted=isElection||closed||large,level=restricted?(pmWatch?'AM sit out':'Sit out'):reasons.length?'Reduced':missingGroups.length||!calendarKnown?'Incomplete':watch.length?'Selective':'Reviewed';
     const plan=closed?'Market closed in the planner. Do not trade the regular session.':isElection?'Election Day: do not trade after 9:30 AM New York under your saved rule. The pre-open restrictions remain.':large?overnightPlan:expiry?'Your expiry plan: target 1:1, no partials; reduce aggression.':reasons.length?'Reduce aggression and wait for clean confirmation. '+reasons[0]:missingGroups.length||!calendarKnown?'Context is incomplete. Wait for verified observations before increasing aggression.':'Available context reviewed. Follow the scheduled restrictions and require confirmation from the setup; this is not an automatic green light.';
     if(typeof raw.mcComment==='string')evidence('mcComment',true);
-    return {day,n,expiry,vix,overnight,overnightTrend:{recent,bigRecent,desens},breadth,management,reasons,watch,missing:missingGroups,groups,alerts,level,plan,restricted,large,preliminary,pmWatch,stale,last};
+    return {day,n,expiry,vix,overnight,overnightTrend:{recent,bigRecent,desens},seekDestroy,breadth,management,reasons,watch,missing:missingGroups,groups,alerts,level,plan,restricted,large,preliminary,pmWatch,stale,last};
   }
   // Previous trading nights' overnight ranges, newest first: the archive's final readings win,
   // overnight-history.json fills days recorded before the archive started.

@@ -21,7 +21,7 @@ SITE = "https://nq-planner.vercel.app"
 ARCHIVE = HERE / "market-conditions.json"
 NUMBERS = {"mcVixChange", "mcYieldChangeBp", "mcDxyChange", "mcMacroYieldChangeBp", "mcMacroDxyChange", "mcOvernightSoFar", "mcVix", "mcOvernight", "mcOvernightRange", "mcOvernightOpen", "mcOvernightHigh", "mcOvernightLow", "mcOvernightClose", "mcOvernightHighMin", "mcOvernightLowMin", "marketGapPoints", "mcRange",
            "mcPriorRange", "mcGammaFlip", "mcYieldLevel", "mcDxy", "mcAAPL", "mcMSFT", "mcNVDA",
-           "mcAMZN", "mcGOOGL", "mcMETA", "mcTSLA"}
+           "mcAMZN", "mcGOOGL", "mcMETA", "mcTSLA", "mcLondonHigh", "mcLondonLow", "mcLondonAsiaHigh", "mcLondonAsiaLow"}
 ENUMS = {"mcOvernightType": {"Trend up", "Trend down", "Reversal", "Balanced"},
          "mcPositioning": {"Long", "Short", "Balanced", "Crowded longs", "Crowded shorts"},
          "marketType": {"Trend up", "Trend down", "Range", "Reversal", "Choppy"},
@@ -32,8 +32,9 @@ ENUMS = {"mcOvernightType": {"Trend up", "Trend down", "Reversal", "Balanced"},
          "mcDollar": {"Rising", "Falling", "Flat"},
          "mcDirection": {"Up", "Down", "Flat"},
          "mcGamma": {"Long gamma", "Short gamma", "Mixed / near flip", "Unknown"},
-         "mcRebalance": {"None confirmed", "Possible", "Confirmed"}}
-TEXT = {"mcGammaSource", "mcComment"}
+         "mcRebalance": {"None confirmed", "Possible", "Confirmed"},
+         "mcLondonTook": {"both", "high", "low", "none"}}
+TEXT = {"mcGammaSource", "mcComment", "mcLondonThrough"}
 NONNEGATIVE = {"mcGammaFlip", "mcVix", "mcOvernightRange", "mcOvernightOpen", "mcOvernightHigh", "mcOvernightLow", "mcOvernightClose", "mcOvernightHighMin", "mcOvernightLowMin", "mcRange", "mcPriorRange", "mcDxy", "mcYieldLevel"}
 
 

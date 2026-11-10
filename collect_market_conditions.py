@@ -125,6 +125,18 @@ def build(results, now, calendar):
             span = max(b[1] for b in overnight) - min(b[2] for b in overnight)
             behavior = "Trend up" if span and net / span >= .6 else "Trend down" if span and net / span <= -.6 else "Balanced"
             add(overnight_data, {"mcOvernight": round(net, 2), "mcOvernightRange": round(span, 2), "mcOvernightType": behavior, **swing}, overnight_end, nq_symbols[0] + " complete " + resolution + " bars, 18:00 open to 01:59 close (02:00 NY boundary); trend if net/range >=60%" + gap_note)
+            # London vs Asia (his seek & destroy check): did London (02:00 NY until 8:00) run the Asia
+            # session's high, low or both? Asia = the 18:00-02:00 window above. Read until 7:59 only.
+            london_start, london_end = instant(today, 2), min(cutoff, instant(today, 8) - 60)
+            lk = [k for k in sorted(bars) if london_start <= k <= london_end]
+            if len(lk) >= 10:
+                ah, al = swing["mcOvernightHigh"], swing["mcOvernightLow"]
+                lh, ll = max(bars[k][1] for k in lk), min(bars[k][2] for k in lk)
+                took = "both" if lh > ah and ll < al else "high" if lh > ah else "low" if ll < al else "none"
+                last = lk[-1]
+                add(nq, {"mcLondonHigh": round(lh, 2), "mcLondonLow": round(ll, 2), "mcLondonAsiaHigh": ah, "mcLondonAsiaLow": al,
+                         "mcLondonTook": took, "mcLondonThrough": datetime.fromtimestamp(last + 60, NY).strftime("%H:%M")},
+                    last, nq_symbols[0] + " London 02:00 NY to " + datetime.fromtimestamp(last + 60, NY).strftime("%H:%M") + " vs Asia 18:00-02:00 high/low")
         rth_start = instant(today, 9, 30)
         end = min(cutoff, instant(today, close_hour) - 60, latest)
         current = complete(bars, rth_start, end) if end >= rth_start else None

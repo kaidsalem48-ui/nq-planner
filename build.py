@@ -228,6 +228,11 @@ def main():
             if red(nxt):
                 day.paint(480, 565, "g", "Pre-open setups OK")
                 why.append("Red folder tomorrow, so before 9:30 is the best spot today if a setup forms.")
+        # Seek & destroy days (his rule, 2026-11-09): range-bound days like no-news Mondays and the day
+        # before NFP or CPI tend to run every high and low back and forth. Size down at least.
+        no_news_monday = d.weekday() == 0 and not reds
+        if "fomc" not in ks and (no_news_monday or "cpi" in kinds(nxt) or "nfp" in kinds(nxt)):
+            why.append("Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.")
         ph = hol.get(prv.isoformat())
         if ph and ph["type"] in ("bank", "closed"):
             day.recolor("g", "y", "Day after holiday, sloppy")
