@@ -1154,7 +1154,7 @@
       ]
     },
     "2026-11-11": {
-      "recordedAt": "2026-11-11T14:37:01.140368+00:00",
+      "recordedAt": "2026-11-11T14:37:26.360662+00:00",
       "values": {
         "mcVix": 18.31,
         "mcVixChange": -5.9096,
@@ -1191,7 +1191,8 @@
         "mcYields": "Rising",
         "mcMacro": "Headwinds",
         "mcMacroYieldChangeBp": 1.5,
-        "mcMacroDxyChange": 0.644
+        "mcMacroDxyChange": 0.644,
+        "mcComment": "Veterans Day after CPI. October headline prices rose 0.4% for the month, down from September's 0.6%; core held at 0.3%. Friday's 8:30 AM New York PPI release is the next inflation test. NQ's 6 PM–2 AM overnight range was 432.25 points, below your 500-point AM block; that does not establish a clean open. Watch rates, the dollar and big tech for confirmation, and keep the scheduled red windows."
       },
       "sources": [
         {
@@ -1350,9 +1351,33 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "BLS October 2026 CPI release; observed Nov 11",
+          "url": "https://www.bls.gov/news.release/archives/cpi_11102026.htm",
+          "asOf": "2026-11-11T14:37:26.360662+00:00",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "BLS schedule: October PPI Nov 13 at 8:30 AM ET; observed Nov 11",
+          "url": "https://www.bls.gov/schedule/news_release/ppi.htm",
+          "asOf": "2026-11-11T14:37:26.360662+00:00",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Same-contract NQ completed overnight high-low, 18:00–02:00 NY",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
+          "asOf": "2026-11-11T06:59:00+00:00",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-11T14:37:01.478567+00:00"
+  "updatedAt": "2026-11-11T14:37:35.461263+00:00"
 }
