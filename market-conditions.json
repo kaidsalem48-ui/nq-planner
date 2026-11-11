@@ -1154,13 +1154,13 @@
       ]
     },
     "2026-11-11": {
-      "recordedAt": "2026-11-11T22:07:13.378221+00:00",
+      "recordedAt": "2026-11-11T22:13:56.630935+00:00",
       "values": {
         "mcVix": 17.49,
         "mcVixChange": -10.1233,
         "mcVol": "Contracting",
-        "mcDxy": 102.921,
-        "mcDxyChange": 0.69,
+        "mcDxy": 102.895,
+        "mcDxyChange": 0.664,
         "mcDollar": "Rising",
         "mcPriorRange": 574.0,
         "mcOvernight": 337.0,
@@ -1192,7 +1192,7 @@
         "mcMacro": "Headwinds",
         "mcMacroYieldChangeBp": 1.5,
         "mcMacroDxyChange": 0.677,
-        "mcComment": "Veterans Day after CPI. October headline prices rose 0.4% for the month, down from September's 0.6%; core held at 0.3%. Friday's 8:30 AM New York PPI release is the next inflation test. NQ's 6 PMÃ¢â‚¬â€œ2 AM overnight range was 432.25 points, below your 500-point AM block; that does not establish a clean open. Watch rates, the dollar and big tech for confirmation, and keep the scheduled red windows.",
+        "mcComment": "Veterans Day after CPI. October headline prices rose 0.4% for the month, down from September's 0.6%; core held at 0.3%. Friday's 8:30 AM New York PPI release is the next inflation test. NQ's 6 PMÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 AM overnight range was 432.25 points, below your 500-point AM block; that does not establish a clean open. Watch rates, the dollar and big tech for confirmation, and keep the scheduled red windows.",
         "mcRange": 498.0,
         "marketType": "Range",
         "marketGapPoints": 517.0
@@ -1215,7 +1215,7 @@
           ]
         },
         {
-          "title": "Same-contract NQ completed overnight high-low, 18:00Ã¢â‚¬â€œ02:00 NY",
+          "title": "Same-contract NQ completed overnight high-low, 18:00ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“02:00 NY",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
           "asOf": "2026-11-11T06:59:00+00:00",
           "fields": [
@@ -1245,7 +1245,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-11T21:57:09+00:00",
+          "asOf": "2026-11-11T22:03:47+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -1255,7 +1255,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-10 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-11T21:57:00+00:00",
+          "asOf": "2026-11-11T21:58:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -1392,5 +1392,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-11T22:07:13.558009+00:00"
+  "updatedAt": "2026-11-11T22:13:57.204277+00:00"
 }
