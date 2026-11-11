@@ -103,6 +103,17 @@ def download(name):
 
 def record(snapshot, deploy=False):
     day, entry = validate(snapshot)
+    if deploy:
+        # The calendar publisher may have advanced main since the previous run.
+        # Fast-forward before writing this snapshot so the archive commit has the
+        # current parent and keeps unrelated published changes.
+        dirty = subprocess.check_output(
+            ["git", "status", "--porcelain", "--untracked-files=no"], cwd=HERE, text=True
+        )
+        if dirty:
+            raise RuntimeError("Tracked Git changes exist; refusing to deploy over another task's work")
+        subprocess.run(["git", "fetch", "origin", "main"], cwd=HERE, check=True)
+        subprocess.run(["git", "merge", "--ff-only", "origin/main"], cwd=HERE, check=True)
     archive = json.loads(ARCHIVE.read_text()) if ARCHIVE.exists() else {"version": 1, "days": {}}
     # Prefer live history when available, preserving local records if a prior deploy failed.
     try:
