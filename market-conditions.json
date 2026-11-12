@@ -1192,7 +1192,7 @@
         "mcMacro": "Headwinds",
         "mcMacroYieldChangeBp": 1.5,
         "mcMacroDxyChange": 0.677,
-        "mcComment": "Veterans Day after CPI. October headline prices rose 0.4% for the month, down from September's 0.6%; core held at 0.3%. Friday's 8:30 AM New York PPI release is the next inflation test. NQ's 6 PMÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ2 AM overnight range was 432.25 points, below your 500-point AM block; that does not establish a clean open. Watch rates, the dollar and big tech for confirmation, and keep the scheduled red windows.",
+        "mcComment": "Veterans Day after CPI. October headline prices rose 0.4% for the month, down from September's 0.6%; core held at 0.3%. Friday's 8:30 AM New York PPI release is the next inflation test. NQ's 6 PMÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“2 AM overnight range was 432.25 points, below your 500-point AM block; that does not establish a clean open. Watch rates, the dollar and big tech for confirmation, and keep the scheduled red windows.",
         "mcRange": 498.0,
         "marketType": "Range",
         "marketGapPoints": 517.0
@@ -1215,7 +1215,7 @@
           ]
         },
         {
-          "title": "Same-contract NQ completed overnight high-low, 18:00ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ02:00 NY",
+          "title": "Same-contract NQ completed overnight high-low, 18:00ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“02:00 NY",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
           "asOf": "2026-11-11T06:59:00+00:00",
           "fields": [
@@ -1392,7 +1392,7 @@
       ]
     },
     "2026-11-12": {
-      "recordedAt": "2026-11-12T14:34:38.845406+00:00",
+      "recordedAt": "2026-11-12T14:35:22.255067+00:00",
       "values": {
         "mcVix": 18.88,
         "mcVixChange": 7.9474,
@@ -1429,7 +1429,8 @@
         "mcYields": "Rising",
         "mcMacro": "Mixed",
         "mcMacroYieldChangeBp": 2.6,
-        "mcMacroDxyChange": -0.045
+        "mcMacroDxyChange": -0.045,
+        "mcComment": "Inflation week into Friday's PPI. October headline CPI rose 0.4% for the month, down from September's 0.6%, while core held at 0.3%. Friday's 8:30 AM New York producer-price report is the next test of inflation pressure. NQ's completed 6 PM–2 AM overnight range was 237 points, below your 500-point AM block; that alone does not promise a clean open. Watch rates, the dollar and big tech for confirmation, and keep Friday's red release window."
       },
       "sources": [
         {
@@ -1588,9 +1589,33 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "BLS October 2026 CPI release; observed Nov 12",
+          "url": "https://www.bls.gov/news.release/archives/cpi_11102026.htm",
+          "asOf": "2026-11-12T14:35:22.255067+00:00",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "BLS schedule: October PPI Nov 13 at 8:30 AM ET; observed Nov 12",
+          "url": "https://www.bls.gov/schedule/news_release/ppi.htm",
+          "asOf": "2026-11-12T14:35:22.255067+00:00",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Same-contract NQ completed overnight high-low, 18:00–02:00 NY",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
+          "asOf": "2026-11-12T06:59:00+00:00",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-12T14:34:40.073475+00:00"
+  "updatedAt": "2026-11-12T14:35:33.387749+00:00"
 }
