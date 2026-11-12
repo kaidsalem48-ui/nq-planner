@@ -1392,14 +1392,14 @@
       ]
     },
     "2026-11-12": {
-      "recordedAt": "2026-11-12T11:07:13.624688+00:00",
+      "recordedAt": "2026-11-12T11:37:19.076368+00:00",
       "values": {
-        "mcVix": 18.27,
-        "mcVixChange": 4.4597,
+        "mcVix": 18.31,
+        "mcVixChange": 4.6884,
         "mcVol": "Expanding",
-        "mcDxy": 102.832,
-        "mcDxyChange": -0.076,
-        "mcDollar": "Falling",
+        "mcDxy": 102.905,
+        "mcDxyChange": -0.003,
+        "mcDollar": "Flat",
         "mcPriorRange": 498.0,
         "mcOvernight": -105.25,
         "mcOvernightRange": 237.0,
@@ -1415,7 +1415,7 @@
         "mcLondonAsiaHigh": 28368.75,
         "mcLondonAsiaLow": 28131.75,
         "mcLondonTook": "none",
-        "mcLondonThrough": "05:58",
+        "mcLondonThrough": "06:28",
         "mcDirection": "Down",
         "mcAAPL": 0.112,
         "mcMSFT": -0.009,
@@ -1429,7 +1429,7 @@
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-12T10:52:01+00:00",
+          "asOf": "2026-11-12T11:22:16+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -1439,7 +1439,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-12T10:57:11+00:00",
+          "asOf": "2026-11-12T11:27:16+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -1449,7 +1449,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-11 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-12T10:57:00+00:00",
+          "asOf": "2026-11-12T11:27:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -1479,9 +1479,9 @@
           ]
         },
         {
-          "title": "NQZ26.CME London 02:00 NY to 05:58 vs Asia 18:00-02:00 high/low",
+          "title": "NQZ26.CME London 02:00 NY to 06:28 vs Asia 18:00-02:00 high/low",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-12T10:57:00+00:00",
+          "asOf": "2026-11-12T11:27:00+00:00",
           "fields": [
             "mcLondonHigh",
             "mcLondonLow",
@@ -1558,5 +1558,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-12T11:07:13.733853+00:00"
+  "updatedAt": "2026-11-12T11:37:19.259775+00:00"
 }
