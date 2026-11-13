@@ -5,16 +5,18 @@ const base={mcVix:17,mcVol:'Stable',mcVixChange:0,mcOvernight:100,mcOvernightRan
 function fixture(values={},date=day){const v={...base,...values};return {recordedAt:date+'T09:40:00-05:00',values:v,sources:[{title:'Synthetic fixture',url:'https://example.com/quotes',asOf:date+'T09:35:00-05:00',fields:Object.keys(v).filter(k=>!['mcMacro','mcOvernight','mcOvernightRange','mcOvernightType','mcOvernightSoFar','mcOvernightOpen','mcOvernightHigh','mcOvernightLow','mcOvernightClose','mcOvernightHighMin','mcOvernightLowMin'].includes(k))},{title:'Final overnight',url:'https://example.com/overnight',asOf:date+'T01:59:00-05:00',fields:['mcOvernight','mcOvernightRange','mcOvernightType','mcOvernightOpen','mcOvernightHigh','mcOvernightLow','mcOvernightClose','mcOvernightHighMin','mcOvernightLowMin'].filter(k=>k in v)},{title:'Early overnight',url:'https://example.com/overnight-early',asOf:date+'T01:30:00-05:00',fields:['mcOvernightSoFar']},{title:'Rates',url:'https://example.com/rates',asOf:date+'T09:35:00-05:00',fields:['mcMacro','mcMacroYieldChangeBp']},{title:'Dollar',url:'https://example.com/dollar',asOf:date+'T09:35:00-05:00',fields:['mcMacro','mcMacroDxyChange']}]};}
 function assess(values={},options={}){return engine.evaluate(fixture(values),{day,now,calendarKnown:true,...options});}
 assert.equal(assess().level,'Reviewed');
+assert.equal(assess().alerts.find(a=>a.id.endsWith(':overnight-1800-0200-final')).observedAt,'2026-11-04T06:59:00.000Z','Overnight Updates show the source minute');
 {const a=assess({mcMacro:'Headwinds'});assert.equal(a.level,'Reviewed','Rates and dollar context must not change the day grade');assert.equal(a.reasons.length,0);assert.equal(a.groups.find(x=>x.id==='macro').state,'Observed');assert(a.alerts.some(x=>x.id.endsWith(':macro-headwinds')&&x.title==='Rates and dollar pressure'),'Rates and dollar pressure remains in Updates');}
+assert.equal(assess({mcMacro:'Headwinds'}).alerts.find(a=>a.id.endsWith(':macro-headwinds')).observedAt,'2026-11-04T14:35:00.000Z','Macro Updates show the synchronized source minute');
 for(const value of [500,550]){const a=assess({mcOvernightRange:value});assert.equal(a.level,'Sit out');assert.equal(a.restricted,true);assert(a.alerts.some(i=>i.severity==='danger'&&i.measurement===String(value)));assert(a.groups.find(g=>g.id==='overnight').reading.includes(String(Math.abs(value))));}
 for(const value of [500,550]){const a=assess({mcOvernightRange:value},{pmEligible:true});assert.equal(a.level,'AM sit out');assert.equal(a.pmWatch,true);assert(a.plan.includes('1:30–4:00 PM NY'));assert(a.alerts.some(i=>i.severity==='danger'&&i.title.startsWith('AM sit out')));}
 {const R=(...v)=>v.map((range,i)=>({day:'2026-10-'+String(20+i),range}));
 // No 500+ night in the previous 5: the usual sit-out.
 let a=assess({mcOvernightRange:600},{recentRanges:R(300,250,220,310,280)});assert.equal(a.level,'Sit out');assert.equal(a.large,true);
 // 1-2 of the last 5 at 500+: light size, never sit out.
-for(const r of [R(520,250,220,310,280),R(896,500,220,310,280)]){a=assess({mcOvernightRange:600},{recentRanges:r,pmEligible:true});assert.equal(a.large,false);assert.equal(a.restricted,false);assert.equal(a.level,'Selective');assert.equal(a.groups.find(g=>g.id==='overnight').state,'Light size');const al=a.alerts.find(x=>x.id.endsWith(':overnight-1800-0200-light-final'));assert(al&&al.severity==='info'&&al.title.startsWith('Light size'));}
+for(const r of [R(520,250,220,310,280),R(896,500,220,310,280)]){a=assess({mcOvernightRange:600},{recentRanges:r,pmEligible:true});assert.equal(a.large,false);assert.equal(a.restricted,false);assert.equal(a.level,'Reviewed');assert.equal(a.groups.find(g=>g.id==='overnight').state,'Light size');const al=a.alerts.find(x=>x.id.endsWith(':overnight-1800-0200-light-final'));assert(al&&al.severity==='info'&&al.title.startsWith('Light size'));}
 // 3+ of the last 5: 500 is normal.
-a=assess({mcOvernightRange:600},{recentRanges:R(896,500,620,310,280)});assert.equal(a.large,false);assert.equal(a.level,'Selective');assert.equal(a.groups.find(g=>g.id==='overnight').state,'Normal lately');assert(a.alerts.some(x=>x.id.endsWith(':overnight-1800-0200-normal-final')&&x.severity==='info'));
+a=assess({mcOvernightRange:600},{recentRanges:R(896,500,620,310,280)});assert.equal(a.large,false);assert.equal(a.level,'Reviewed');assert.equal(a.groups.find(g=>g.id==='overnight').state,'Normal lately');assert(a.alerts.some(x=>x.id.endsWith(':overnight-1800-0200-normal-final')&&x.severity==='info'));
 // Back to 200-300 nights: the sit-out returns.
 a=assess({mcOvernightRange:600},{recentRanges:R(250,300,220,310,280,900)});assert.equal(a.level,'Sit out');
 // Only the previous 5 trading nights count, and the archive beats the backfill.
@@ -28,7 +30,7 @@ const provisional=fixture({mcOvernight:undefined,mcOvernightSoFar:-500});const p
 assert.equal(engine.evaluate(provisional,{day,now,calendarKnown:true,pmEligible:true}).pmWatch,false,'No PM watch until final overnight reading');
 assert.equal(engine.evaluate(provisional,{day,now:Date.parse('2026-11-04T12:00:00-05:00')}).level,'Sit out','Premarket restriction persists until the final reading arrives');
 assert.equal(assess({mcOvernight:100,mcOvernightSoFar:-500}).level,'Reviewed','Final measurement supersedes provisional restriction');
-assert.equal(assess({mcVix:25,mcVol:'Expanding'}).level,'Selective');assert.equal(assess({mcVix:19,mcVol:'Expanding'}).level,'Selective');
+assert.equal(assess({mcVix:25,mcVol:'Expanding'}).level,'Reviewed');assert.equal(assess({mcVix:19,mcVol:'Expanding'}).level,'Reviewed');
 assert(assess({mcVix:19,mcVol:'Contracting'}).groups.find(g=>g.id==='volatility').conclusion.includes('Normal size is fine'));
 {const v=assess({mcVix:21.4,mcVol:'Stable'}),g=v.groups.find(g=>g.id==='volatility'),a=v.alerts.find(a=>a.id.endsWith(':vix-very-volatile'));
 assert.equal(g.state,'Very volatile');assert(g.reading.includes('very volatile'));assert(a&&a.severity==='info');assert.equal(assess({mcVix:25.82,mcVol:'Expanding',mcVixChange:55.45}).alerts.find(a=>a.id.endsWith(':vix-very-volatile')).title,'Size down · VIX 25.82 · very volatile · +55% vs. yesterday');
@@ -47,6 +49,8 @@ assert.equal(m({mcRange:undefined}).preOpen,true);
 assert(assess({...down,mcMacro:'Headwinds'}).alerts.some(a=>a.id.endsWith(':mgmt:Partials early, no runner|Leave a runner, light partials')&&a.title==='Longs: partials early, no runner · Shorts: leave a runner, light partials'));}
 assert(!assess({mcVix:20,mcVol:'Stable'}).alerts.some(a=>a.id.endsWith(':vix-very-volatile')));}
 const divergent=assess({mcAAPL:-1,mcMSFT:-1,mcNVDA:-1,mcAMZN:-1});assert.equal(divergent.breadth.label,'Divergent');
+assert.equal(divergent.level,'Reviewed','Split big tech must stay in Updates without lowering the calendar grade');
+assert(divergent.alerts.some(a=>a.id.includes(':tech-daily:')),'Split big tech still creates an Update');
 const unsync=fixture();unsync.sources[0].fields=unsync.sources[0].fields.filter(k=>k!=='mcAAPL');unsync.sources.push({title:'Different minute',url:'https://example.com/aapl',asOf:'2026-11-04T09:34:00-05:00',fields:['mcAAPL']});assert.equal(engine.evaluate(unsync,{day,now}).breadth.label,'Not recorded');
 const stale=assess({}, {now:Date.parse('2026-11-04T12:00:00-05:00')});assert.equal(stale.vix,null);assert.equal(stale.overnight,100,'Final overnight survives dynamic freshness cutoff');assert.equal(stale.level,'Incomplete');
 const zeroRange=assess({mcPriorRange:0});assert(zeroRange.groups.find(g=>g.id==='range').conclusion.includes('comparable prior session range is unavailable'));
@@ -55,7 +59,7 @@ const bad=fixture();bad.sources.forEach(s=>s.url='javascript:alert(1)');assert.e
 const oldGamma=assess({mcGamma:'Short gamma',mcPositioning:'Crowded shorts'});assert.deepEqual(oldGamma.groups.map(({sources,...g})=>g),assess().groups.map(({sources,...g})=>g),'Retired positioning inputs cannot change conclusions');assert.equal(oldGamma.level,assess().level);assert.equal(oldGamma.n.mcGamma,undefined);
 const election=engine.evaluate(fixture({mcOvernightRange:500},'2026-11-03'),{day:'2026-11-03',now:Date.parse('2026-11-03T10:00:00-05:00'),calendarKnown:true});assert.equal(election.level,'Sit out');assert(election.plan.includes('do not trade after 9:30'));assert(election.alerts.some(a=>a.id.endsWith(':election')));
 assert.equal(engine.evaluate(fixture({mcOvernightRange:500},'2026-11-03'),{day:'2026-11-03',now:Date.parse('2026-11-03T10:00:00-05:00'),calendarKnown:true,pmEligible:true}).pmWatch,false,'Election Day keeps its stronger restriction');
-assert.equal(assess({}, {expiry:'OPEX'}).level,'Reduced');assert.equal(assess({}, {closed:true}).level,'Sit out');
+assert.equal(assess({}, {expiry:'OPEX'}).level,'Reviewed');assert.equal(assess({}, {closed:true}).level,'Sit out');
 assert.equal(assess({mcOvernightRange:500},{closed:true,pmEligible:true}).pmWatch,false,'Closed market has no PM watch');
 const current=assess({mcOvernightRange:500}).alerts,seen=Object.fromEntries(current.map(a=>[a.id,true]));assert.equal(engine.unread(current,seen).length,0);assert(engine.unread(assess({mcOvernightRange:550}).alerts,seen).length>0);
 assert.equal(assess({mcRange:600,mcPriorRange:300}).groups.find(g=>g.id==='range').state,'Expanded');

@@ -28,7 +28,11 @@
     function timeFor(keys){const rows=validSources.filter(s=>keys.some(k=>sourceCovers(s,k)));return rows.length?Math.min(...rows.map(s=>Date.parse(s.asOf))):null;}
     const groups=[],alerts=[],reasons=[],watch=[];
     function group(id,title,state,reading,meaning,conclusion,keys){const sources=id==='sources'?validSources:validSources.filter(s=>keys.some(k=>sourceCovers(s,k)));groups.push({id,title,state,reading,meaning,conclusion,keys,sources,asOf:id==='sources'&&sources.length?Math.min(...sources.map(s=>Date.parse(s.asOf))):timeFor(keys),missing:keys.filter(k=>issues.has(k))});}
-    function alert(key,title,message,severity='caution',measurement=''){alerts.push({id:day+':'+key,day,title,message,severity,measurement});}
+    function alert(key,title,message,severity='caution',measurement=''){
+      const fields=key.startsWith('vix-')?['mcVix']:key.startsWith('overnight-1800-0200-')?['mcOvernightRange','mcOvernight','mcOvernightSoFar']:key.startsWith('overnight-london-')?['mcLondonTook']:key==='range-expanded'?['mcRange']:key.startsWith('tech-daily:')?['mcDirection']:key==='macro-headwinds'?['mcMacro']:key.startsWith('mgmt:')?['mcMacro','mcDirection','mcRange']:key==='rebalance'?['mcRebalance']:[];
+      const times=validSources.filter(s=>fields.some(f=>n[f]!==undefined&&sourceCovers(s,f))).map(s=>Date.parse(s.asOf));
+      alerts.push({id:day+':'+key,day,title,message,severity,measurement,observedAt:times.length?new Date(Math.max(...times)).toISOString():null});
+    }
     const vix=number('mcVix'),vol=text('mcVol',['Expanding','Contracting','Stable']);
     const vixChange=number('mcVixChange');
     const veryVolatile=vix!==null&&vix>RULES.vixVery;
@@ -117,7 +121,7 @@
       group('london','London vs Asia',seekDestroy?'Seek & destroy':lTook==='none'?'Inside Asia':lTook==='high'?'Took Asia high':'Took Asia low',reading,
         'When London takes both the Asia high and low, New York tends to do the same to London’s high and low: back-and-forth stop runs. Common on no-news Mondays and the day before NFP or CPI.',
         seekDestroy?sdPlan:lTook==='none'?'London stayed inside the Asia range.':`London ran only the Asia ${lTook}. One-sided, not seek & destroy.`,['mcLondonTook','mcLondonHigh','mcLondonLow']);
-      if(seekDestroy){reasons.push('Seek & destroy: London took both the Asia high and low. Size down at least.');alert('overnight-london-both','Seek & destroy · London took Asia high & low',reading+' '+sdPlan,'caution');}
+      if(seekDestroy)alert('overnight-london-both','Seek & destroy · London took Asia high & low',reading+' '+sdPlan,'caution');
       else if(lTook!=='none')alert('overnight-london-'+lTook,`London took the Asia ${lTook}`,reading+` Only one side so far; if London also takes the Asia ${lTook==='high'?'low':'high'} it becomes seek & destroy.`,'info');
     }
     const range=number('mcRange'),prior=number('mcPriorRange',true),gap=number('marketGapPoints',true),behavior=text('marketType',['Trend up','Trend down','Range','Reversal','Choppy']);
@@ -132,7 +136,6 @@
     const aligned=techReady&&direction!=='Flat'?moves.filter(v=>direction==='Up'?v>0:v<0).length:null,opposed=techReady&&direction!=='Flat'?moves.filter(v=>direction==='Up'?v<0:v>0).length:null;
     const breadth={aligned,opposed,label:!techReady?'Not recorded':direction==='Flat'?'NQ flat':aligned>=5?'Broad participation':opposed>=4?'Divergent':'Narrow / mixed',detail:!techReady?'Awaiting all seven stock moves and NQ direction at the exact same minute.':direction==='Flat'?'NQ is flat versus its prior RTH close; no directional alignment tally.':`${aligned}/7 align with NQ ${direction.toLowerCase()}; ${opposed}/7 oppose. Equal-count comparison, not index-weighted contribution.`};
     group('tech','Big-tech participation',!techReady?'Unknown':['Divergent','Narrow / mixed'].includes(breadth.label)?'Caution':'Observed',breadth.detail+(techReady?' '+TECH.map((k,i)=>k+' '+signed(moves[i])+'%').join(' · '):''),'All seven names and NQ must share one observation minute and a prior RTH-close baseline. Five or more aligned names count as broad; four or more opposing count as divergent.',!techReady?'No breadth conclusion until data is complete and synchronized.':direction==='Flat'?'NQ is flat; watch for a direction to develop.':breadth.label==='Broad participation'?'More of the tracked tech stocks are moving with NQ. That gives the move broader support within this group.':'Fewer tracked stocks support the NQ move. Wait for clearer confirmation before chasing it.',techKeys);
-    if(techReady&&['Divergent','Narrow / mixed'].includes(breadth.label))reasons.push('Big-tech participation is narrow or divergent.');
     let techCall=null;
     // Daily big-tech update: all in / split / one leading. A new category gets a new id, so it notifies again.
     if(techReady&&direction!=='Flat'){
@@ -176,7 +179,7 @@
     const rebalance=text('mcRebalance',['Confirmed','Possible','None confirmed'],true),upcoming=(options.upcomingExpiry||[]).map(x=>' '+x).join('');
     group('expiry','Expiry & scheduled flows',expiry||rebalance==='Confirmed'?'Caution':calendarKnown?'Observed':'Unknown',`${expiry?expiry+' today.':'No monthly or quarterly expiry today.'}${upcoming}${rebalance?' Index rebalance: '+rebalance+'.':''}`,'Monthly and quarterly expiries follow the exchange calendar with holiday adjustments. A quarterly window alone does not establish a confirmed index rebalance or dealer hedging flow.',expiry?'Your expiry plan applies: 1:1 targets, no partials, and lower aggression.':!calendarKnown?'Calendar coverage is missing; verify the session before planning.':'No expiry restriction today. Special index changes require a direct announcement.',['mcRebalance']);
     if(expiry){reasons.push(expiry+': your lower-aggression, 1:1/no-partials plan applies.');alert('expiry',expiry+' today','Your expiry plan: target 1:1, no partials, and reduce aggression.');}
-    if(rebalance==='Confirmed'){reasons.push('A sourced index rebalance is confirmed.');alert('rebalance','Index rebalance confirmed','Monitor event timing and the closing auction; expiry alone did not establish this.');}
+    if(rebalance==='Confirmed')alert('rebalance','Index rebalance confirmed','Monitor event timing and the closing auction; expiry alone did not establish this.');
     for(const g of groups){if(g.state==='Observed'&&((g.id==='overnight'&&(overnightRange===null||overnightType===null))||(g.id==='volatility'&&vol===null)||(g.id==='range'&&(prior===null||gap===null))))g.state='Partial';}
     const stale=[...issues].filter(([,v])=>v==='Older than 90 minutes').map(([k])=>k),missingGroups=groups.filter(g=>['Unknown','Partial'].includes(g.state)).map(g=>g.title);
     group('sources','Data quality & sources',!record||stale.length||missingGroups.length?'Incomplete':'Observed',record?`${validSources.length} timestamped source records. ${stale.length} stale inputs excluded.`:'No verified snapshot recorded for this date.','Each input needs its own observation time. A later collection time does not make an earlier quote current. During 08:00–16:30 NY, dynamic inputs older than 90 minutes are excluded. Final overnight, opening gap and prior-session baselines are fixed measurements.',missingGroups.length?`Incomplete groups: ${missingGroups.join(', ')}. Missing data never means neutral or low risk.`:'The available measurements pass the source/time checks. These are periodic observations, not a real-time feed.',[]);
@@ -202,8 +205,8 @@
       src.reading=`${validSources.length} timestamped source records. Last observation ${clock(lastTime)} NY, ${age} min ago, so ${stale.length} live inputs are past the 90-minute limit. The next scheduled recording refreshes them.`;
       src.conclusion=`Sections showing their last reading: ${groups.filter(g=>g.state==='Last reading'&&g.id!=='sources').map(g=>g.title).join(', ')}. They stay out of the current call until fresh data arrives.`;
     }
-    const restricted=isElection||closed||large,level=restricted?(pmWatch?'AM sit out':'Sit out'):reasons.length?'Reduced':missingGroups.length||!calendarKnown?'Incomplete':watch.length?'Selective':'Reviewed';
-    const plan=closed?'Market closed in the planner. Do not trade the regular session.':isElection?'Election Day: do not trade after 9:30 AM New York under your saved rule. The pre-open restrictions remain.':large?overnightPlan:expiry?'Your expiry plan: target 1:1, no partials; reduce aggression.':reasons.length?'Reduce aggression and wait for clean confirmation. '+reasons[0]:missingGroups.length||!calendarKnown?'Context is incomplete. Wait for verified observations before increasing aggression.':'Available context reviewed. Follow the scheduled restrictions and require confirmation from the setup; this is not an automatic green light.';
+    const restricted=isElection||closed||large,level=restricted?(pmWatch?'AM sit out':'Sit out'):missingGroups.length||!calendarKnown?'Incomplete':'Reviewed';
+    const plan=closed?'Market closed in the planner. Do not trade the regular session.':isElection?'Election Day: do not trade after 9:30 AM New York under your saved rule. The pre-open restrictions remain.':large?overnightPlan:expiry?'Your expiry plan: target 1:1, no partials; reduce aggression.':missingGroups.length||!calendarKnown?'Context is incomplete. Follow the scheduled calendar restrictions while waiting for verified observations.':'Calendar grade and time windows stay as scheduled. Review Updates for market context and confirm setups with price.';
     if(typeof raw.mcComment==='string')evidence('mcComment',true);
     return {day,n,expiry,vix,overnight,overnightTrend:{recent,bigRecent,desens},seekDestroy,breadth,management,reasons,watch,missing:missingGroups,groups,alerts,level,plan,restricted,large,preliminary,pmWatch,stale,last};
   }
