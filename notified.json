@@ -50,7 +50,10 @@
     "2026-11-13:news:8:30",
     "2026-11-13:news:10:00",
     "2026-11-13:overnight-1800-0200-final",
-    "2026-11-13:overnight-london-low"
+    "2026-11-13:overnight-london-low",
+    "2026-11-13:block:8:30-9:25",
+    "2026-11-13:tech-daily:split",
+    "2026-11-13:mgmt:Partials early, no runner|Partials early, no runner"
   ],
   "2026-11-11": [
     "2026-11-11:overnight-1800-0200-final",
