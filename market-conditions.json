@@ -1630,22 +1630,22 @@
       ]
     },
     "2026-11-13": {
-      "recordedAt": "2026-11-13T21:15:08.988884+00:00",
+      "recordedAt": "2026-11-13T21:37:19.567283+00:00",
       "values": {
-        "mcVix": 18.81,
-        "mcVixChange": 0.5882,
-        "mcVol": "Stable",
-        "mcDxy": 103.371,
-        "mcDxyChange": 0.198,
+        "mcVix": 19.3,
+        "mcVixChange": 3.2086,
+        "mcVol": "Expanding",
+        "mcDxy": 103.404,
+        "mcDxyChange": 0.231,
         "mcDollar": "Rising",
         "mcPriorRange": 607.75,
-        "mcOvernight": -50.75,
+        "mcOvernight": -51.75,
         "mcOvernightRange": 350.5,
         "mcOvernightType": "Balanced",
         "mcOvernightOpen": 28399.25,
         "mcOvernightHigh": 28607.75,
         "mcOvernightLow": 28257.25,
-        "mcOvernightClose": 28348.5,
+        "mcOvernightClose": 28347.5,
         "mcOvernightHighMin": 43,
         "mcOvernightLowMin": 429,
         "mcLondonHigh": 28469.75,
@@ -1693,7 +1693,7 @@
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-13T21:00:01+00:00",
+          "asOf": "2026-11-13T21:15:01+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -1713,7 +1713,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-13T21:05:05+00:00",
+          "asOf": "2026-11-13T21:27:16+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -1723,7 +1723,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-12 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-13T21:05:00+00:00",
+          "asOf": "2026-11-13T21:27:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -1860,5 +1860,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-13T21:15:09.682463+00:00"
+  "updatedAt": "2026-11-13T21:37:19.943426+00:00"
 }
