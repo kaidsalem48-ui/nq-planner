@@ -53,7 +53,10 @@
     "2026-11-13:overnight-london-low",
     "2026-11-13:block:8:30-9:25",
     "2026-11-13:tech-daily:split",
-    "2026-11-13:mgmt:Partials early, no runner|Partials early, no runner"
+    "2026-11-13:mgmt:Partials early, no runner|Partials early, no runner",
+    "2026-11-13:macro-headwinds",
+    "2026-11-13:tech-daily:all",
+    "2026-11-13:mgmt:Manage normally|Manage normally"
   ],
   "2026-11-11": [
     "2026-11-11:overnight-1800-0200-final",
