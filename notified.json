@@ -62,7 +62,8 @@
     "2026-11-13:block:10:00-12:00",
     "2026-11-13:vix-expanding",
     "2026-11-13:vix-very-volatile",
-    "2026-11-13:range-expanded"
+    "2026-11-13:range-expanded",
+    "2026-11-13:mgmt:Partials early, no runner|Manage normally"
   ],
   "2026-11-11": [
     "2026-11-11:overnight-1800-0200-final",
