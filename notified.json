@@ -1,11 +1,4 @@
 {
-  "2026-11-05": [
-    "2026-11-05:vix-very-volatile",
-    "2026-11-05:overnight-1800-0200-large-final-10",
-    "2026-11-05:range-expanded",
-    "2026-11-05:tech-daily:all",
-    "2026-11-05:mgmt:Partials early, no runner|Manage normally"
-  ],
   "2026-11-06": [
     "2026-11-06:news:8:30",
     "2026-11-06:overnight-1800-0200-large-final-15",
@@ -55,7 +48,9 @@
   ],
   "2026-11-13": [
     "2026-11-13:news:8:30",
-    "2026-11-13:news:10:00"
+    "2026-11-13:news:10:00",
+    "2026-11-13:overnight-1800-0200-final",
+    "2026-11-13:overnight-london-low"
   ],
   "2026-11-11": [
     "2026-11-11:overnight-1800-0200-final",
