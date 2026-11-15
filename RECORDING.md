@@ -148,6 +148,10 @@ enable native browser notifications from Updates on each device. On iPhone,
 install the site with Share → Add to Home Screen, open it from that icon, and
 enable notifications there (iOS 16.4 or newer). OS placement is controlled by
 the device; the in-page desktop toast is fixed to the bottom right.
+After device alerts are enabled, the Updates panel no longer shows alert
+settings. The bottom of the page has **Send test notification** and **Turn off
+device alerts**. The test uses `/api/push-test` to send a real Web Push to that
+registered device and limits repeat tests to one per minute.
 The older Windows WebView2 wrapper does not implement background Web Push; use
 Chrome with NQ Planner installed or open for native Windows alerts. Its in-page
 bottom-right update card still works while the wrapper is open.

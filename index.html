@@ -459,6 +459,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
 .update-time{color:var(--muted);font-size:.78rem;margin:3px 0 12px!important}
 .update-row-meta{display:inline-flex;align-items:center;gap:8px;flex:none;color:var(--muted);font-size:.74rem;white-space:nowrap;font-variant-numeric:tabular-nums}
 .push-setup{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0;color:var(--muted);font-size:.82rem}.push-setup .btn{color:var(--fg);white-space:nowrap}.push-setup p{margin:0}.live-toast{position:fixed;right:16px;bottom:16px;z-index:2000;width:min(370px,calc(100vw - 32px));box-sizing:border-box;background:#1b2029;border:1px solid #705de2;border-left:4px solid #705de2;border-radius:12px;box-shadow:0 16px 42px #0009;color:#f4f5f8;padding:14px 42px 14px 16px;text-align:left;cursor:pointer}.live-toast.danger{border-color:#ef5b61}.live-toast strong{display:block;margin-bottom:5px}.live-toast span{display:block;color:#c4ccda;font-size:.88rem;line-height:1.4}.live-toast small{display:block;color:#9da8bb;margin-top:8px}.live-toast .toast-close{position:absolute;right:8px;top:8px;border:0;background:transparent;color:#d5d9e2;font-size:20px;cursor:pointer}@media(max-width:639px){.live-toast{bottom:max(16px,env(safe-area-inset-bottom))}}
+.device-alert-settings{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding:10px 4px max(4px,env(safe-area-inset-bottom));font-size:.78rem;color:var(--muted)}.device-alert-settings[hidden]{display:none}.device-alert-settings .btn{padding:7px 10px;font-size:.78rem}.device-alert-settings p{margin:0}.device-alert-settings button:disabled{opacity:.6;cursor:wait}
 
 .condition-evaluations{display:grid;gap:8px;align-items:start;margin:14px 0 20px}
 .condition-evaluations .condition-accordion{padding:0;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);max-width:none;min-width:0}
@@ -533,6 +534,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   <div class="sheet" id="sheet" hidden></div>
 
   <footer class="foot" id="foot"></footer>
+  <div class="device-alert-settings" id="device-alert-settings" aria-label="Device alert settings" hidden><button class="btn" id="test-device-alert" type="button">Send test notification</button><button class="btn" id="disable-device-alert" type="button">Turn off device alerts</button><p id="device-alert-status" role="status" aria-live="polite"></p></div>
  </section>
 </div>
 
@@ -768,7 +770,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     return `<details class="condition-notice" role="note"><summary><b>${title}</b><span class="cn-tag">${tag}</span></summary><p>${esc(assessment.plan)}</p>${reason?`<p>${esc(reason)}</p>`:''}</details>`;
   }
   let updatesOpen=false,selectedUpdate=null,seenUpdates={};try{seenUpdates=JSON.parse(localStorage.getItem('nq-condition-updates-seen-v1')||'{}');if(!seenUpdates||Array.isArray(seenUpdates)||typeof seenUpdates!=='object')seenUpdates={};}catch{}
-  let archiveConnectionError=false,lastUnread='',checkingArchive=false,pushStatus='',pushEnabled=false;
+  let archiveConnectionError=false,lastUnread='',checkingArchive=false,pushStatus='',pushEnabled=false,deviceTestStatus='';
   let toastTimer;
   function showLiveToast(item){
     if(!item||document.hidden)return;
@@ -781,8 +783,27 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   }
   function pushAvailable(){return 'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;}
   function iphoneNeedsInstall(){return /iPhone|iPad|iPod/.test(navigator.userAgent)&&!window.navigator.standalone&&!matchMedia('(display-mode: standalone)').matches;}
+  function renderDeviceAlertSettings(){
+    $('device-alert-settings').hidden=!pushEnabled;
+    $('device-alert-status').textContent=pushEnabled?deviceTestStatus:'';
+  }
+  async function sendTestNotification(){
+    if(!pushEnabled)return;
+    const button=$('test-device-alert');button.disabled=true;deviceTestStatus='Sending test…';renderDeviceAlertSettings();
+    try{
+      const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();
+      if(!subscription)throw new Error('This device is not subscribed. Enable alerts again.');
+      const response=await fetch('/api/push-test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:subscription.endpoint})});
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok){if(response.status===410){pushEnabled=false;pushStatus=result.error||'This device subscription expired.';renderNotifications();}throw new Error(result.error||'Test notification could not be sent.');}
+      deviceTestStatus='Test sent. Check this device’s notifications.';
+    }catch(error){deviceTestStatus=error.message||'Test notification could not be sent.';}
+    button.disabled=false;renderDeviceAlertSettings();
+  }
+  $('test-device-alert').onclick=sendTestNotification;
+  $('disable-device-alert').onclick=disableNativePush;
   async function disableNativePush(){
-    try{const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();if(subscription){const response=await fetch('/api/push',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON()})});if(!response.ok)throw new Error('Could not remove this device');await subscription.unsubscribe();}pushEnabled=false;pushStatus='Device alerts are off.';}catch(error){pushStatus=error.message||'Could not turn off alerts.';}renderNotifications();
+    try{const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();if(subscription){const response=await fetch('/api/push',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON()})});if(!response.ok)throw new Error('Could not remove this device');await subscription.unsubscribe();}pushEnabled=false;pushStatus='Device alerts are off.';deviceTestStatus='';}catch(error){deviceTestStatus=error.message||'Could not turn off alerts.';}renderNotifications();
   }
   async function enableNativePush(){
     if(pushEnabled)return disableNativePush();
@@ -843,6 +864,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   });
   function renderNotifications(){
     if(!DATA)return;const items=conditionUpdates(),unread=conditionEngine.unread(items,seenUpdates),danger=items.some(i=>i.severity==='danger'),button=$('updates-toggle');
+    renderDeviceAlertSettings();
     button.classList.toggle('has-unread',unread.length>0);button.classList.toggle('has-danger',danger);button.setAttribute('aria-expanded',String(updatesOpen));button.setAttribute('aria-label',`Updates: ${unread.length} unread${danger?', high-risk condition present':''}`);
     $('update-count').hidden=!unread.length;$('update-count').textContent=String(unread.length);$('market-updates').hidden=!updatesOpen;positionUpdates();
     const ids=unread.map(i=>i.id).join('|');if(ids!==lastUnread){$('updates-live').textContent=unread.length?`${unread.length} unread updates. ${unread[0].title}.`:'';lastUnread=ids;}
@@ -855,9 +877,9 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const markAll=!active&&unread.length?`<button class="btn updates-markall" data-mark-all>Mark all read</button>`:'';
     const updatesNav=active?`<nav class="updates-nav" aria-label="Browse updates"><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav>`:'';
     $('market-updates').innerHTML=`<header>${updatesTitle}${updatesNav}${markAll}<button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
-    <div class="push-setup"><button class="btn" id="enable-push">${pushEnabled?'Turn off device alerts':'Enable device alerts'}</button><p>${esc(pushStatus||'Get NQ Planner alerts on this computer or iPhone.')}</p></div>
+    ${pushEnabled?'':`<div class="push-setup"><button class="btn" id="enable-push">Enable device alerts</button><p>${esc(pushStatus||'Get NQ Planner alerts on this computer or iPhone.')}</p></div>`}
     <div class="updates-content${active?'':' is-list'}">${active?`<article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><p class="update-time">${active.updatedAt?`Updated · <time datetime="${esc(active.updatedAt)}">${esc(updateTime(active))} NY</time>`:'Update time unavailable'}${active.observedAt?`<br>Reading observed · <time datetime="${esc(active.observedAt)}">${esc(updateTime({updatedAt:active.observedAt}))} NY</time>`:''}</p><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">Open market conditions</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span class="update-row-meta">${updateTime(item)?`<time datetime="${esc(item.updatedAt)}">${esc(updateTime(item))}</time>`:''}<span aria-hidden="true">›</span></span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
-    $('enable-push').onclick=enableNativePush;
+    if($('enable-push'))$('enable-push').onclick=enableNativePush;
     $('market-updates').querySelectorAll('[data-update-index]').forEach(button=>button.onclick=()=>{
       selectedUpdate=items[Number(button.dataset.updateIndex)]?.id;
       if(selectedUpdate){
