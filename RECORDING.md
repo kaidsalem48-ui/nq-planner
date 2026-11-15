@@ -148,6 +148,9 @@ enable native browser notifications from Updates on each device. On iPhone,
 install the site with Share → Add to Home Screen, open it from that icon, and
 enable notifications there (iOS 16.4 or newer). OS placement is controlled by
 the device; the in-page desktop toast is fixed to the bottom right.
+The older Windows WebView2 wrapper does not implement background Web Push; use
+Chrome with NQ Planner installed or open for native Windows alerts. Its in-page
+bottom-right update card still works while the wrapper is open.
 
 Native Web Push uses `sw.js`, the Vercel `/api/push` subscription endpoint and
 `/api/push-dispatch`. Subscriptions and sent identifiers live in the private

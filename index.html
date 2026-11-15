@@ -787,7 +787,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   async function enableNativePush(){
     if(pushEnabled)return disableNativePush();
     if(iphoneNeedsInstall()){pushStatus='On iPhone: Share → Add to Home Screen, then open NQ Planner from its icon and tap Enable alerts.';renderNotifications();return;}
-    if(!pushAvailable()){pushStatus='This browser does not support native push notifications.';renderNotifications();return;}
+    if(!pushAvailable()){pushStatus=window.chrome?.webview?'This Windows wrapper shows updates while open. For background alerts, open nq-planner.vercel.app in Chrome and enable alerts there.':'This browser does not support native push notifications.';renderNotifications();return;}
     // Ask directly from this tap; iPhone requires permission in a user gesture.
     const permission=await Notification.requestPermission();
     if(permission!=='granted'){pushStatus=permission==='denied'?'Notifications are blocked in this device’s settings.':'Notification permission was not granted.';renderNotifications();return;}
