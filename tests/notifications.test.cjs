@@ -23,6 +23,7 @@ assert.equal(fomcAtNine[0].id, '2026-12-09:tomorrow-preview:v1');
 assert.equal(dispatch.previewEvents(ny('2026-12-08', 21 * 60 + 9))[0].id, fomcAtNine[0].id);
 assert.equal(dispatch.previewEvents(ny('2026-12-08', 21 * 60 + 10)).length, 0);
 assert.equal(dispatch.scheduledEvents(ny('2026-12-08', 21 * 60)).filter(item => item.id.includes('tomorrow-preview')).length, 1);
+assert.equal(dispatch.eventsForMode(['--news'],ny('2026-12-08',21*60))[0].id,'2026-12-09:tomorrow-preview:v1','Already-running recorders still call the legacy mode');
 
 // Closure and half-day language must take priority over ordinary grades and news.
 const thanksgiving = previewAt('2026-11-25')[0];

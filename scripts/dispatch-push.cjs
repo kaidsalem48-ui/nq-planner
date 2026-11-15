@@ -55,6 +55,7 @@ function windowEvents(now){
   });
 }
 function scheduledEvents(now){return [...newsEvents(now),...previewEvents(now),...morningEvents(now),...windowEvents(now)];}
+function eventsForMode(args,now){return args.includes('--check')?[]:args.includes('--scheduled')||args.includes('--news')?scheduledEvents(now):updateEvents(now);}
 async function dispatch(events) {
   if (!events.length && !process.argv.includes('--check')) return console.log('native push: nothing due');
   if (!process.env.ACTIONS_ID_TOKEN_REQUEST_URL || !process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN) return console.log('native push: GitHub Actions OIDC unavailable; skipping local delivery');
@@ -70,5 +71,5 @@ async function dispatch(events) {
   console.log(`native push: ${result.sent} delivered, ${result.failed} failed, ${result.removed} expired devices, ${result.events} candidate updates`);
   if (result.failed) process.exitCode = 1;
 }
-if(require.main===module)dispatch(process.argv.includes('--check')?[]:process.argv.includes('--scheduled')?scheduledEvents(Date.now()):process.argv.includes('--news')?newsEvents(Date.now()):updateEvents(Date.now())).catch(error=>{console.error('native push:',error.message);process.exitCode=1;});
-module.exports={updateEvents,newsEvents,previewEvents,morningEvents,windowEvents,scheduledEvents};
+if(require.main===module)dispatch(eventsForMode(process.argv,Date.now())).catch(error=>{console.error('native push:',error.message);process.exitCode=1;});
+module.exports={updateEvents,newsEvents,previewEvents,morningEvents,windowEvents,scheduledEvents,eventsForMode};
