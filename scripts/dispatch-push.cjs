@@ -49,9 +49,9 @@ function morningEvents(now){
 function windowEvents(now){
   const day=nyDay(now),minute=nyMinute(now),base=(read('data.json').days||[]).find(d=>d.date===day);
   if(!base||base.holidayType==='closed')return [];
-  return (base.segs||[]).filter(seg=>toMinute(seg[0])-30<=minute&&minute<toMinute(seg[0])-28&&toMinute(seg[0])>=30).map(seg=>{
+  return (base.segs||[]).filter(seg=>toMinute(seg[0])-30<=minute&&minute<toMinute(seg[0])-20&&toMinute(seg[0])>=30).map(seg=>{
     const key=seg[0]+'-'+seg[1],grade=seg[2]==='r'?'Sit out':seg[2]==='y'?'Light':'Good';
-    return {id:`${day}:selected-window:${key}`,day,title:`Selected window · ${content.timeLabel(seg[0])} NY`,message:`Your ${content.timeLabel(seg[0])}–${content.timeLabel(seg[1])} NY window starts in about 30 minutes. Calendar plan: ${grade.toLowerCase()}. Check live Updates before trading; overnight and red restrictions still apply.`,severity:seg[2]==='r'?'danger':seg[2]==='y'?'caution':'info',updatedAt:new Date(now).toISOString(),delivery:'selected-window',windowKey:key};
+    return {id:`${day}:selected-window:${key}`,day,title:`Selected window · ${content.timeLabel(seg[0])} NY`,message:`Your ${content.timeLabel(seg[0])}–${content.timeLabel(seg[1])} NY window is coming up. Calendar plan: ${grade.toLowerCase()}. Check live Updates before trading; overnight and red restrictions still apply.`,severity:seg[2]==='r'?'danger':seg[2]==='y'?'caution':'info',updatedAt:new Date(now).toISOString(),delivery:'selected-window',windowKey:key};
   });
 }
 function scheduledEvents(now){return [...newsEvents(now),...previewEvents(now),...morningEvents(now),...windowEvents(now)];}

@@ -85,7 +85,8 @@ assert.equal(dispatch.windowEvents(ny('2026-11-17', 7 * 60 + 59)).length, 0);
 const windows = dispatch.windowEvents(ny('2026-11-17', 8 * 60));
 assert(windows.some(item => item.windowKey === '8:30-9:25' && item.delivery === 'selected-window'));
 assert(windows.every(item => /Check live Updates before trading/.test(item.message)));
-assert.equal(dispatch.windowEvents(ny('2026-11-17', 8 * 60 + 2)).length, 0);
+assert(dispatch.windowEvents(ny('2026-11-17', 8 * 60 + 2)).some(item => item.windowKey === '8:30-9:25'));
+assert.equal(dispatch.windowEvents(ny('2026-11-17', 8 * 60 + 10)).some(item => item.windowKey === '8:30-9:25'), false);
 assert.equal(dispatch.windowEvents(ny('2026-11-26', 8 * 60)).length, 0);
 
 // Test choices are samples, never invented live market observations.
