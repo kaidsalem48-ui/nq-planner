@@ -19,6 +19,14 @@ from urllib.request import urlopen, Request
 HERE = Path(__file__).resolve().parent
 SITE = "https://nq-planner.vercel.app"
 ARCHIVE = HERE / "market-conditions.json"
+# A direct snapshot deployment must retain the live app and native push service.
+# The UI comes from production; server functions come from the fast-forwarded main checkout.
+LIVE_ASSETS = [
+    "index.html", "data.json", "icon.png", "manifest.json", "robots.txt",
+    "sw.js", "conditions-engine.js", "notification-content.js",
+    "OUTLOOK_STYLE.md", "RECORDING.md", "events.json", "plan.json",
+    "notified.json", "overnight-history.json",
+]
 NUMBERS = {"mcVixChange", "mcYieldChangeBp", "mcDxyChange", "mcMacroYieldChangeBp", "mcMacroDxyChange", "mcOvernightSoFar", "mcVix", "mcOvernight", "mcOvernightRange", "mcOvernightOpen", "mcOvernightHigh", "mcOvernightLow", "mcOvernightClose", "mcOvernightHighMin", "mcOvernightLowMin", "marketGapPoints", "mcRange",
            "mcPriorRange", "mcGammaFlip", "mcYieldLevel", "mcDxy", "mcAAPL", "mcMSFT", "mcNVDA",
            "mcAMZN", "mcGOOGL", "mcMETA", "mcTSLA", "mcLondonHigh", "mcLondonLow", "mcLondonAsiaHigh", "mcLondonAsiaLow"}
@@ -153,8 +161,11 @@ def record(snapshot, deploy=False):
             stage = Path(folder)
             assert stage.resolve().is_relative_to(work.resolve())
             # Deploy the actual live UI, rather than replacing it with an older local checkout.
-            for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt", "conditions-engine.js", "OUTLOOK_STYLE.md", "RECORDING.md"]:
+            for name in LIVE_ASSETS:
                 (stage / name).write_bytes(download(name))
+            shutil.copytree(HERE / "api", stage / "api")
+            for name in ["package.json", "package-lock.json"]:
+                shutil.copy2(HERE / name, stage / name)
             (stage / "market-conditions.json").write_text(serialized, encoding="utf-8")
             (stage / ".vercel").mkdir()
             shutil.copy2(HERE / ".vercel" / "project.json", stage / ".vercel" / "project.json")
@@ -173,7 +184,7 @@ def record(snapshot, deploy=False):
         # Never push a Git UI that differs from what is live, or include another task's staged work.
         if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=HERE).returncode:
             raise RuntimeError("Snapshot is live, but Git has other staged work; archive was not committed")
-        for name in ["index.html", "data.json", "icon.png", "manifest.json", "robots.txt", "conditions-engine.js", "OUTLOOK_STYLE.md", "RECORDING.md"]:
+        for name in LIVE_ASSETS:
             head = subprocess.check_output(["git", "show", "HEAD:" + name], cwd=HERE)
             if head.replace(b"\r\n", b"\n") != download(name).replace(b"\r\n", b"\n"):
                 raise RuntimeError("Snapshot is live, but Git and live site differ; refusing a push that could roll back the UI")
