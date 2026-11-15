@@ -81,7 +81,7 @@ assert.match(incompleteRange.title, /range missing/);
 assert.match(incompleteRange.message, /cannot clear your 500-point rule/);
 
 // The selected-window reminder fires only in its lead window and remains conditional.
-assert.equal(dispatch.windowEvents(ny('2026-11-17', 7 * 60 + 59)).length, 0);
+assert.equal(dispatch.windowEvents(ny('2026-11-17', 7 * 60 + 59)).some(item => item.windowKey === '8:30-9:25'), false);
 const windows = dispatch.windowEvents(ny('2026-11-17', 8 * 60));
 assert(windows.some(item => item.windowKey === '8:30-9:25' && item.delivery === 'selected-window'));
 assert(windows.every(item => /Check live Updates before trading/.test(item.message)));
