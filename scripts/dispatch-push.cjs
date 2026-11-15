@@ -27,7 +27,7 @@ function newsEvents(now) {
   return [...grouped].map(([time, list]) => ({ id: `${day}:news:${time}`, day, title: 'News in 2 min', message: `${time} NY · ${list.map(n => n.name).join(', ')}. Check the release before trading.`, severity: list.some(n => n.impact === 'red' || /sentiment|consumer confidence/i.test(n.name)) ? 'danger' : 'caution', updatedAt: new Date(now).toISOString() }));
 }
 async function dispatch(events) {
-  if (!events.length) return console.log('native push: nothing due');
+  if (!events.length && !process.argv.includes('--check')) return console.log('native push: nothing due');
   if (!process.env.ACTIONS_ID_TOKEN_REQUEST_URL || !process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN) return console.log('native push: GitHub Actions OIDC unavailable; skipping local delivery');
   const audience = 'https://nq-planner.vercel.app/api/push-dispatch';
   const tokenURL = new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL);
@@ -41,4 +41,4 @@ async function dispatch(events) {
   console.log(`native push: ${result.sent} delivered, ${result.failed} failed, ${result.removed} expired devices, ${result.events} candidate updates`);
   if (result.failed) process.exitCode = 1;
 }
-dispatch(process.argv.includes('--news') ? newsEvents(Date.now()) : updateEvents(Date.now())).catch(error => { console.error('native push:', error.message); process.exitCode = 1; });
+dispatch(process.argv.includes('--check') ? [] : process.argv.includes('--news') ? newsEvents(Date.now()) : updateEvents(Date.now())).catch(error => { console.error('native push:', error.message); process.exitCode = 1; });

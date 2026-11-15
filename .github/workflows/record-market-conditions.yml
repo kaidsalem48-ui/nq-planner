@@ -10,6 +10,11 @@ on:
   schedule:
     - cron: "7,37 * * * *"
   workflow_dispatch:
+    inputs:
+      verify_push:
+        description: "Check native push authentication without collecting"
+        type: boolean
+        default: false
 
 concurrency:
   group: record-market-conditions
@@ -31,7 +36,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Verify native push authentication
+        if: ${{ inputs.verify_push }}
+        run: node scripts/dispatch-push.cjs --check
       - name: Restart the recorder loop if it stopped
+        if: ${{ !inputs.verify_push }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -40,6 +49,7 @@ jobs:
           echo "Recorder loops running or queued: $live"
           if [ "$live" = "0" ]; then gh workflow run recorder-loop.yml --ref main -R "$GITHUB_REPOSITORY" && echo "Loop restarted"; fi
       - name: Record, notify, commit
+        if: ${{ !inputs.verify_push }}
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: |
