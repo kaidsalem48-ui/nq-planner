@@ -1,6 +1,5 @@
 'use strict';
 const store = require('./_push-store');
-const webpush = require('web-push');
 const AUDIENCE = 'https://nq-planner.vercel.app/api/push-dispatch';
 let jwks;
 async function authenticated(req) {
@@ -21,6 +20,7 @@ module.exports = async (req, res) => {
   if (!Array.isArray(raw) || raw.length > 30) return res.status(400).json({ error: 'Invalid events' });
   const events = raw.filter(x => typeof x.id === 'string' && x.id.length < 180 && typeof x.title === 'string' && x.title.length < 180 && typeof x.message === 'string' && x.message.length < 1200 && /^\d{4}-\d{2}-\d{2}$/.test(x.day));
   try {
+    const webpush = await import('web-push');
     if (!process.env.VAPID_PRIVATE_KEY || !process.env.VAPID_PUBLIC_KEY) throw new Error('VAPID keys unavailable');
     webpush.setVapidDetails('mailto:nq-planner@users.noreply.github.com', process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
     let sent = 0, removed = 0, failed = 0;
