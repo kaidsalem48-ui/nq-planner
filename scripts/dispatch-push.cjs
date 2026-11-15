@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const engine = require('../conditions-engine.js');
+const content = require('../notification-content.js');
 const root = path.join(__dirname, '..');
 const read = name => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8'));
 const nyDay = time => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(time));
@@ -15,8 +16,8 @@ function updateEvents(now) {
   const history = fs.existsSync(path.join(root, 'overnight-history.json')) ? read('overnight-history.json').ranges : {};
   const pmEligible = !!base && base.score !== -2 && !['closed', 'half', 'bank'].includes(base.holidayType) && (base.segs || []).some(s => s[2] !== 'r' && toMinute(s[0]) < 960 && toMinute(s[1]) > 810);
   const result = engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, history, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', pmEligible });
-  const events = result.alerts.filter(a => ![':stale', ':missing', ':connection'].some(s => a.id.endsWith(s))).map(a => ({ ...a, updatedAt: record.recordedAt }));
-  events.push({ id: `${day}:snapshot:${record.recordedAt}`, day, title: 'Market conditions updated', message: `New snapshot collected ${atNY(record.recordedAt)} NY. Open NQ Planner to see the recorded conditions and source times.`, severity: 'info', updatedAt: record.recordedAt });
+  const events = result.alerts.filter(a => ![':stale', ':missing', ':connection'].some(s => a.id.endsWith(s))).map(a => ({ ...a, updatedAt: record.recordedAt, delivery: a.id.includes(':overnight-1800-0200-') ? 'always' : 'window-if-picked' }));
+  events.push({ id: `${day}:snapshot:${record.recordedAt}`, day, title: 'Market conditions updated', message: `New snapshot collected ${atNY(record.recordedAt)} NY. Open NQ Planner to see the recorded conditions and source times.`, severity: 'info', updatedAt: record.recordedAt, delivery: 'window-if-picked' });
   return events;
 }
 function newsEvents(now) {
@@ -24,8 +25,36 @@ function newsEvents(now) {
   if (!base || base.holidayType === 'closed') return [];
   const grouped = new Map();
   for (const item of base.news || []) if (toMinute(item.time) - minute === 2) grouped.set(item.time, [...(grouped.get(item.time) || []), item]);
-  return [...grouped].map(([time, list]) => ({ id: `${day}:news:${time}`, day, title: 'News in 2 min', message: `${time} NY · ${list.map(n => n.name).join(', ')}. Check the release before trading.`, severity: list.some(n => n.impact === 'red' || /sentiment|consumer confidence/i.test(n.name)) ? 'danger' : 'caution', updatedAt: new Date(now).toISOString() }));
+  return [...grouped].map(([time, list]) => ({ id: `${day}:news:${time}`, day, title: 'News in 2 min', message: `${content.timeLabel(time)} NY · ${list.map(n => n.name).join(', ')}. Check the release before trading.`, severity: list.some(n => n.impact === 'red' || /sentiment|consumer confidence/i.test(n.name)) ? 'danger' : 'caution', updatedAt: new Date(now).toISOString(), delivery: 'always' }));
 }
+function previewEvents(now){
+  const minute=nyMinute(now);
+  if(minute<1260||minute>=1270)return [];
+  const target=content.addDays(nyDay(now),1),days=read('data.json').days||[],base=days.find(d=>d.date===target);
+  if(!base)return [];
+  const following=days.find(d=>d.date>target&&d.holidayType!=='closed'&&![0,6].includes(new Date(d.date+'T12:00:00Z').getUTCDay()));
+  const item=content.preview(base,following);
+  return item?[{...item,updatedAt:new Date(now).toISOString()}]:[];
+}
+function morningEvents(now){
+  const minute=nyMinute(now),day=nyDay(now);
+  if(minute<480||minute>=490)return [];
+  const base=(read('data.json').days||[]).find(d=>d.date===day);
+  if(!base||base.holidayType==='closed')return [];
+  const archive=read('market-conditions.json'),record=archive.days?.[day];
+  const history=fs.existsSync(path.join(root,'overnight-history.json'))?read('overnight-history.json').ranges:{};
+  const result=engine.evaluate(record,{day,now,recentRanges:engine.recentOvernightRanges(archive,history,day),calendarKnown:true,closed:false,pmEligible:false});
+  return [{...content.morningSummary(day,result,record),updatedAt:new Date(now).toISOString()}];
+}
+function windowEvents(now){
+  const day=nyDay(now),minute=nyMinute(now),base=(read('data.json').days||[]).find(d=>d.date===day);
+  if(!base||base.holidayType==='closed')return [];
+  return (base.segs||[]).filter(seg=>toMinute(seg[0])-30<=minute&&minute<toMinute(seg[0])-28&&toMinute(seg[0])>=30).map(seg=>{
+    const key=seg[0]+'-'+seg[1],grade=seg[2]==='r'?'Sit out':seg[2]==='y'?'Light':'Good';
+    return {id:`${day}:selected-window:${key}`,day,title:`Selected window · ${content.timeLabel(seg[0])} NY`,message:`Your ${content.timeLabel(seg[0])}–${content.timeLabel(seg[1])} NY window starts in about 30 minutes. Calendar plan: ${grade.toLowerCase()}. Check live Updates before trading; overnight and red restrictions still apply.`,severity:seg[2]==='r'?'danger':seg[2]==='y'?'caution':'info',updatedAt:new Date(now).toISOString(),delivery:'selected-window',windowKey:key};
+  });
+}
+function scheduledEvents(now){return [...newsEvents(now),...previewEvents(now),...morningEvents(now),...windowEvents(now)];}
 async function dispatch(events) {
   if (!events.length && !process.argv.includes('--check')) return console.log('native push: nothing due');
   if (!process.env.ACTIONS_ID_TOKEN_REQUEST_URL || !process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN) return console.log('native push: GitHub Actions OIDC unavailable; skipping local delivery');
@@ -41,4 +70,5 @@ async function dispatch(events) {
   console.log(`native push: ${result.sent} delivered, ${result.failed} failed, ${result.removed} expired devices, ${result.events} candidate updates`);
   if (result.failed) process.exitCode = 1;
 }
-dispatch(process.argv.includes('--check') ? [] : process.argv.includes('--news') ? newsEvents(Date.now()) : updateEvents(Date.now())).catch(error => { console.error('native push:', error.message); process.exitCode = 1; });
+if(require.main===module)dispatch(process.argv.includes('--check')?[]:process.argv.includes('--scheduled')?scheduledEvents(Date.now()):process.argv.includes('--news')?newsEvents(Date.now()):updateEvents(Date.now())).catch(error=>{console.error('native push:',error.message);process.exitCode=1;});
+module.exports={updateEvents,newsEvents,previewEvents,morningEvents,windowEvents,scheduledEvents};

@@ -460,6 +460,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
 .update-row-meta{display:inline-flex;align-items:center;gap:8px;flex:none;color:var(--muted);font-size:.74rem;white-space:nowrap;font-variant-numeric:tabular-nums}
 .push-setup{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0;color:var(--muted);font-size:.82rem}.push-setup .btn{color:var(--fg);white-space:nowrap}.push-setup p{margin:0}.live-toast{position:fixed;right:16px;bottom:16px;z-index:2000;width:min(370px,calc(100vw - 32px));box-sizing:border-box;background:#1b2029;border:1px solid #705de2;border-left:4px solid #705de2;border-radius:12px;box-shadow:0 16px 42px #0009;color:#f4f5f8;padding:14px 42px 14px 16px;text-align:left;cursor:pointer}.live-toast.danger{border-color:#ef5b61}.live-toast strong{display:block;margin-bottom:5px}.live-toast span{display:block;color:#c4ccda;font-size:.88rem;line-height:1.4}.live-toast small{display:block;color:#9da8bb;margin-top:8px}.live-toast .toast-close{position:absolute;right:8px;top:8px;border:0;background:transparent;color:#d5d9e2;font-size:20px;cursor:pointer}@media(max-width:639px){.live-toast{bottom:max(16px,env(safe-area-inset-bottom))}}
 .device-alert-settings{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding:10px 4px max(4px,env(safe-area-inset-bottom));font-size:.78rem;color:var(--muted)}.device-alert-settings[hidden]{display:none}.device-alert-settings .btn{padding:7px 10px;font-size:.78rem}.device-alert-settings p{margin:0}.device-alert-settings button:disabled{opacity:.6;cursor:wait}
+.test-alert-choices{width:100%;display:flex;gap:7px;flex-wrap:wrap;align-items:center;padding-top:4px}.test-alert-choices[hidden]{display:none}.test-alert-choices span{width:100%;font-weight:700;color:var(--fg)}.test-alert-choices .btn{background:var(--panel-2)}
 
 .condition-evaluations{display:grid;gap:8px;align-items:start;margin:14px 0 20px}
 .condition-evaluations .condition-accordion{padding:0;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);max-width:none;min-width:0}
@@ -534,11 +535,12 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   <div class="sheet" id="sheet" hidden></div>
 
   <footer class="foot" id="foot"></footer>
-  <div class="device-alert-settings" id="device-alert-settings" aria-label="Device alert settings" hidden><button class="btn" id="test-device-alert" type="button">Send test notification</button><button class="btn" id="disable-device-alert" type="button">Turn off device alerts</button><p id="device-alert-status" role="status" aria-live="polite"></p></div>
+  <div class="device-alert-settings" id="device-alert-settings" aria-label="Device alert settings" hidden><button class="btn" id="test-device-alert" type="button" aria-expanded="false" aria-controls="test-alert-choices">Send test notification</button><button class="btn" id="disable-device-alert" type="button">Turn off device alerts</button><p id="device-alert-status" role="status" aria-live="polite"></p><div class="test-alert-choices" id="test-alert-choices" role="group" aria-label="Choose a test notification" hidden></div></div>
  </section>
 </div>
 
 <script src="conditions-engine.js"></script>
+<script src="notification-content.js"></script>
 <script>
 (() => {
   const T0 = 120, T8 = 480, T1 = 960;
@@ -584,18 +586,42 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       for (const line of (await r.text()).split("\n")) { try { const m = JSON.parse(line); if (m.event === "message") { const e = JSON.parse(m.message); if (e.date) changed = planMerge(e.date, e) || changed; } } catch {} }
       if (!planSync || planSync === "Could not sync") planSync = "Synced with your phone alerts";
     } catch { planSync = "Could not sync"; }
-    if (changed) planSave();
+    if (changed){planSave();if(pushEnabled){const plans=localNativePlans();if(Object.keys(plans).length)syncNativePlans(plans).catch(()=>{planSync='Could not save alert windows';renderPlan();});}}
     markPicks(document); renderPlan();
   }
   async function publishPlan(d){
     planSync = "Saving…"; renderPlan();
     const e = { date: d, blocks: planBlocks(d), at: (PLAN.days[d] && PLAN.days[d].at) || Date.now() };
-    try { const r = await fetch("https://ntfy.sh/" + encodeURIComponent(PLAN.topic + "-plan"), { method: "POST", body: JSON.stringify(e) }); planSync = r.ok ? "Saved · your phone follows these picks" : "Could not save, tap again"; }
+    try {
+      if(pushEnabled){
+        await syncNativePlans({[d]:e.blocks});
+        planSync="Saved · device alerts follow these windows";
+      }else{
+        const r = await fetch("https://ntfy.sh/" + encodeURIComponent(PLAN.topic + "-plan"), { method: "POST", body: JSON.stringify(e) });
+        planSync = r.ok ? "Saved · your phone follows these picks" : "Could not save, tap again";
+      }
+    }
     catch { planSync = "Could not save, tap again"; }
     renderPlan();
   }
+  async function syncNativePlans(plans){
+    const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();
+    if(!subscription)throw new Error('Device alerts are not enabled');
+    const response=await fetch('/api/push-plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:subscription.endpoint,plans})});
+    if(!response.ok)throw new Error((await response.json().catch(()=>({}))).error||'Could not save alert windows');
+  }
+  function localNativePlans(){
+    const plans={};
+    for(const [date,entry] of Object.entries(PLAN.days).sort(([a],[b])=>a.localeCompare(b))){
+      if(Object.keys(plans).length>=40)break;
+      if(date<addDays(NOW.date,-3)||date>addDays(NOW.date,40)||!BY[date]||!Array.isArray(entry?.blocks))continue;
+      const allowed=new Set((BY[date].segs||[]).map(seg=>seg[0]+'-'+seg[1]));
+      plans[date]=entry.blocks.filter(key=>allowed.has(key));
+    }
+    return plans;
+  }
   function togglePlan(d, k){
-    if (!PLAN.topic) { $("sheet").hidden = true; if (view !== "day" || cursor !== d || listMode || outlookMode || conditionsMode) { cursor = d; view = "day"; listMode = outlookMode = conditionsMode = false; render(); } const h = $("plan-host"); if (h) { h.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => $("plan-topic") && $("plan-topic").focus(), 300); } return; }
+    if (!pushEnabled&&!PLAN.topic) { $("sheet").hidden = true; if (view !== "day" || cursor !== d || listMode || outlookMode || conditionsMode) { cursor = d; view = "day"; listMode = outlookMode = conditionsMode = false; render(); } const h = $("plan-host"); if (h) { h.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => $("plan-enable-device")?.focus(), 300); } return; }
     const set = new Set(planBlocks(d)); set.has(k) ? set.delete(k) : set.add(k);
     PLAN.days[d] = { blocks: [...set].sort((a, b) => planStart(a) - planStart(b)), at: Date.now() };
     planSave(); markPicks(document); publishPlan(d);
@@ -607,19 +633,21 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const host = $("plan-host"); if (!host) return;
     host.innerHTML = planHTML();
     host.querySelectorAll("[data-plan-key]").forEach(b => b.onclick = () => togglePlan(cursor, b.dataset.planKey));
+    const enable=host.querySelector('#plan-enable-device');if(enable)enable.onclick=enableNativePush;
+    const retry=host.querySelector('#plan-retry');if(retry)retry.onclick=()=>publishPlan(cursor);
     const form = $("plan-form");
     if (form) form.onsubmit = e => { e.preventDefault(); const t = $("plan-topic").value.trim(); if (!/^[A-Za-z0-9_-]{8,64}$/.test(t)) { $("plan-topic").setCustomValidity("Use the channel name from the ntfy app"); $("plan-topic").reportValidity(); return; } PLAN.topic = t; planSave(); planSync = ""; renderPlan(); loadPlan(); };
   }
   function planHTML(){
     const d = cursor, dd = BY[d];
     const head = `<div class="plan-h"><span class="plan-k">PHONE ALERTS · ${esc(dow(d).slice(0,3).toUpperCase())} ${esc(short(d).toUpperCase())}</span></div>`;
-    if (!PLAN.topic) return `${head}<p class="plan-note">Paste your ntfy channel name once on this device. Then pick the blocks you'll trade, and your phone only gets updates during them.</p><form class="plan-topic" id="plan-form"><input id="plan-topic" autocomplete="off" spellcheck="false" placeholder="nq-planner-…" aria-label="ntfy channel name"><button class="btn">Save</button></form>`;
+    if (!pushEnabled&&!PLAN.topic) return `${head}<p class="plan-note">Enable NQ Planner device alerts, then pick the time windows you want to follow.</p><button class="btn" id="plan-enable-device" type="button">Enable device alerts</button>`;
     if (!dd) return `${head}<p class="plan-note">No schedule for this day yet.</p>`;
     const picks = planBlocks(d);
     const segs = dd.segs.filter(x => !(x[2] === "r" && toMin(x[1]) <= T8));
     const rows = segs.map(([a, b, k, n]) => { const key = a + "-" + b, on = picks.includes(key); return `<button class="plan-seg${on ? " on" : ""}" data-plan-key="${esc(key)}" aria-pressed="${on}"><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span><span class="pb">${on ? "🔔 On" : "Off"}</span></button>`; }).join("");
-    const status = picks.length ? `Phone updates ${dow(d).slice(0,3)}: ${picks.map(k => fmtR(planStart(k), toMin(k.split("-")[1]))).join(", ")}, from 30 min before each block.` : `Nothing picked: no phone updates this day.`;
-    return `${head}<p class="plan-note">Pick the blocks you'll trade. Your phone only gets updates then; tap a notification to see why the block is graded the way it is.</p>${rows}<p class="plan-status">${esc(status)}${planSync ? " · " + esc(planSync) : ""}</p>`;
+    const status = picks.length ? `Selected ${dow(d).slice(0,3)} windows: ${picks.map(k => fmtR(planStart(k), toMin(k.split("-")[1]))).join(", ")}.` : `No time windows selected for this day.`;
+    return `${head}<p class="plan-note">Pick a time window for live alerts when new market conditions are recorded, starting 30 minutes before it opens. The 9 PM next-day plan, 8 AM overnight summary and news alerts arrive independently.</p>${rows}<p class="plan-status">${esc(status)}${planSync ? " · " + esc(planSync) : ""}</p>${planSync.startsWith('Could not save')?'<button class="btn" id="plan-retry" type="button">Retry saving alerts</button>':''}`;
   }
   const D = iso => new Date(iso + "T12:00:00Z");
   const iso = d => d.toISOString().slice(0,10);
@@ -786,24 +814,36 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   function renderDeviceAlertSettings(){
     $('device-alert-settings').hidden=!pushEnabled;
     $('device-alert-status').textContent=pushEnabled?deviceTestStatus:'';
+    if(!pushEnabled){$('test-alert-choices').hidden=true;$('test-device-alert').setAttribute('aria-expanded','false');}
   }
-  async function sendTestNotification(){
+  function chooseTestNotification(){
     if(!pushEnabled)return;
+    const choices=$('test-alert-choices'),opening=choices.hidden;
+    choices.hidden=!opening;$('test-device-alert').setAttribute('aria-expanded',String(opening));
+    if(opening){
+      choices.innerHTML='<span>Choose a test notification</span>'+NQNotifications.testChoices.map(choice=>`<button class="btn" type="button" data-test-type="${esc(choice.type)}">${esc(choice.label)}</button>`).join('');
+      choices.querySelectorAll('[data-test-type]').forEach(button=>button.onclick=()=>sendTestNotification(button.dataset.testType));
+      choices.querySelector('button')?.focus();
+    }
+  }
+  async function sendTestNotification(type){
+    if(!pushEnabled||!NQNotifications.testSample(type))return;
+    $('test-alert-choices').hidden=true;$('test-device-alert').setAttribute('aria-expanded','false');
     const button=$('test-device-alert');button.disabled=true;deviceTestStatus='Sending test…';renderDeviceAlertSettings();
     try{
       const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();
       if(!subscription)throw new Error('This device is not subscribed. Enable alerts again.');
-      const response=await fetch('/api/push-test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:subscription.endpoint})});
+      const response=await fetch('/api/push-test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:subscription.endpoint,type})});
       const result=await response.json().catch(()=>({}));
       if(!response.ok){if(response.status===410){pushEnabled=false;pushStatus=result.error||'This device subscription expired.';renderNotifications();}throw new Error(result.error||'Test notification could not be sent.');}
-      deviceTestStatus='Test sent. Check this device’s notifications.';
+      deviceTestStatus=`${NQNotifications.testChoices.find(choice=>choice.type===type).label} test sent. Check this device’s notifications.`;
     }catch(error){deviceTestStatus=error.message||'Test notification could not be sent.';}
     button.disabled=false;renderDeviceAlertSettings();
   }
-  $('test-device-alert').onclick=sendTestNotification;
+  $('test-device-alert').onclick=chooseTestNotification;
   $('disable-device-alert').onclick=disableNativePush;
   async function disableNativePush(){
-    try{const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();if(subscription){const response=await fetch('/api/push',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON()})});if(!response.ok)throw new Error('Could not remove this device');await subscription.unsubscribe();}pushEnabled=false;pushStatus='Device alerts are off.';deviceTestStatus='';}catch(error){deviceTestStatus=error.message||'Could not turn off alerts.';}renderNotifications();
+    try{const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();if(subscription){const response=await fetch('/api/push',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON()})});if(!response.ok)throw new Error('Could not remove this device');await subscription.unsubscribe();}pushEnabled=false;pushStatus='Device alerts are off.';deviceTestStatus='';}catch(error){deviceTestStatus=error.message||'Could not turn off alerts.';}renderNotifications();renderPlan();
   }
   async function enableNativePush(){
     if(pushEnabled)return disableNativePush();
@@ -822,8 +862,9 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       const response=await fetch('/api/push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON(),currentIds:conditionUpdates().map(item=>item.id)})});
       if(!response.ok)throw new Error('Could not save this device');
       pushEnabled=true;pushStatus='Native alerts are on for this device.';
+      const plans=localNativePlans();if(Object.keys(plans).length){try{await syncNativePlans(plans);}catch{planSync='Could not save alert windows';}}
     }catch(error){pushStatus=error.message||'Could not enable alerts.';}
-    renderNotifications();
+    renderNotifications();renderPlan();
   }
   async function openPushedUpdate(id){
     updatesOpen=true;selectedUpdate=id||null;
@@ -839,11 +880,29 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const a=marketAssessment(NOW.date),record=AUTO_CONDITIONS.days?.[NOW.date];
     const items=a.alerts.map(item=>({...item,updatedAt:record?.recordedAt||null}));
     if(a.overnight==null&&![0,6].includes(wd(NOW.date))&&BY[NOW.date]?.holidayType!=='closed'){
-      items.push({id:NOW.date+':overnight-pending',day:NOW.date,title:'Overnight move · awaiting data',message:'The 6 PM–2 AM New York net move will appear here when a verified reading is available.',severity:'info'});
+      items.push({id:NOW.date+':overnight-pending',day:NOW.date,title:'Overnight move · awaiting data',message:'The 6 PM–2 AM New York high–low range will appear here when a verified reading is available.',severity:'info'});
     }
     if(record)items.push({id:NOW.date+':snapshot:'+record.recordedAt,day:NOW.date,title:'Market conditions updated',message:'New snapshot collected '+stampNY(Date.parse(record.recordedAt))+'. Open the evaluation for each condition and its source time.',severity:'info',updatedAt:record.recordedAt,timeKind:'Snapshot updated'});
+    const previewDay=NOW.min>=1260?addDays(NOW.date,1):NOW.date,previewBase=BY[previewDay];
+    if(previewBase){
+      const following=DATA.days.find(day=>day.date>previewDay&&day.holidayType!=='closed'&&![0,6].includes(wd(day.date)));
+      items.push(NQNotifications.preview(previewBase,following));
+    }
+    if(NOW.min>=480&&BY[NOW.date]&&BY[NOW.date].holidayType!=='closed'&&![0,6].includes(wd(NOW.date))){
+      items.push(NQNotifications.morningSummary(NOW.date,a,record));
+    }
+    for(const key of planBlocks(NOW.date)){
+      const seg=(BY[NOW.date]?.segs||[]).find(s=>s[0]+'-'+s[1]===key);
+      if(!seg||NOW.min<toMin(seg[0])-30||NOW.min>=toMin(seg[1]))continue;
+      const grade=seg[2]==='r'?'Sit out':seg[2]==='y'?'Light':'Good';
+      items.push({id:`${NOW.date}:selected-window:${key}`,day:NOW.date,title:`Selected window · ${NQNotifications.timeLabel(seg[0])} NY`,message:`Your selected ${NQNotifications.timeLabel(seg[0])}–${NQNotifications.timeLabel(seg[1])} NY window is approaching. Calendar plan: ${grade.toLowerCase()}. Review live market conditions before trading.`,severity:seg[2]==='r'?'danger':seg[2]==='y'?'caution':'info',updatedAt:new Date(NQNotifications.nyWallEpoch(NOW.date,toMin(seg[0])-30)).toISOString()});
+    }
+    if(selectedUpdate?.includes(':tomorrow-preview:')&&!items.some(item=>item.id===selectedUpdate)){
+      const day=selectedUpdate.slice(0,10),base=BY[day];
+      if(base){const following=DATA.days.find(item=>item.date>day&&item.holidayType!=='closed'&&![0,6].includes(wd(item.date)));items.push(NQNotifications.preview(base,following));}
+    }
     if(archiveConnectionError)items.push({id:NOW.date+':connection',day:NOW.date,title:'Updates could not load',message:'Showing the last downloaded archive. Reconnect and retry; a saved value may be old.',severity:'caution'});
-    return items.sort((a,b)=>({danger:0,caution:1,info:2}[a.severity]-{danger:0,caution:1,info:2}[b.severity]));
+    return items.filter(Boolean).sort((a,b)=>(Date.parse(b.updatedAt)||0)-(Date.parse(a.updatedAt)||0)||({danger:0,caution:1,info:2}[a.severity]-{danger:0,caution:1,info:2}[b.severity]));
   }
   function positionUpdates(){
     if(!updatesOpen)return;
@@ -876,9 +935,10 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     // List view only: "Mark all read". Hidden while one update is open so the paging has room.
     const markAll=!active&&unread.length?`<button class="btn updates-markall" data-mark-all>Mark all read</button>`:'';
     const updatesNav=active?`<nav class="updates-nav" aria-label="Browse updates"><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav>`:'';
+    const openDayPlan=!!active&&(/:tomorrow-preview:|:selected-window:/.test(active.id));
     $('market-updates').innerHTML=`<header>${updatesTitle}${updatesNav}${markAll}<button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
     ${pushEnabled?'':`<div class="push-setup"><button class="btn" id="enable-push">Enable device alerts</button><p>${esc(pushStatus||'Get NQ Planner alerts on this computer or iPhone.')}</p></div>`}
-    <div class="updates-content${active?'':' is-list'}">${active?`<article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><p class="update-time">${active.updatedAt?`Updated · <time datetime="${esc(active.updatedAt)}">${esc(updateTime(active))} NY</time>`:'Update time unavailable'}${active.observedAt?`<br>Reading observed · <time datetime="${esc(active.observedAt)}">${esc(updateTime({updatedAt:active.observedAt}))} NY</time>`:''}</p><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">Open market conditions</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span class="update-row-meta">${updateTime(item)?`<time datetime="${esc(item.updatedAt)}">${esc(updateTime(item))}</time>`:''}<span aria-hidden="true">›</span></span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
+    <div class="updates-content${active?'':' is-list'}">${active?`<article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><p class="update-time">${active.updatedAt?`Updated · <time datetime="${esc(active.updatedAt)}">${esc(updateTime(active))} NY</time>`:'Update time unavailable'}${active.observedAt?`<br>Reading observed · <time datetime="${esc(active.observedAt)}">${esc(updateTime({updatedAt:active.observedAt}))} NY</time>`:''}</p><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}" data-update-mode="${openDayPlan?'plan':'conditions'}">${openDayPlan?'Open day plan':'Open market conditions'}</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span class="update-row-meta">${updateTime(item)?`<time datetime="${esc(item.updatedAt)}">${esc(updateTime(item))}</time>`:''}<span aria-hidden="true">›</span></span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
     if($('enable-push'))$('enable-push').onclick=enableNativePush;
     $('market-updates').querySelectorAll('[data-update-index]').forEach(button=>button.onclick=()=>{
       selectedUpdate=items[Number(button.dataset.updateIndex)]?.id;
@@ -900,9 +960,9 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     $('updates-close').onclick=()=>{updatesOpen=false;renderNotifications();button.focus();};
     $('market-updates').querySelectorAll('[data-update-day]').forEach(button=>button.onclick=()=>{
       cursor=button.dataset.updateDay;
-      view='week';
+      view=button.dataset.updateMode==='plan'?'day':'week';
       outlookMode=false;
-      conditionsMode=true;
+      conditionsMode=button.dataset.updateMode!=='plan';
       listMode=false;
       updatesOpen=false;
       render();
@@ -910,8 +970,8 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     });
   }
   $('updates-toggle').onclick=()=>{updatesOpen=!updatesOpen;selectedUpdate=null;renderNotifications();};
-  async function refreshConditionArchive(){
-    if(checkingArchive||!DATA)return;checkingArchive=true;const before=JSON.stringify(AUTO_CONDITIONS),priorIds=new Set(conditionUpdates().map(item=>item.id)),state=marketAssessment(NOW.date),fingerprint=state.level+state.stale.join();
+  async function refreshConditionArchive(previousIds){
+    if(checkingArchive||!DATA)return;checkingArchive=true;const before=JSON.stringify(AUTO_CONDITIONS),priorIds=previousIds||new Set(conditionUpdates().map(item=>item.id)),state=marketAssessment(NOW.date),fingerprint=state.level+state.stale.join();
     try{const response=await fetch('market-conditions.json?refresh='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('Unavailable');const archive=await response.json();if(archive.version!==1||!archive.days||typeof archive.days!=='object')throw new Error('Invalid archive');AUTO_CONDITIONS=archive;archiveConnectionError=false;}catch{archiveConnectionError=true;}finally{checkingArchive=false;}
     NOW=nyNow();const next=marketAssessment(NOW.date);if(before!==JSON.stringify(AUTO_CONDITIONS)||fingerprint!==next.level+next.stale.join())render();else renderNotifications();
     const fresh=conditionUpdates().filter(item=>!priorIds.has(item.id)&&!item.id.endsWith(':connection')&&!item.id.endsWith(':overnight-pending'));if(fresh.length)showLiveToast(fresh[0]);
@@ -1754,9 +1814,9 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     $("upd").textContent = "Updated " + short(d.updated);
     $("foot").innerHTML = `<p>All times New York. Green = good to trade · yellow = risky / light size · red = don't trade.</p><p>Calendar sources: ${d.sources.map(esc).join(", ")}. Dates marked "est." are confirmed each Sunday.</p><p>Add to Apple Calendar (tap each, so each gets its own colour): <a href="webcal://nq-planner.vercel.app/api/calendar?show=green" style="color:#34C759;font-weight:700">Good</a> · <a href="webcal://nq-planner.vercel.app/api/calendar?show=yellow" style="color:#e7ac36;font-weight:700">Light / risky</a> · <a href="webcal://nq-planner.vercel.app/api/calendar?show=red" style="color:#ef5b61;font-weight:700">Sit out</a> · <a href="webcal://nq-planner.vercel.app/api/calendar?show=news" style="color:#AF52DE;font-weight:700">News</a>. Updates on its own.</p>`;
     marketBase=Object.fromEntries(d.days.map(x=>[x.date,JSON.parse(JSON.stringify(x))]));readHash(); render(); loadPlan();
-    if(pushAvailable())navigator.serviceWorker.getRegistration('/sw.js').then(reg=>reg?.pushManager.getSubscription()).then(sub=>{if(sub){pushEnabled=true;pushStatus='Native alerts are on for this device.';renderNotifications();}}).catch(()=>{});
+    if(pushAvailable())navigator.serviceWorker.getRegistration('/sw.js').then(reg=>reg?.pushManager.getSubscription()).then(sub=>{if(sub){pushEnabled=true;pushStatus='Native alerts are on for this device.';renderNotifications();renderPlan();const plans=localNativePlans();if(Object.keys(plans).length)syncNativePlans(plans).catch(()=>{planSync='Could not save alert windows';renderPlan();});}}).catch(()=>{});
     const pushed=new URLSearchParams(location.search).get('push');if(pushed){history.replaceState(null,'',location.pathname+location.hash);openPushedUpdate(pushed);}
-    setInterval(() => { NOW = nyNow(); renderNow(); refreshConditionArchive(); }, 60000);
+    setInterval(() => { const before=new Set(conditionUpdates().map(item=>item.id));NOW = nyNow(); renderNow(); refreshConditionArchive(before); }, 60000);
     window.addEventListener("focus",()=>{refreshConditionArchive();loadPlan();});
     document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshConditionArchive();loadPlan();}});
   }).catch(error => { console.error("Planner initialization failed",error); $("view").innerHTML = `<section class="panel err">Couldn't load the schedule. Check your connection and reload.</section>`; });

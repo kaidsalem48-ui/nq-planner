@@ -54,7 +54,7 @@ jobs:
               bash scripts/sync-plan.sh   # phone alert picks, any day and hour
               sleep 60
             fi
-            node scripts/dispatch-push.cjs --news
+            node scripts/dispatch-push.cjs --scheduled
             sleep 20
           done
       - name: Start the next loop

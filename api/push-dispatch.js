@@ -1,7 +1,15 @@
 'use strict';
 const store = require('./_push-store');
+const content = require('../notification-content.js');
 const AUDIENCE = 'https://nq-planner.vercel.app/api/push-dispatch';
 let jwks;
+function shouldDeliver(event,plans,currentDay,currentMinute){
+  if(event.delivery==='selected-window')return (plans?.[event.day]||[]).includes(event.windowKey);
+  if(event.delivery!=='window-if-picked')return true;
+  const selected=plans?.[event.day]||[];
+  if(!selected.length)return true;
+  return event.day===currentDay&&selected.some(key=>{const [start,end]=key.split('-');return currentMinute>=content.toMinute(start)-30&&currentMinute<content.toMinute(end);});
+}
 async function authenticated(req) {
   const token = /^Bearer (.+)$/.exec(req.headers.authorization || '')?.[1];
   if (!token) return false;
@@ -29,9 +37,11 @@ module.exports = async (req, res) => {
       if (!row?.value?.subscription?.endpoint) continue;
       const { subscription, sentIds = [] } = row.value;
       const done = new Set(sentIds);
+      const currentDay=content.nyDay(Date.now()),currentMinute=content.nyMinute(Date.now());
       let dead = false;
       for (const event of events) {
         if (done.has(event.id)) continue;
+        if (!shouldDeliver(event,row.value.plans,currentDay,currentMinute)) continue;
         try {
           await webpush.sendNotification(subscription, JSON.stringify({ id: event.id, title: event.title, body: event.message, day: event.day, severity: event.severity || 'info', updatedAt: event.updatedAt || new Date().toISOString(), url: `https://nq-planner.vercel.app/?push=${encodeURIComponent(event.id)}` }), { TTL: 3600, urgency: event.severity === 'danger' ? 'high' : 'normal' });
           done.add(event.id); sent++;
@@ -52,3 +62,4 @@ module.exports = async (req, res) => {
     return res.status(503).json({ error: 'Push dispatch unavailable' });
   }
 };
+module.exports.shouldDeliver=shouldDeliver;

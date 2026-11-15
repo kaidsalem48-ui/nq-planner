@@ -99,9 +99,9 @@ Dynamic values older than 90 minutes during 08:00–16:30 NY are excluded; fixed
 final overnight/opening-gap/prior-range measurements keep their source times.
 Historical session views remain explicitly dated.
 
-User rules: VIX >18 is caution; VIX >18 and >2% above previous close reduces
-aggression. VIX >20 (2026-11-05) labels Volatility "Very volatile" and raises a red
-"VIX above 20 · very volatile" update. A net overnight move of at least 500 points in either direction
+User rules: VIX >18 adds sizing context; VIX >18 and >2% above previous close reduces
+aggression. VIX >20 (2026-11-05) labels Volatility "Very volatile" and raises an
+informational sizing update; it does not lower the day grade. An overnight high–low range of at least 500 points
 blocks the New York AM session and raises a red alert. Once the final 02:00
 reading is available, an otherwise eligible 13:30–16:00 NY segment becomes a
 yellow PM watch if the AM session was choppy and a cleaner setup confirms.
@@ -150,8 +150,10 @@ enable notifications there (iOS 16.4 or newer). OS placement is controlled by
 the device; the in-page desktop toast is fixed to the bottom right.
 After device alerts are enabled, the Updates panel no longer shows alert
 settings. The bottom of the page has **Send test notification** and **Turn off
-device alerts**. The test uses `/api/push-test` to send a real Web Push to that
-registered device and limits repeat tests to one per minute.
+device alerts**. The test button opens a choice of overnight, VIX, holiday,
+CPI, FOMC and half-day examples. `/api/push-test` sends the chosen example to
+the registered device, labels it as a test, and limits repeat tests to one per
+10 seconds.
 The older Windows WebView2 wrapper does not implement background Web Push; use
 Chrome with NQ Planner installed or open for native Windows alerts. Its in-page
 bottom-right update card still works while the wrapper is open.
@@ -162,8 +164,21 @@ Native Web Push uses `sw.js`, the Vercel `/api/push` subscription endpoint and
 `GITHUB_PUSH_TOKEN`, `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` must stay private.
 GitHub Actions dispatch is authenticated with a short-lived Actions OIDC token
 restricted to this repository's main-branch recorder workflows. The recorder
-sends new condition updates after each cloud collection. The loop also checks
-for scheduled news alerts two minutes before release. Dispatch deduplicates per
-device. The old ntfy route remains available for existing block-plan picks;
-native alerts are delivered by NQ Planner itself and require no ntfy app.
-These are scheduled observations, not instant exchange-price alerts.
+sends new condition updates after each cloud collection. The continuous loop
+also checks for a 9:00 PM New York preview of the next calendar day's saved
+grade, catalyst and plan; an 8:00 AM New York summary of the verified prior
+6 PM–2 AM range and net (or an explicit missing-data notice); red-news alerts
+two minutes before scheduled releases; and reminders about 30 minutes before
+a selected time window. Stable event IDs deduplicate per device. The 9 PM
+preview is a calendar plan, subject to the verified overnight reading and
+later news; estimated releases stay marked estimated. The 8 AM summary never
+turns missing range bars into a low-risk reading.
+
+Time-window picks are stored per native push subscription through
+`/api/push-plan`. New published market observations reach that device during
+its selected window, beginning 30 minutes before the window starts. The 9 PM
+preview, 8 AM overnight summary, overnight red restriction and scheduled news
+alerts still arrive independently of window picks. The old ntfy route remains
+available for existing users without native push. NQ Planner native alerts
+require no ntfy app. Collection runs on the recorded schedule, so these are
+published observations rather than instant exchange-price alerts.

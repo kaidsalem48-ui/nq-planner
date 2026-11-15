@@ -70,7 +70,7 @@
     const large=big&&!desens;
     const recentText=recent.length?` Last ${recent.length} nights: ${recent.map(r=>Math.round(r.range)).join(', ')} (${bigRecent} at 500+).`:'';
     const pmWatch=large&&!preliminary&&!closed&&!election(day)&&pmEligible;
-    const moveLabel=useRange?`Range ${overnightRange} · net ${signed(overnight??0)}`:signed(overnight??0);
+    const moveLabel=useRange?`Range ${overnightRange} · net ${overnight===null?'unavailable':signed(overnight)}`:overnight===null?'unavailable':signed(overnight);
     // Both swings of the night: first extreme to second extreme, then second extreme to the 1:59 close.
     const legKeys=['mcOvernightHigh','mcOvernightLow','mcOvernightClose','mcOvernightHighMin','mcOvernightLowMin'];
     const lv=useRange?legKeys.map(k=>number(k,true)):[];
@@ -82,11 +82,11 @@
       const highFirst=hiMin<=loMin,second=highFirst?lo:hi,back=close-second;
       legsText=` Leg 1: ${highFirst?'down':'up'} ${pts(hi-lo)} points from the ${at(highFirst?hiMin:loMin)} ${highFirst?'high':'low'} (${pts(highFirst?hi:lo)}) to the ${at(highFirst?loMin:hiMin)} ${highFirst?'low':'high'} (${pts(second)}). Leg 2: ${back>=0?'up':'down'} ${pts(Math.abs(back))} points to the 1:59 AM close (${pts(close)}).`;
     }
-    const moveReading=overnight===null&&!useRange?'Waiting for a verified overnight move.':(useRange?`Overnight high–low range: ${overnightRange} NQ points (6 PM–2 AM NY).${legsText} `:'')+(overnight===null?'':`${preliminary?'Overnight so far':'Final overnight net'}: ${signed(overnight)} NQ points from the prior 6 PM NY open to ${preliminary?'the observation time':'the 1:59 AM NY close (2:00 AM boundary)'}.`);
+    const moveReading=overnight===null&&!useRange?'Waiting for a verified overnight move.':(useRange?`Overnight high–low range: ${overnightRange} NQ points (6 PM–2 AM NY).${legsText} `:'')+(overnight===null?'Final net unavailable.':`${preliminary?'Overnight so far':'Final overnight net'}: ${signed(overnight)} NQ points from the prior 6 PM NY open to ${preliminary?'the observation time':'the 1:59 AM NY close (2:00 AM boundary)'}.`);
     const overnightPlan=preliminary?'Sit out for now. Recheck when the final 2:00 AM NY window is published.':pmWatch?'Sit out the New York AM session. Watch 1:30–4:00 PM NY only if the morning was choppy and a cleaner setup confirms. PM quality is not guaranteed.':'Sit out this trading day under your 500-point overnight rule and existing calendar restrictions.';
     const desensPlan=desens==='light'?`Light size, no sit out: ${bigRecent} of the last ${recent.length} nights also moved 500+, so the market is getting used to big nights. Stay light until 500 nights are normal.`:desens==='normal'?`Normal size: ${bigRecent} of the last ${recent.length} nights moved 500+, so a 500 night is normal right now. The sit-out comes back once nights drop to 200–300 again.`:'';
-    const overnightConclusion=large?overnightPlan:desens?desensPlan:overnight===null?'Wait for a verified reading.':preliminary?'The reading so far is below 500 points. Recheck after 2:00 AM NY.':'The final move is below 500 points. Use the other conditions and calendar rules to plan the session.';
-    group('overnight','Overnight move',large?(pmWatch?'AM sit out':'Sit out'):desens==='light'?'Light size':desens==='normal'?'Normal lately':overnight===null?'Unknown':'Observed',
+    const overnightConclusion=large?overnightPlan:desens?desensPlan:overnight===null&&!useRange?'Wait for a verified reading.':preliminary?'The reading so far is below 500 points. Recheck after 2:00 AM NY.':'The final range is below 500 points. Use the other conditions and calendar rules to plan the session.';
+    group('overnight','Overnight move',large?(pmWatch?'AM sit out':'Sit out'):desens==='light'?'Light size':desens==='normal'?'Normal lately':overnight===null&&!useRange?'Unknown':'Observed',
       moveReading+(useRange?'':' Full high–low range unavailable; the net move is used as a lower bound.')+recentText,
       `An overnight high–low range of 500 points or more blocks the New York AM session, even if price came back to where it started. An otherwise eligible 1:30–4:00 PM NY window becomes a conditional watch after the final reading. When the market gets used to big nights the rule eases: 1–2 of the previous 5 nights at 500+ means light size instead, 3 or more means 500 is normal. Other red calendar restrictions still apply.${overnightType?' Recorded behavior: '+overnightType.toLowerCase()+'.':''}`,
       overnightConclusion,[final!==null?'mcOvernight':'mcOvernightSoFar','mcOvernightRange','mcOvernightType']);
