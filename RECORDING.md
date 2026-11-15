@@ -143,5 +143,20 @@ takes its place. Market conditions is a separate weekly navigation view beside
 Show list, with day-specific recorded readings and source times.
 The page checks the archive every minute while open and on return to the app;
 failed refreshes show a connection warning and retain dated cached readings.
-These are in-app notices about scheduled observations, not OS push notifications
-or instant exchange-price alerts. Codex still needs to be awake/online for runs.
+New readings also show a bottom-right toast while the page is open. A user can
+enable native browser notifications from Updates on each device. On iPhone,
+install the site with Share → Add to Home Screen, open it from that icon, and
+enable notifications there (iOS 16.4 or newer). OS placement is controlled by
+the device; the in-page desktop toast is fixed to the bottom right.
+
+Native Web Push uses `sw.js`, the Vercel `/api/push` subscription endpoint and
+`/api/push-dispatch`. Subscriptions and sent identifiers live in the private
+`kaidsalem48-ui/nq-planner-push-state` repository. The Vercel production secrets
+`GITHUB_PUSH_TOKEN`, `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` must stay private.
+GitHub Actions dispatch is authenticated with a short-lived Actions OIDC token
+restricted to this repository's main-branch recorder workflows. The recorder
+sends new condition updates after each cloud collection. The loop also checks
+for scheduled news alerts two minutes before release. Dispatch deduplicates per
+device. The old ntfy route remains available for existing block-plan picks;
+native alerts are delivered by NQ Planner itself and require no ntfy app.
+These are scheduled observations, not instant exchange-price alerts.

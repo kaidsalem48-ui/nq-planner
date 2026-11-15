@@ -10,6 +10,7 @@ main() {
   git pull --rebase -q origin main || true
   python collect_market_conditions.py || { echo "collect failed"; exit 0; }
   node notify_updates.cjs
+  node scripts/dispatch-push.cjs
   if [ -z "$(git status --porcelain -- market-conditions.json notified.json plan.json)" ]; then
     echo "No change to record"
   else

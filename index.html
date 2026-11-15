@@ -13,6 +13,7 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
@@ -457,6 +458,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
 .update-date{display:block;margin:4px 0;color:var(--muted);font-size:.78rem}
 .update-time{color:var(--muted);font-size:.78rem;margin:3px 0 12px!important}
 .update-row-meta{display:inline-flex;align-items:center;gap:8px;flex:none;color:var(--muted);font-size:.74rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.push-setup{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0;color:var(--muted);font-size:.82rem}.push-setup .btn{color:var(--fg);white-space:nowrap}.push-setup p{margin:0}.live-toast{position:fixed;right:16px;bottom:16px;z-index:2000;width:min(370px,calc(100vw - 32px));box-sizing:border-box;background:#1b2029;border:1px solid #705de2;border-left:4px solid #705de2;border-radius:12px;box-shadow:0 16px 42px #0009;color:#f4f5f8;padding:14px 42px 14px 16px;text-align:left;cursor:pointer}.live-toast.danger{border-color:#ef5b61}.live-toast strong{display:block;margin-bottom:5px}.live-toast span{display:block;color:#c4ccda;font-size:.88rem;line-height:1.4}.live-toast small{display:block;color:#9da8bb;margin-top:8px}.live-toast .toast-close{position:absolute;right:8px;top:8px;border:0;background:transparent;color:#d5d9e2;font-size:20px;cursor:pointer}@media(max-width:639px){.live-toast{bottom:max(16px,env(safe-area-inset-bottom))}}
 
 .condition-evaluations{display:grid;gap:8px;align-items:start;margin:14px 0 20px}
 .condition-evaluations .condition-accordion{padding:0;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);max-width:none;min-width:0}
@@ -766,7 +768,52 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     return `<details class="condition-notice" role="note"><summary><b>${title}</b><span class="cn-tag">${tag}</span></summary><p>${esc(assessment.plan)}</p>${reason?`<p>${esc(reason)}</p>`:''}</details>`;
   }
   let updatesOpen=false,selectedUpdate=null,seenUpdates={};try{seenUpdates=JSON.parse(localStorage.getItem('nq-condition-updates-seen-v1')||'{}');if(!seenUpdates||Array.isArray(seenUpdates)||typeof seenUpdates!=='object')seenUpdates={};}catch{}
-  let archiveConnectionError=false,lastUnread='',checkingArchive=false;
+  let archiveConnectionError=false,lastUnread='',checkingArchive=false,pushStatus='',pushEnabled=false;
+  let toastTimer;
+  function showLiveToast(item){
+    if(!item||document.hidden)return;
+    document.querySelector('.live-toast')?.remove();
+    const box=document.createElement('div');box.className='live-toast '+(item.severity==='danger'?'danger':'');box.setAttribute('role','status');
+    box.innerHTML=`<button class="toast-close" aria-label="Dismiss notification">×</button><strong>${esc(item.title)}</strong><span>${esc(item.message)}</span><small>Updated ${esc(new Date(item.updatedAt||Date.now()).toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'}))} NY · Open Updates</small>`;
+    box.querySelector('.toast-close').onclick=event=>{event.stopPropagation();box.remove();};
+    box.onclick=()=>{box.remove();openPushedUpdate(item.id);};document.body.append(box);
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>box.remove(),12000);
+  }
+  function pushAvailable(){return 'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;}
+  function iphoneNeedsInstall(){return /iPhone|iPad|iPod/.test(navigator.userAgent)&&!window.navigator.standalone&&!matchMedia('(display-mode: standalone)').matches;}
+  async function disableNativePush(){
+    try{const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();if(subscription){const response=await fetch('/api/push',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON()})});if(!response.ok)throw new Error('Could not remove this device');await subscription.unsubscribe();}pushEnabled=false;pushStatus='Device alerts are off.';}catch(error){pushStatus=error.message||'Could not turn off alerts.';}renderNotifications();
+  }
+  async function enableNativePush(){
+    if(pushEnabled)return disableNativePush();
+    if(iphoneNeedsInstall()){pushStatus='On iPhone: Share → Add to Home Screen, then open NQ Planner from its icon and tap Enable alerts.';renderNotifications();return;}
+    if(!pushAvailable()){pushStatus='This browser does not support native push notifications.';renderNotifications();return;}
+    // Ask directly from this tap; iPhone requires permission in a user gesture.
+    const permission=await Notification.requestPermission();
+    if(permission!=='granted'){pushStatus=permission==='denied'?'Notifications are blocked in this device’s settings.':'Notification permission was not granted.';renderNotifications();return;}
+    pushStatus='Enabling…';renderNotifications();
+    try{
+      const reg=await navigator.serviceWorker.register('/sw.js');
+      const config=await fetch('/api/push',{cache:'no-store'}).then(r=>r.json());
+      if(!config.ready||!config.publicKey)throw new Error('Push service is unavailable');
+      const bytes=Uint8Array.from(atob(config.publicKey.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+      const subscription=await reg.pushManager.getSubscription()||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes});
+      const response=await fetch('/api/push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON(),currentIds:conditionUpdates().map(item=>item.id)})});
+      if(!response.ok)throw new Error('Could not save this device');
+      pushEnabled=true;pushStatus='Native alerts are on for this device.';
+    }catch(error){pushStatus=error.message||'Could not enable alerts.';}
+    renderNotifications();
+  }
+  async function openPushedUpdate(id){
+    updatesOpen=true;selectedUpdate=id||null;
+    if(id){seenUpdates[id]=Date.now();try{localStorage.setItem('nq-condition-updates-seen-v1',JSON.stringify(seenUpdates));}catch{}}
+    await refreshConditionArchive();renderNotifications();
+    $('updates-toggle').focus();
+  }
+  if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',event=>{
+    if(event.data?.type==='nq-push')showLiveToast({id:event.data.id,title:event.data.title||'NQ Planner update',message:event.data.body||'',severity:event.data.severity,updatedAt:event.data.updatedAt});
+    if(event.data?.type==='nq-open-push')openPushedUpdate(event.data.id);
+  });
   function conditionUpdates(){
     const a=marketAssessment(NOW.date),record=AUTO_CONDITIONS.days?.[NOW.date];
     const items=a.alerts.map(item=>({...item,updatedAt:record?.recordedAt||null}));
@@ -808,7 +855,9 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const markAll=!active&&unread.length?`<button class="btn updates-markall" data-mark-all>Mark all read</button>`:'';
     const updatesNav=active?`<nav class="updates-nav" aria-label="Browse updates"><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav>`:'';
     $('market-updates').innerHTML=`<header>${updatesTitle}${updatesNav}${markAll}<button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
+    <div class="push-setup"><button class="btn" id="enable-push">${pushEnabled?'Turn off device alerts':'Enable device alerts'}</button><p>${esc(pushStatus||'Get NQ Planner alerts on this computer or iPhone.')}</p></div>
     <div class="updates-content${active?'':' is-list'}">${active?`<article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><p class="update-time">${active.updatedAt?`Updated · <time datetime="${esc(active.updatedAt)}">${esc(updateTime(active))} NY</time>`:'Update time unavailable'}${active.observedAt?`<br>Reading observed · <time datetime="${esc(active.observedAt)}">${esc(updateTime({updatedAt:active.observedAt}))} NY</time>`:''}</p><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}">Open market conditions</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span class="update-row-meta">${updateTime(item)?`<time datetime="${esc(item.updatedAt)}">${esc(updateTime(item))}</time>`:''}<span aria-hidden="true">›</span></span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
+    $('enable-push').onclick=enableNativePush;
     $('market-updates').querySelectorAll('[data-update-index]').forEach(button=>button.onclick=()=>{
       selectedUpdate=items[Number(button.dataset.updateIndex)]?.id;
       if(selectedUpdate){
@@ -840,9 +889,10 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   }
   $('updates-toggle').onclick=()=>{updatesOpen=!updatesOpen;selectedUpdate=null;renderNotifications();};
   async function refreshConditionArchive(){
-    if(checkingArchive||!DATA)return;checkingArchive=true;const before=JSON.stringify(AUTO_CONDITIONS),state=marketAssessment(NOW.date),fingerprint=state.level+state.stale.join();
+    if(checkingArchive||!DATA)return;checkingArchive=true;const before=JSON.stringify(AUTO_CONDITIONS),priorIds=new Set(conditionUpdates().map(item=>item.id)),state=marketAssessment(NOW.date),fingerprint=state.level+state.stale.join();
     try{const response=await fetch('market-conditions.json?refresh='+Date.now(),{cache:'no-store'});if(!response.ok)throw new Error('Unavailable');const archive=await response.json();if(archive.version!==1||!archive.days||typeof archive.days!=='object')throw new Error('Invalid archive');AUTO_CONDITIONS=archive;archiveConnectionError=false;}catch{archiveConnectionError=true;}finally{checkingArchive=false;}
     NOW=nyNow();const next=marketAssessment(NOW.date);if(before!==JSON.stringify(AUTO_CONDITIONS)||fingerprint!==next.level+next.stale.join())render();else renderNotifications();
+    const fresh=conditionUpdates().filter(item=>!priorIds.has(item.id)&&!item.id.endsWith(':connection')&&!item.id.endsWith(':overnight-pending'));if(fresh.length)showLiveToast(fresh[0]);
   }
 
   function tileClass(day){
@@ -1682,6 +1732,8 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     $("upd").textContent = "Updated " + short(d.updated);
     $("foot").innerHTML = `<p>All times New York. Green = good to trade · yellow = risky / light size · red = don't trade.</p><p>Calendar sources: ${d.sources.map(esc).join(", ")}. Dates marked "est." are confirmed each Sunday.</p><p>Add to Apple Calendar (tap each, so each gets its own colour): <a href="webcal://nq-planner.vercel.app/api/calendar?show=green" style="color:#34C759;font-weight:700">Good</a> · <a href="webcal://nq-planner.vercel.app/api/calendar?show=yellow" style="color:#e7ac36;font-weight:700">Light / risky</a> · <a href="webcal://nq-planner.vercel.app/api/calendar?show=red" style="color:#ef5b61;font-weight:700">Sit out</a> · <a href="webcal://nq-planner.vercel.app/api/calendar?show=news" style="color:#AF52DE;font-weight:700">News</a>. Updates on its own.</p>`;
     marketBase=Object.fromEntries(d.days.map(x=>[x.date,JSON.parse(JSON.stringify(x))]));readHash(); render(); loadPlan();
+    if(pushAvailable())navigator.serviceWorker.getRegistration('/sw.js').then(reg=>reg?.pushManager.getSubscription()).then(sub=>{if(sub){pushEnabled=true;pushStatus='Native alerts are on for this device.';renderNotifications();}}).catch(()=>{});
+    const pushed=new URLSearchParams(location.search).get('push');if(pushed){history.replaceState(null,'',location.pathname+location.hash);openPushedUpdate(pushed);}
     setInterval(() => { NOW = nyNow(); renderNow(); refreshConditionArchive(); }, 60000);
     window.addEventListener("focus",()=>{refreshConditionArchive();loadPlan();});
     document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshConditionArchive();loadPlan();}});

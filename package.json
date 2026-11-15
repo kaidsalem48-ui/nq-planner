@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "jose": "6.2.17",
+    "web-push": "4.0.0"
+  }
+}
