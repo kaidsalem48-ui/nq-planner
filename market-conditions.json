@@ -1655,13 +1655,13 @@
       ]
     },
     "2026-11-16": {
-      "recordedAt": "2026-11-16T22:12:21.885864+00:00",
+      "recordedAt": "2026-11-16T22:37:01.802520+00:00",
       "values": {
         "mcVix": 22.91,
         "mcVixChange": 18.7047,
         "mcVol": "Expanding",
-        "mcDxy": 103.572,
-        "mcDxyChange": 0.16,
+        "mcDxy": 103.582,
+        "mcDxyChange": 0.17,
         "mcDollar": "Rising",
         "mcPriorRange": 703.75,
         "mcDirection": "Down",
@@ -1724,7 +1724,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-16T22:02:18+00:00",
+          "asOf": "2026-11-16T22:27:00+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -1734,7 +1734,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-13 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-16T21:58:00+00:00",
+          "asOf": "2026-11-16T21:59:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -1842,5 +1842,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-16T22:12:22.527674+00:00"
+  "updatedAt": "2026-11-16T22:37:01.907126+00:00"
 }
