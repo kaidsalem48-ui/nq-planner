@@ -90,7 +90,7 @@ assert.equal(dispatch.morningEvents(ny('2026-11-26', 8 * 60)).length, 0, 'Closed
 const overnightSource = { sources: [{ asOf: '2026-11-04T01:59:00-05:00', fields: ['mcOvernightRange'] }] };
 const restricted = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 896.25, mcOvernight: -193 }, large: true }, overnightSource);
 assert.equal(restricted.severity, 'danger');
-assert.equal(restricted.title, 'Overnight move 896.25 points');
+assert.equal(restricted.title, 'Overnight move: 896.25 points');
 assert.match(restricted.message, /high–low range; net -193 points\. NY AM: sit out/);
 assert.equal(restricted.observedAt, '2026-11-04T01:59:00-05:00');
 const sharedId = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 896.25 }, large: true, alerts: [{id: '2026-11-04:overnight-1800-0200-large-final-17'}] }, overnightSource);
@@ -98,15 +98,15 @@ assert.equal(sharedId.id, '2026-11-04:overnight-1800-0200-large-final-17', '8 AM
 const pmWatch = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 600 }, large: true, pmWatch: true }, overnightSource);
 assert.match(pmWatch.message, /PM watch only if AM was choppy and a cleaner setup confirms/);
 const incompleteRange = content.morningSummary('2026-11-04', { n: { mcOvernight: 75 }, large: false }, null);
-assert.equal(incompleteRange.title,'Overnight move at least 75 points');
+assert.equal(incompleteRange.title,'Overnight move: 75 points');
 assert.match(incompleteRange.message,/full range incomplete.*cannot clear the 500-point rule/);
 const lowerBound=content.morningSummary('2026-11-16',{n:{mcOvernightRangeMin:621.25},large:true},{sources:[{asOf:'2026-11-16T06:59:00Z',fields:['mcOvernightRangeMin']}]});
-assert.equal(lowerBound.title,'Overnight move at least 621.25 points');
+assert.equal(lowerBound.title,'Overnight move: 621.25 points');
 assert.equal(lowerBound.severity,'danger');
-assert.match(lowerBound.message,/full high–low range is still incomplete\. NY AM: sit out/);
+assert.match(lowerBound.message,/At least 621\.25 points observed.*full range unavailable\. NY AM: sit out/);
 assert.equal(lowerBound.observedAt,'2026-11-16T06:59:00Z');
 const partialBelow=content.morningSummary('2026-11-16',{n:{mcOvernightRangeMin:499.75},large:false},null);
-assert.equal(partialBelow.title,'Overnight move at least 499.75 points');
+assert.equal(partialBelow.title,'Overnight move: 499.75 points');
 assert.equal(partialBelow.severity,'caution');
 const partialAlert={id:'2026-11-16:overnight-1800-0200-final'};
 assert.equal(content.shouldPushConditionAlert(partialAlert,{n:{mcOvernightRangeMin:499.75}}),true);

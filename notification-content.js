@@ -97,22 +97,23 @@
     if(typeof range!=='number'&&typeof minRange!=='number'&&!(typeof net==='number'&&Math.abs(net)>0))return null;
     const signed=value=>(value>0?'+':'')+Number(value.toFixed(2));
     const points=value=>Number(value.toFixed(2)).toLocaleString('en-US',{maximumFractionDigits:2});
+    const headline=value=>`Overnight move: ${points(value)} points`;
     let title,message,severity='info';
     if(typeof range==='number'){
-      title=`Overnight move ${points(range)} points`;
+      title=headline(range);
       const reading=`6 PM–2 AM NY high–low range${typeof net==='number'?`; net ${signed(net)} points`:''}.`;
       if(assessment.large){message=`${reading} NY AM: sit out.${assessment.pmWatch?' PM watch only if AM was choppy and a cleaner setup confirms.':''}`;severity='danger';}
       else if(assessment.overnightTrend?.desens==='light'){message=`${reading} Size light under your recent-night rule.`;severity='caution';}
       else if(assessment.overnightTrend?.desens==='normal'){message=`${reading} Normal size under your recent-night rule; calendar restrictions still apply.`;}
       else message=`${reading} Below your 500-point sit-out level; follow the calendar plan.`;
     }else if(typeof minRange==='number'){
-      title=`Overnight move at least ${points(Math.max(minRange,typeof net==='number'?Math.abs(net):0))} points`;
-      const reading='Observed 6 PM–2 AM NY bars; the full high–low range is still incomplete.';
+      title=headline(Math.max(minRange,typeof net==='number'?Math.abs(net):0));
+      const reading=`At least ${points(Math.max(minRange,typeof net==='number'?Math.abs(net):0))} points observed from 6 PM–2 AM NY; full range unavailable.`;
       if(assessment.large){message=`${reading} NY AM: sit out.${assessment.pmWatch?' PM watch only if AM was choppy and a cleaner setup confirms.':''}`;severity='danger';}
       else if(assessment.overnightTrend?.desens==='light'){message=`${reading} Size light under your recent-night rule.`;severity='caution';}
       else {message=`${reading} The 500-point rule cannot be cleared from partial bars; follow the calendar plan.`;severity='caution';}
     }else if(typeof net==='number'){
-      title=`Overnight move at least ${points(Math.abs(net))} points`;
+      title=headline(Math.abs(net));
       message=assessment.large?`6 PM–2 AM NY net ${signed(net)} points; full range incomplete. NY AM: sit out.`:`6 PM–2 AM NY net ${signed(net)} points; full range incomplete. This cannot clear the 500-point rule; follow the calendar plan.`;
       severity=assessment.large?'danger':'caution';
     }
