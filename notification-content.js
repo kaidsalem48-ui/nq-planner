@@ -21,7 +21,7 @@
     if(!day||!/^\d{4}-\d{2}-\d{2}$/.test(day.date))return null;
     const date=day.date,news=redNews(day),main=news.find(item=>/FOMC Rate Decision|\bCPI\b|Non-Farm Payrolls/i.test(item.name))||news[0];
     const next=redNews(following).find(item=>/\bCPI\b|Non-Farm Payrolls|FOMC Rate Decision/i.test(item.name));
-    const grade=label(day),overnight=' Overnight range is checked when verified data arrives.';
+    const grade=label(day);
     let title,message,severity=grade==='Sit out'?'danger':grade==='Light'?'caution':'info';
     if(day.holidayType==='closed'){
       title=`Markets closed tomorrow · ${day.holiday||'holiday'}`;
@@ -41,30 +41,33 @@
       message='Futures may be open, but the holiday can thin trading. Size light and keep your red windows.';severity='caution';
     }else if(next&&/Day before CPI/i.test(day.why||'')){
       title='Light day tomorrow · day before CPI';
-      message=`CPI follows at ${timeLabel(next.time)} NY. Small scalps only on your eval account; size down and wait for a clean setup.${overnight}`;severity='caution';
+      message=`CPI follows at ${timeLabel(next.time)} NY. Small scalps only on your eval account; size down and wait for a clean setup.`;severity='caution';
     }else if(next&&/Day before (?:NFP|payrolls)/i.test(day.why||'')){
       title='Light day tomorrow · before payrolls';
-      message=`Payrolls follow at ${timeLabel(next.time)} NY. Keep size light and stay selective.${overnight}`;severity='caution';
+      message=`Payrolls follow at ${timeLabel(next.time)} NY. Keep size light and stay selective.`;severity='caution';
     }else if(/Day before FOMC/i.test(day.why||'')){
       title='OK day tomorrow · before FOMC';
-      message=`The Fed decision follows the next day. Stay selective and take profits sooner.${overnight}`;severity='caution';
+      message=`The Fed decision follows the next day. Stay selective and take profits sooner.`;severity='caution';
     }else if(day.opex||/Your OPEX rule/i.test(day.why||'')){
-      title='Light day tomorrow · OPEX';message=`Lower probability under your saved rule: target 1:1, no partials.${overnight}`;severity='caution';
+      title='Light day tomorrow · OPEX';message=`Lower probability under your saved rule: target 1:1, no partials.`;severity='caution';
     }else if(main){
       const name=main.name.replace(/\s*\(est\.\)/i,' (est.)');
       title=`${grade} day tomorrow · ${name} ${timeLabel(main.time)} NY`;
       const context=/\bCPI\b|\bPPI\b/i.test(name)?'Inflation data':/Non-Farm Payrolls|ADP|JOLTS/i.test(name)?'Jobs data':name;
       const second=news.find(item=>item!==main&&toMinute(item.time)>toMinute(main.time));
-      message=`${context} is the main catalyst. Stay out in the saved pre-release red window; assess the post-data setup.${second?` Also ${second.name} at ${timeLabel(second.time)} NY.`:''}${/\(est\.\)/i.test(name)?' This time is estimated.':''}${overnight}`;
+      message=`${context} is the main catalyst. Stay out in the saved pre-release red window; assess the post-data setup.${second?` Also ${second.name} at ${timeLabel(second.time)} NY.`:''}${/\(est\.\)/i.test(name)?' This time is estimated.':''}`;
     }else if(grade==='Sit out'){
       title='Sit out tomorrow';message='The planner has no eligible trading window. Keep the saved calendar restrictions.';
     }else{
       const green=(day.segs||[]).find(seg=>seg[2]==='g'&&toMinute(seg[0])>=570&&toMinute(seg[0])<720)
         ||(day.segs||[]).find(seg=>seg[2]==='g'&&toMinute(seg[0])>=480&&toMinute(seg[0])<720);
       const minor=(day.news||[]).filter(item=>item.impact!=='red').sort((a,b)=>toMinute(a.time)-toMinute(b.time))[0];
-      const mondayWindow=/No-news Monday:/i.test(day.why||'')&&green&&toMinute(green[0])===570&&toMinute(green[1])===600;
       title=minor?`${grade} day tomorrow · ${minor.name} ${timeLabel(minor.time)} NY`:`${grade} day tomorrow · lighter calendar`;
-      message=`No red-folder release is scheduled.${minor?` ${minor.name} is scheduled for ${timeLabel(minor.time)} NY.`:''}${green?` Main saved window: ${timeLabel(green[0])}–${timeLabel(green[1])} NY.`:''}${mondayWindow?' 10:00–10:30 AM is light only; finish by 10:30.':''} Trade only if price action is clean.${overnight}`;
+      if(green){
+        const start=timeLabel(green[0]),end=timeLabel(green[1]);
+        const window=start.slice(-2)===end.slice(-2)?`${start.slice(0,-3)}–${end}`:`${start}–${end}`;
+        message=`No red folder tmrw. Best trading window (green): ${window} NY.`;
+      }else message='No red folder tmrw. No green window; size light or skip.';
     }
     return {id:`${date}:tomorrow-preview:v1`,day:date,title,message,severity,updatedAt:new Date(nyWallEpoch(addDays(date,-1),21*60)).toISOString(),delivery:'always'};
   }

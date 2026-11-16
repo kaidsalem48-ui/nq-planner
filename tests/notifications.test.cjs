@@ -62,9 +62,9 @@ assert.equal(monday.label, 'OK', 'A non-red Empire State release does not lower 
 assert(monday.news.some(item => item.name === 'Empire State Manufacturing Survey' && item.time === '8:30' && item.impact === 'orange'));
 const mondayPreview = previewAt('2026-11-15')[0];
 assert.match(mondayPreview.title, /^OK day tomorrow.*Empire State Manufacturing Survey 8:30 AM NY/);
-assert.match(mondayPreview.message, /No red-folder release/);
-assert.match(mondayPreview.message, /Main saved window: 9:30 AM–10:00 AM NY/);
-assert.match(mondayPreview.message, /10:00–10:30 AM is light only; finish by 10:30/);
+assert.equal(mondayPreview.message, 'No red folder tmrw. Best trading window (green): 9:30–10:00 AM NY.');
+assert.equal(content.preview(day('2026-11-12')).message, 'No red folder tmrw. No green window; size light or skip.');
+for(const calendarDay of data.days)assert.doesNotMatch(content.preview(calendarDay).message, /overnight range/i, 'The 9 PM preview leaves overnight readings to the separate 8 AM alert');
 assert.match(beforeCpi.message, /size down/i);
 
 // At 8 AM, unknown overnight data is not turned into a small or safe move.
