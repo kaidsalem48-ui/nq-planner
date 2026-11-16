@@ -456,8 +456,8 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
 .update-date{display:block;margin:4px 0;color:var(--muted);font-size:.78rem}
 .update-time{color:var(--muted);font-size:.78rem;margin:3px 0 12px!important}
 .update-row-meta{display:inline-flex;align-items:center;gap:8px;flex:none;color:var(--muted);font-size:.74rem;white-space:nowrap;font-variant-numeric:tabular-nums}
-.push-setup{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 0;color:var(--muted);font-size:.82rem}.push-setup .btn{color:var(--fg);white-space:nowrap}.push-setup p{margin:0}.live-toast{position:fixed;right:16px;bottom:16px;z-index:2000;width:min(370px,calc(100vw - 32px));box-sizing:border-box;background:#1b2029;border:1px solid #705de2;border-left:4px solid #705de2;border-radius:12px;box-shadow:0 16px 42px #0009;color:#f4f5f8;padding:14px 42px 14px 16px;text-align:left;cursor:pointer}.live-toast.danger{border-color:#ef5b61}.live-toast strong{display:block;margin-bottom:5px}.live-toast span{display:block;color:#c4ccda;font-size:.88rem;line-height:1.4}.live-toast small{display:block;color:#9da8bb;margin-top:8px}.live-toast .toast-close{position:absolute;right:8px;top:8px;border:0;background:transparent;color:#d5d9e2;font-size:20px;cursor:pointer}@media(max-width:639px){.live-toast{bottom:max(16px,env(safe-area-inset-bottom))}}
-.device-alert-settings{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding:10px 4px max(4px,env(safe-area-inset-bottom));font-size:.78rem;color:var(--muted)}.device-alert-settings[hidden]{display:none}.device-alert-settings .btn{padding:7px 10px;font-size:.78rem}.device-alert-settings p{margin:0}.device-alert-settings button:disabled{opacity:.6;cursor:wait}
+.live-toast{position:fixed;right:16px;bottom:16px;z-index:2000;width:min(370px,calc(100vw - 32px));box-sizing:border-box;background:#1b2029;border:1px solid #705de2;border-left:4px solid #705de2;border-radius:12px;box-shadow:0 16px 42px #0009;color:#f4f5f8;padding:14px 42px 14px 16px;text-align:left;cursor:pointer}.live-toast.danger{border-color:#ef5b61}.live-toast strong{display:block;margin-bottom:5px}.live-toast span{display:block;color:#c4ccda;font-size:.88rem;line-height:1.4}.live-toast small{display:block;color:#9da8bb;margin-top:8px}.live-toast .toast-close{position:absolute;right:8px;top:8px;border:0;background:transparent;color:#d5d9e2;font-size:20px;cursor:pointer}@media(max-width:639px){.live-toast{bottom:max(16px,env(safe-area-inset-bottom))}}
+.device-alert-settings{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;border-top:1px solid var(--line);padding:12px 4px max(4px,env(safe-area-inset-bottom));font-size:.78rem;color:var(--muted)}.device-alert-settings h2{font-size:.82rem;color:var(--fg);margin:0 auto 0 0}.device-alert-actions{display:flex;flex-wrap:wrap;gap:8px}.device-alert-settings .btn{padding:7px 10px;font-size:.78rem}.device-alert-settings p{margin:0;width:100%}.device-alert-settings button:disabled{opacity:.6;cursor:wait}
 .test-alert-choices{width:100%;display:flex;gap:7px;flex-wrap:wrap;align-items:center;padding-top:4px}.test-alert-choices[hidden]{display:none}.test-alert-choices span{width:100%;font-weight:700;color:var(--fg)}.test-alert-choices .btn{background:var(--panel-2)}
 
 .condition-evaluations{display:grid;gap:8px;align-items:start;margin:14px 0 20px}
@@ -533,7 +533,12 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   <div class="sheet" id="sheet" hidden></div>
 
   <footer class="foot" id="foot"></footer>
-  <div class="device-alert-settings" id="device-alert-settings" aria-label="Device alert settings" hidden><button class="btn" id="test-device-alert" type="button" aria-expanded="false" aria-controls="test-alert-choices">Send test notification</button><button class="btn" id="disable-device-alert" type="button">Turn off device alerts</button><p id="device-alert-status" role="status" aria-live="polite"></p><div class="test-alert-choices" id="test-alert-choices" role="group" aria-label="Choose a test notification" hidden></div></div>
+  <section class="device-alert-settings" id="device-alert-settings" aria-label="Device alert settings">
+    <h2>Device alerts</h2>
+    <div class="device-alert-actions"><button class="btn" id="enable-push" type="button">Enable device alerts</button><button class="btn" id="test-device-alert" type="button" aria-expanded="false" aria-controls="test-alert-choices" hidden>Send test notification</button><button class="btn" id="disable-device-alert" type="button" hidden>Turn off device alerts</button></div>
+    <p id="device-alert-status" role="status" aria-live="polite">Get NQ Planner alerts on this computer or iPhone.</p>
+    <div class="test-alert-choices" id="test-alert-choices" role="group" aria-label="Choose a test notification" hidden></div>
+  </section>
  </section>
 </div>
 
@@ -810,8 +815,10 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   function pushAvailable(){return 'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;}
   function iphoneNeedsInstall(){return /iPhone|iPad|iPod/.test(navigator.userAgent)&&!window.navigator.standalone&&!matchMedia('(display-mode: standalone)').matches;}
   function renderDeviceAlertSettings(){
-    $('device-alert-settings').hidden=!pushEnabled;
-    $('device-alert-status').textContent=pushEnabled?deviceTestStatus:'';
+    $('enable-push').hidden=pushEnabled;
+    $('test-device-alert').hidden=!pushEnabled;
+    $('disable-device-alert').hidden=!pushEnabled;
+    $('device-alert-status').textContent=deviceTestStatus||pushStatus||(pushEnabled?'Native alerts are on for this device.':'Get NQ Planner alerts on this computer or iPhone.');
     if(!pushEnabled){$('test-alert-choices').hidden=true;$('test-device-alert').setAttribute('aria-expanded','false');}
   }
   function chooseTestNotification(){
@@ -838,6 +845,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     }catch(error){deviceTestStatus=error.message||'Test notification could not be sent.';}
     button.disabled=false;renderDeviceAlertSettings();
   }
+  $('enable-push').onclick=enableNativePush;
   $('test-device-alert').onclick=chooseTestNotification;
   $('disable-device-alert').onclick=disableNativePush;
   async function disableNativePush(){
@@ -845,6 +853,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   }
   async function enableNativePush(){
     if(pushEnabled)return disableNativePush();
+    deviceTestStatus='';
     if(iphoneNeedsInstall()){pushStatus='On iPhone: Share → Add to Home Screen, then open NQ Planner from its icon and tap Enable alerts.';renderNotifications();return;}
     if(!pushAvailable()){pushStatus=window.chrome?.webview?'This Windows wrapper shows updates while open. For background alerts, open nq-planner.vercel.app in Chrome and enable alerts there.':'This browser does not support native push notifications.';renderNotifications();return;}
     // Ask directly from this tap; iPhone requires permission in a user gesture.
@@ -920,8 +929,8 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     }
   });
   function renderNotifications(){
-    if(!DATA)return;const items=conditionUpdates(),unread=conditionEngine.unread(items,seenUpdates),danger=items.some(i=>i.severity==='danger'),button=$('updates-toggle');
     renderDeviceAlertSettings();
+    if(!DATA)return;const items=conditionUpdates(),unread=conditionEngine.unread(items,seenUpdates),danger=items.some(i=>i.severity==='danger'),button=$('updates-toggle');
     button.classList.toggle('has-unread',unread.length>0);button.classList.toggle('has-danger',danger);button.setAttribute('aria-expanded',String(updatesOpen));button.setAttribute('aria-label',`Updates: ${unread.length} unread${danger?', high-risk condition present':''}`);
     $('update-count').hidden=!unread.length;$('update-count').textContent=String(unread.length);$('market-updates').hidden=!updatesOpen;positionUpdates();
     const ids=unread.map(i=>i.id).join('|');if(ids!==lastUnread){$('updates-live').textContent=unread.length?`${unread.length} unread updates. ${unread[0].title}.`:'';lastUnread=ids;}
@@ -933,9 +942,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const updatesNav=active?`<nav class="updates-nav" aria-label="Browse updates"><button class="btn" data-update-index="${activeIndex-1}" aria-label="Previous update" ${activeIndex===0?'disabled':''}>←</button><span>${activeIndex+1} of ${items.length}</span><button class="btn" data-update-index="${activeIndex+1}" aria-label="Next update" ${activeIndex===items.length-1?'disabled':''}>→</button></nav>`:'';
     const openDayPlan=!!active&&(/:tomorrow-preview:|:selected-window:/.test(active.id));
     $('market-updates').innerHTML=`<header>${updatesTitle}${updatesNav}<button class="btn" id="updates-close" aria-label="Close updates">Close</button></header>
-    ${pushEnabled?'':`<div class="push-setup"><button class="btn" id="enable-push">Enable device alerts</button><p>${esc(pushStatus||'Get NQ Planner alerts on this computer or iPhone.')}</p></div>`}
     <div class="updates-content${active?'':' is-list'}">${active?`<article class="market-update ${active.severity}"><time class="update-date" datetime="${esc(active.day)}">${esc(D(active.day).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'UTC'}))}</time><p class="update-time">${active.updatedAt?`Updated · <time datetime="${esc(active.updatedAt)}">${esc(updateTime(active))} NY</time>`:'Update time unavailable'}${active.observedAt?`<br>Reading observed · <time datetime="${esc(active.observedAt)}">${esc(updateTime({updatedAt:active.observedAt}))} NY</time>`:''}</p><h4>${esc(active.title)}</h4><p>${esc(active.message)}</p><button class="btn" data-update-day="${active.day}" data-update-mode="${openDayPlan?'plan':'conditions'}">${openDayPlan?'Open day plan':'Open market conditions'}</button></article>`:items.map((item,index)=>`<button class="update-row market-update ${item.severity}" data-update-index="${index}"><strong>${esc(item.title)}${!seenUpdates[item.id]?' · New':''}</strong><span class="update-row-meta">${updateTime(item)?`<time datetime="${esc(item.updatedAt)}">${esc(updateTime(item))}</time>`:''}<span aria-hidden="true">›</span></span></button>`).join('')||'<p>No updates for this date.</p>'}</div>`;
-    if($('enable-push'))$('enable-push').onclick=enableNativePush;
     $('market-updates').querySelectorAll('[data-update-index]').forEach(button=>button.onclick=()=>{
       selectedUpdate=items[Number(button.dataset.updateIndex)]?.id;
       if(selectedUpdate){

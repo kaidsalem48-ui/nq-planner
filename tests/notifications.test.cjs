@@ -57,7 +57,14 @@ assert.match(tentative.title, /\(est\.\)/);
 assert.match(tentative.message, /time is estimated/i);
 const beforeCpi = content.preview({ date: '2026-12-09', label: 'Light', why: 'Day before CPI', news: [] }, day('2026-12-10'));
 assert.match(beforeCpi.title, /Light day tomorrow.*day before CPI/);
-assert.match(previewAt('2026-11-15')[0].title, /^OK day tomorrow/);
+const monday = day('2026-11-16');
+assert.equal(monday.label, 'OK', 'A non-red Empire State release does not lower the saved grade');
+assert(monday.news.some(item => item.name === 'Empire State Manufacturing Survey' && item.time === '8:30' && item.impact === 'orange'));
+const mondayPreview = previewAt('2026-11-15')[0];
+assert.match(mondayPreview.title, /^OK day tomorrow.*Empire State Manufacturing Survey 8:30 AM NY/);
+assert.match(mondayPreview.message, /No red-folder release/);
+assert.match(mondayPreview.message, /Main saved window: 9:30 AM–10:00 AM NY/);
+assert.match(mondayPreview.message, /10:00–10:30 AM is light only; finish by 10:30/);
 assert.match(beforeCpi.message, /size down/i);
 
 // At 8 AM, unknown overnight data is not turned into a small or safe move.

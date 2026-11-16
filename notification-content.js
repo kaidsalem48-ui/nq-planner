@@ -59,9 +59,12 @@
     }else if(grade==='Sit out'){
       title='Sit out tomorrow';message='The planner has no eligible trading window. Keep the saved calendar restrictions.';
     }else{
-      const green=(day.segs||[]).find(seg=>seg[2]==='g'&&toMinute(seg[0])>=480&&toMinute(seg[0])<720);
-      title=`${grade} day tomorrow · lighter calendar`;
-      message=`No red-folder release is scheduled.${green?` Main saved window: ${timeLabel(green[0])}–${timeLabel(green[1])} NY.`:''} Trade only if price action is clean.${overnight}`;
+      const green=(day.segs||[]).find(seg=>seg[2]==='g'&&toMinute(seg[0])>=570&&toMinute(seg[0])<720)
+        ||(day.segs||[]).find(seg=>seg[2]==='g'&&toMinute(seg[0])>=480&&toMinute(seg[0])<720);
+      const minor=(day.news||[]).filter(item=>item.impact!=='red').sort((a,b)=>toMinute(a.time)-toMinute(b.time))[0];
+      const mondayWindow=/No-news Monday:/i.test(day.why||'')&&green&&toMinute(green[0])===570&&toMinute(green[1])===600;
+      title=minor?`${grade} day tomorrow · ${minor.name} ${timeLabel(minor.time)} NY`:`${grade} day tomorrow · lighter calendar`;
+      message=`No red-folder release is scheduled.${minor?` ${minor.name} is scheduled for ${timeLabel(minor.time)} NY.`:''}${green?` Main saved window: ${timeLabel(green[0])}–${timeLabel(green[1])} NY.`:''}${mondayWindow?' 10:00–10:30 AM is light only; finish by 10:30.':''} Trade only if price action is clean.${overnight}`;
     }
     return {id:`${date}:tomorrow-preview:v1`,day:date,title,message,severity,updatedAt:new Date(nyWallEpoch(addDays(date,-1),21*60)).toISOString(),delivery:'always'};
   }

@@ -1,11 +1,12 @@
 {
- "updated": "2026-10-28",
+ "updated": "2026-11-15",
  "sources": [
   "fedratecalc.com US economic calendar (BLS/BEA/Census/Fed dates)",
   "BLS CPI release schedule",
   "ISM PMI release calendar",
   "Kiplinger weekly economic calendar",
-  "Dorman Trading November 2026 calendar"
+  "Dorman Trading November 2026 calendar",
+  "New York Fed November 2026 Economic Indicators Calendar: https://www.newyorkfed.org/research/calendars/i-nov26.html"
  ],
  "days": [
   {
@@ -2951,8 +2952,20 @@
   },
   {
    "date": "2026-11-16",
-   "news": [],
-   "marks": [],
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Empire State Manufacturing Survey",
+     "impact": "orange"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "Empire",
+     "minor"
+    ]
+   ],
    "holiday": null,
    "asia": [
     [

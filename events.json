@@ -1,12 +1,13 @@
 {
-  "updated": "2026-10-28",
+  "updated": "2026-11-15",
   "range": ["2026-10-01", "2026-12-31"],
   "sources": [
     "fedratecalc.com US economic calendar (BLS/BEA/Census/Fed dates)",
     "BLS CPI release schedule",
     "ISM PMI release calendar",
     "Kiplinger weekly economic calendar",
-    "Dorman Trading November 2026 calendar"
+    "Dorman Trading November 2026 calendar",
+    "New York Fed November 2026 Economic Indicators Calendar: https://www.newyorkfed.org/research/calendars/i-nov26.html"
   ],
   "holidays": {
     "2026-10-12": {"type": "bank", "name": "Columbus Day"},
@@ -52,6 +53,7 @@
     {"date": "2026-11-12", "time": "8:30", "name": "Jobless Claims", "short": "Claims", "impact": "orange", "kind": "data", "est": true},
     {"date": "2026-11-13", "time": "8:30", "name": "PPI", "short": "PPI", "impact": "red", "kind": "data"},
     {"date": "2026-11-13", "time": "10:00", "name": "UMich Sentiment (prelim)", "short": "UMich", "impact": "red", "kind": "data", "est": true},
+    {"date": "2026-11-16", "time": "8:30", "name": "Empire State Manufacturing Survey", "short": "Empire", "impact": "orange", "kind": "data"},
     {"date": "2026-11-17", "time": "8:30", "name": "Retail Sales", "short": "Retail", "impact": "red", "kind": "data"},
     {"date": "2026-11-18", "time": "14:00", "name": "FOMC Minutes", "short": "Minutes", "impact": "red", "kind": "minutes"},
     {"date": "2026-11-19", "time": "8:30", "name": "Philly Fed + Jobless Claims", "short": "Philly", "impact": "orange", "kind": "data", "est": true},
