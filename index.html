@@ -369,6 +369,7 @@ body{overflow-x:clip}
 #lst[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 #lst{white-space:nowrap}
 .navrow{flex-wrap:wrap}
+@media(min-width:900px) and (max-width:1500px){.ctl{flex-direction:column;align-items:stretch}.ctl .seg3{order:1;width:min(330px,100%);margin:0 auto}.ctl .navrow{display:flex;order:2;width:100%}.ctl .navrow .title{order:0;min-width:0;margin:0 auto 0 0}.ctl .navrow #outlook-toggle{order:1}.ctl .navrow .list-updates{order:2}.ctl .navrow .nav-arrows{order:3}.ctl .navrow #today{order:4}}
 .brand{white-space:nowrap}
 @media (min-width:1100px){
   .ctl .seg3{order:1}
@@ -1568,7 +1569,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const d = D(cursor); const m = d.getUTCMonth(), y = d.getUTCFullYear();
     const days = Object.values(BY).filter(x => { const t = D(x.date); return t.getUTCMonth() === m && t.getUTCFullYear() === y; });
     const k = dayLabel;
-    const rows = [["Great","#12a77f"],["Good","#26c48d"],["OK","#8cc4b0"],["Light","#e7ac36"],["Sit out","#ef5b61"],["Markets open","#7b6cf6"],["Markets closed","#4a4f5c"]];
+    const rows = [["Great","#12a77f"],["Good","#26c48d"],["OK","#8cc4b0"],["Light","#e7ac36"],["Risky","#e7ac36"],["Sit out","#ef5b61"],["Markets open","#7b6cf6"],["Markets closed","#4a4f5c"]];
     const n = days.length || 1;
     $("brk").innerHTML = `<h3>${MON[m]} breakdown</h3>` + rows.map(([lab, col]) => {
       const c = days.filter(x => k(x) === lab).length;
