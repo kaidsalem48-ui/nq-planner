@@ -34,7 +34,7 @@ assert.match(thanksgiving.message, /Stay out/);
 const afterThanksgiving = previewAt('2026-11-26')[0];
 assert.equal(afterThanksgiving.day, '2026-11-27');
 assert.equal(afterThanksgiving.severity, 'caution');
-assert.match(afterThanksgiving.title, /Light tomorrow.*Day after Thanksgiving/);
+assert.match(afterThanksgiving.title, /Light day tomorrow.*Day after Thanksgiving/);
 assert.match(afterThanksgiving.message, /Size light/);
 
 // A rate-decision day is blocked; FOMC Minutes with an OK grade is a distinct event.
@@ -50,13 +50,14 @@ assert.doesNotMatch(minutes.title, /stay out/i);
 // Use the scheduled release and the saved grade, with explicit source uncertainty.
 const cpi = previewAt('2026-12-09')[0];
 assert.equal(cpi.day, '2026-12-10');
-assert.match(cpi.title, /Great tomorrow.*CPI 8:30 AM NY/);
+assert.match(cpi.title, /Great day tomorrow.*CPI 8:30 AM NY/);
 assert.match(cpi.message, /post-data setup/);
 const tentative = content.preview({ date: '2026-11-19', label: 'Good', news: [{ time: '8:30', name: 'Jobless Claims (est.)', impact: 'red' }] });
 assert.match(tentative.title, /\(est\.\)/);
 assert.match(tentative.message, /time is estimated/i);
 const beforeCpi = content.preview({ date: '2026-12-09', label: 'Light', why: 'Day before CPI', news: [] }, day('2026-12-10'));
-assert.match(beforeCpi.title, /Light tomorrow.*day before CPI/);
+assert.match(beforeCpi.title, /Light day tomorrow.*day before CPI/);
+assert.match(previewAt('2026-11-15')[0].title, /^OK day tomorrow/);
 assert.match(beforeCpi.message, /size down/i);
 
 // At 8 AM, unknown overnight data is not turned into a small or safe move.

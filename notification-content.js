@@ -34,25 +34,25 @@
       title='Election Day tomorrow · sit out';message='Your rule: no trading after 9:30 AM NY. Pre-open restrictions remain.';severity='danger';
     }else if(day.holidayType==='half'){
       const close=(day.segs||[]).find(seg=>/closed early/i.test(seg[3]||''));
-      title=`Light tomorrow · ${day.holiday||'half day'}`;
+      title=`Light day tomorrow · ${day.holiday||'half day'}`;
       message=`Early-close session${close?` at ${timeLabel(close[0])} NY`:''}. Size light if trading; wait for clean price action.`;severity='caution';
     }else if(day.holidayType==='bank'){
-      title=`Light tomorrow · ${day.holiday||'bank holiday'}`;
+      title=`Light day tomorrow · ${day.holiday||'bank holiday'}`;
       message='Futures may be open, but the holiday can thin trading. Size light and keep your red windows.';severity='caution';
     }else if(next&&/Day before CPI/i.test(day.why||'')){
-      title='Light tomorrow · day before CPI';
+      title='Light day tomorrow · day before CPI';
       message=`CPI follows at ${timeLabel(next.time)} NY. Small scalps only on your eval account; size down and wait for a clean setup.${overnight}`;severity='caution';
     }else if(next&&/Day before (?:NFP|payrolls)/i.test(day.why||'')){
-      title='Light tomorrow · before payrolls';
+      title='Light day tomorrow · before payrolls';
       message=`Payrolls follow at ${timeLabel(next.time)} NY. Keep size light and stay selective.${overnight}`;severity='caution';
     }else if(/Day before FOMC/i.test(day.why||'')){
-      title='Tomorrow: OK · before FOMC';
+      title='OK day tomorrow · before FOMC';
       message=`The Fed decision follows the next day. Stay selective and take profits sooner.${overnight}`;severity='caution';
     }else if(day.opex||/Your OPEX rule/i.test(day.why||'')){
-      title='Light tomorrow · OPEX';message=`Lower probability under your saved rule: target 1:1, no partials.${overnight}`;severity='caution';
+      title='Light day tomorrow · OPEX';message=`Lower probability under your saved rule: target 1:1, no partials.${overnight}`;severity='caution';
     }else if(main){
       const name=main.name.replace(/\s*\(est\.\)/i,' (est.)');
-      title=`${grade} tomorrow · ${name} ${timeLabel(main.time)} NY`;
+      title=`${grade} day tomorrow · ${name} ${timeLabel(main.time)} NY`;
       const context=/\bCPI\b|\bPPI\b/i.test(name)?'Inflation data':/Non-Farm Payrolls|ADP|JOLTS/i.test(name)?'Jobs data':name;
       const second=news.find(item=>item!==main&&toMinute(item.time)>toMinute(main.time));
       message=`${context} is the main catalyst. Stay out in the saved pre-release red window; assess the post-data setup.${second?` Also ${second.name} at ${timeLabel(second.time)} NY.`:''}${/\(est\.\)/i.test(name)?' This time is estimated.':''}${overnight}`;
@@ -60,7 +60,7 @@
       title='Sit out tomorrow';message='The planner has no eligible trading window. Keep the saved calendar restrictions.';
     }else{
       const green=(day.segs||[]).find(seg=>seg[2]==='g'&&toMinute(seg[0])>=480&&toMinute(seg[0])<720);
-      title=`${grade} tomorrow · lighter calendar`;
+      title=`${grade} day tomorrow · lighter calendar`;
       message=`No red-folder release is scheduled.${green?` Main saved window: ${timeLabel(green[0])}–${timeLabel(green[1])} NY.`:''} Trade only if price action is clean.${overnight}`;
     }
     return {id:`${date}:tomorrow-preview:v1`,day:date,title,message,severity,updatedAt:new Date(nyWallEpoch(addDays(date,-1),21*60)).toISOString(),delivery:'always'};
@@ -98,9 +98,9 @@
       overnight:['Overnight move','Test only. A verified 6 PM–2 AM NY range would show the points, net move and your AM rule.'],
       vix:['VIX update','Test only. A verified VIX alert would show its level and sizing implication. VIX alone does not lower the day grade.'],
       holiday:['Holiday tomorrow · stay out','Test only. A holiday preview would name the closure and tell you to stay out.'],
-      cpi:['Good tomorrow · CPI 8:30 AM NY','Test only. A CPI preview would name the release and your plan to wait for post-data price action.'],
+      cpi:['Good day tomorrow · CPI 8:30 AM NY','Test only. A CPI preview would name the release and your plan to wait for post-data price action.'],
       fomc:['FOMC tomorrow · stay out','Test only. Your saved FOMC rule blocks the day around the rate decision and Chair.'],
-      half:['Light tomorrow · half day','Test only. A day-after-Thanksgiving preview would flag the early close and lighter size.']
+      half:['Light day tomorrow · half day','Test only. A day-after-Thanksgiving preview would flag the early close and lighter size.']
     };
     const value=examples[type];return value?{title:'Test · '+value[0],message:value[1]}:null;
   }
