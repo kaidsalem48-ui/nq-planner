@@ -64,7 +64,11 @@
     "2026-11-17:news:8:30"
   ],
   "2026-11-16": [
-    "2026-11-16:news:8:30"
+    "2026-11-16:news:8:30",
+    "2026-11-16:block:8:00-9:25",
+    "2026-11-16:vix-very-volatile",
+    "2026-11-16:tech-daily:all",
+    "2026-11-16:mgmt:Partials early, no runner|Normal partials, small runner"
   ],
   "2026-11-18": [
     "2026-11-18:news:14:00"
