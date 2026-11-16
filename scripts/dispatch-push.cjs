@@ -8,12 +8,11 @@ const read = name => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8'));
 const nyDay = time => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(time));
 const nyMinute = time => { const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(time)); return Number(parts.find(p => p.type === 'hour').value) * 60 + Number(parts.find(p => p.type === 'minute').value); };
 const toMinute = text => { const [h, m] = text.split(':').map(Number); return h * 60 + m; };
-const pmEligible = base => !!base && base.score !== -2 && !['closed', 'half', 'bank'].includes(base.holidayType) && (base.segs || []).some(s => s[2] !== 'r' && toMinute(s[0]) < 960 && toMinute(s[1]) > 810);
 function updateEvents(now) {
   const day = nyDay(now), archive = read('market-conditions.json'), record = archive.days?.[day];
   if (!record) return [];
   const base = (read('data.json').days || []).find(d => d.date === day);
-  const result = engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, {}, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', pmEligible: pmEligible(base) });
+  const result = engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, {}, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', calendarSitOut: base?.score === -2 });
   return result.alerts.filter(a => content.shouldPushConditionAlert(a,result))
     .map(a => ({ ...a, updatedAt: a.observedAt || record.recordedAt, delivery: a.id.includes(':overnight-1800-0200-') ? 'always' : 'window-if-picked' }));
 }
@@ -39,16 +38,20 @@ function morningEvents(now){
   const base=(read('data.json').days||[]).find(d=>d.date===day);
   if(!base||base.holidayType==='closed')return [];
   const archive=read('market-conditions.json'),record=archive.days?.[day];
-  const result=engine.evaluate(record,{day,now,recentRanges:engine.recentOvernightRanges(archive,{},day),calendarKnown:true,closed:false,pmEligible:pmEligible(base)});
+  const result=engine.evaluate(record,{day,now,recentRanges:engine.recentOvernightRanges(archive,{},day),calendarKnown:true,closed:false,calendarSitOut:base.score===-2});
   const alert=content.morningSummary(day,result,record);
   return alert?[{...alert,updatedAt:alert.observedAt||new Date(now).toISOString()}]:[];
 }
 function windowEvents(now){
   const day=nyDay(now),minute=nyMinute(now),base=(read('data.json').days||[]).find(d=>d.date===day);
   if(!base||base.holidayType==='closed')return [];
+  const archive=read('market-conditions.json'),record=archive.days?.[day];
+  const assessment=record?engine.evaluate(record,{day,now,recentRanges:engine.recentOvernightRanges(archive,{},day),calendarKnown:true,closed:false,calendarSitOut:base.score===-2}):null;
+  const overnightRisky=!!assessment?.large&&!assessment.restricted;
   return (base.segs||[]).filter(seg=>toMinute(seg[0])-30<=minute&&minute<toMinute(seg[0])-20&&toMinute(seg[0])>=30).map(seg=>{
     const key=seg[0]+'-'+seg[1],grade=seg[2]==='r'?'Sit out':seg[2]==='y'?'Light':'Good';
-    return {id:`${day}:selected-window:${key}`,day,title:`Selected window · ${content.timeLabel(seg[0])} NY`,message:`Your ${content.timeLabel(seg[0])}–${content.timeLabel(seg[1])} NY window is coming up. Calendar plan: ${grade.toLowerCase()}. Check live Updates before trading; overnight and red restrictions still apply.`,severity:seg[2]==='r'?'danger':seg[2]==='y'?'caution':'info',updatedAt:new Date(now).toISOString(),delivery:'selected-window',windowKey:key};
+    const riskNote=overnightRisky?'Day grade: Risky from 500+ overnight points; size light. ':'';
+    return {id:`${day}:selected-window:${key}`,day,title:`Selected window · ${content.timeLabel(seg[0])} NY`,message:`Your ${content.timeLabel(seg[0])}–${content.timeLabel(seg[1])} NY window is coming up. Calendar window: ${grade.toLowerCase()}. ${riskNote}Check live Updates before trading.`,severity:seg[2]==='r'?'danger':seg[2]==='y'||overnightRisky?'caution':'info',updatedAt:new Date(now).toISOString(),delivery:'selected-window',windowKey:key};
   });
 }
 function scheduledEvents(now){return [...newsEvents(now),...previewEvents(now),...morningEvents(now),...windowEvents(now)];}

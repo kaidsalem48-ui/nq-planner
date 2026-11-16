@@ -98,24 +98,22 @@
     const signed=value=>(value>0?'+':'')+Number(value.toFixed(2));
     const points=value=>Number(value.toFixed(2)).toLocaleString('en-US',{maximumFractionDigits:2});
     const headline=value=>`Overnight move: ${points(value)} points`;
+    const riskAction=assessment.restricted?'The calendar sit-out rule still applies.':'Risky day. Size light; calendar red windows still apply.';
     let title,message,severity='info';
     if(typeof range==='number'){
       title=headline(range);
       const reading=`6 PM–2 AM NY high–low range${typeof net==='number'?`; net ${signed(net)} points`:''}.`;
-      if(assessment.large){message=`${reading} NY AM: sit out.${assessment.pmWatch?' PM watch only if AM was choppy and a cleaner setup confirms.':''}`;severity='danger';}
-      else if(assessment.overnightTrend?.desens==='light'){message=`${reading} Size light under your recent-night rule.`;severity='caution';}
-      else if(assessment.overnightTrend?.desens==='normal'){message=`${reading} Normal size under your recent-night rule; calendar restrictions still apply.`;}
-      else message=`${reading} Below your 500-point sit-out level; follow the calendar plan.`;
+      if(assessment.large){message=`${reading} ${riskAction}`;severity='caution';}
+      else message=`${reading} Below 500 points. Follow the calendar plan.`;
     }else if(typeof minRange==='number'){
       title=headline(Math.max(minRange,typeof net==='number'?Math.abs(net):0));
       const reading=`At least ${points(Math.max(minRange,typeof net==='number'?Math.abs(net):0))} points observed from 6 PM–2 AM NY; full range unavailable.`;
-      if(assessment.large){message=`${reading} NY AM: sit out.${assessment.pmWatch?' PM watch only if AM was choppy and a cleaner setup confirms.':''}`;severity='danger';}
-      else if(assessment.overnightTrend?.desens==='light'){message=`${reading} Size light under your recent-night rule.`;severity='caution';}
-      else {message=`${reading} The 500-point rule cannot be cleared from partial bars; follow the calendar plan.`;severity='caution';}
+      if(assessment.large){message=`${reading} ${riskAction}`;severity='caution';}
+      else {message=`${reading} The full range could still exceed 500; follow the calendar plan.`;severity='caution';}
     }else if(typeof net==='number'){
       title=headline(Math.abs(net));
-      message=assessment.large?`6 PM–2 AM NY net ${signed(net)} points; full range incomplete. NY AM: sit out.`:`6 PM–2 AM NY net ${signed(net)} points; full range incomplete. This cannot clear the 500-point rule; follow the calendar plan.`;
-      severity=assessment.large?'danger':'caution';
+      message=assessment.large?`6 PM–2 AM NY net ${signed(net)} points; full range incomplete. ${riskAction}`:`6 PM–2 AM NY net ${signed(net)} points; full range incomplete. The 500-point threshold is unknown; follow the calendar plan.`;
+      severity='caution';
     }
     const sourceKey=typeof range==='number'?'mcOvernightRange':typeof minRange==='number'&&!(typeof net==='number'&&Math.abs(net)>minRange)?'mcOvernightRangeMin':'mcOvernight';
     const source=record?.sources?.find(s=>Array.isArray(s.fields)&&s.fields.includes(sourceKey)&&nyDay(s.asOf)===day);
@@ -132,7 +130,7 @@
   ]);
   function testSample(type){
     const examples={
-      overnight:['Overnight move','Test only. A verified 6 PM–2 AM NY range would show the points, net move and your AM rule.'],
+      overnight:['Overnight move','Test only. A verified 6 PM–2 AM NY range would show the points and Risky grade when it reaches 500. Calendar red windows still apply.'],
       vix:['VIX update','Test only. A verified VIX alert would show its level and sizing implication. VIX alone does not lower the day grade.'],
       holiday:['Holiday tomorrow · stay out','Test only. A holiday preview would name the closure and tell you to stay out.'],
       cpi:['Good day tomorrow · CPI 8:30 AM NY','Test only. A CPI preview would name the release and your plan to wait for post-data price action.'],

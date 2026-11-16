@@ -89,21 +89,25 @@ assert.equal(dispatch.morningEvents(ny('2026-11-26', 8 * 60)).length, 0, 'Closed
 
 const overnightSource = { sources: [{ asOf: '2026-11-04T01:59:00-05:00', fields: ['mcOvernightRange'] }] };
 const restricted = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 896.25, mcOvernight: -193 }, large: true }, overnightSource);
-assert.equal(restricted.severity, 'danger');
+const calendarSitOut = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 896.25 }, large: true, restricted: true }, overnightSource);
+assert.match(calendarSitOut.message, /calendar sit-out rule still applies/);
+assert.doesNotMatch(calendarSitOut.message, /Risky day/);
+assert.equal(restricted.severity, 'caution');
 assert.equal(restricted.title, 'Overnight move: 896.25 points');
-assert.match(restricted.message, /high–low range; net -193 points\. NY AM: sit out/);
+assert.match(restricted.message, /high–low range; net -193 points\. Risky day\. Size light/);
+assert.doesNotMatch(restricted.message, /sit out|PM watch/i);
 assert.equal(restricted.observedAt, '2026-11-04T01:59:00-05:00');
 const sharedId = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 896.25 }, large: true, alerts: [{id: '2026-11-04:overnight-1800-0200-large-final-17'}] }, overnightSource);
 assert.equal(sharedId.id, '2026-11-04:overnight-1800-0200-large-final-17', '8 AM and live overnight pushes share an ID to prevent duplicates');
-const pmWatch = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 600 }, large: true, pmWatch: true }, overnightSource);
-assert.match(pmWatch.message, /PM watch only if AM was choppy and a cleaner setup confirms/);
 const incompleteRange = content.morningSummary('2026-11-04', { n: { mcOvernight: 75 }, large: false }, null);
 assert.equal(incompleteRange.title,'Overnight move: 75 points');
-assert.match(incompleteRange.message,/full range incomplete.*cannot clear the 500-point rule/);
+assert.match(incompleteRange.message,/full range incomplete.*500-point threshold is unknown/);
 const lowerBound=content.morningSummary('2026-11-16',{n:{mcOvernightRangeMin:621.25},large:true},{sources:[{asOf:'2026-11-16T06:59:00Z',fields:['mcOvernightRangeMin']}]});
 assert.equal(lowerBound.title,'Overnight move: 621.25 points');
-assert.equal(lowerBound.severity,'danger');
-assert.match(lowerBound.message,/At least 621\.25 points observed.*full range unavailable\. NY AM: sit out/);
+assert.equal(lowerBound.severity,'caution');
+assert.match(lowerBound.message,/At least 621\.25 points observed.*full range unavailable\. Risky day\. Size light/);
+assert.match(lowerBound.message,/calendar red windows still apply/);
+assert.doesNotMatch(lowerBound.message,/sit out|PM watch/i);
 assert.equal(lowerBound.observedAt,'2026-11-16T06:59:00Z');
 const partialBelow=content.morningSummary('2026-11-16',{n:{mcOvernightRangeMin:499.75},large:false},null);
 assert.equal(partialBelow.title,'Overnight move: 499.75 points');
@@ -134,6 +138,8 @@ for (const choice of content.testChoices) {
   assert(sample && sample.title.startsWith('Test · '));
   assert.match(sample.message, /Test only/);
 }
+assert.match(content.testSample('overnight').message, /Risky grade/);
+assert.doesNotMatch(content.testSample('overnight').message, /sit out|AM block/i);
 assert.equal(content.testSample('unknown'), null);
 
 // A device's picked windows gate live snapshots, while scheduled essentials remain on.

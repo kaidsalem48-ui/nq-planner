@@ -2,8 +2,8 @@
 // webcal:// link on the site). Built on each request from the files deployed with the site, so
 // the weekly schedule update and every recording (each one redeploys) show up on their own.
 //
-// Per trading day: an all-day event with the day's grade and why (plus Sit out / Light size from
-// the latest market conditions), one event per green or yellow block, and one per news time.
+// Per trading day: an all-day event with the day's grade and why (including a Risky grade from
+// a verified 500+ overnight move), one event per green or yellow block, and one per news time.
 // Red "don't trade" blocks are left out to keep the calendar readable.
 //
 // Apple Calendar gives every event in one subscribed calendar the same colour, so ?show= splits
@@ -59,29 +59,30 @@ module.exports = (req, res) => {
 
   for (const dd of (data.days || []).filter(d => d.date >= from)) {
     const day = dd.date, link = `${SITE}#day-${day}`;
-    let extra = '', note = '';
+    let extra = '', note = '', overnightRisky = false, calendarRestricted = false;
     const record = archive.days?.[day];
     if (record) {
       try {
-        const a = engine.evaluate(record, { day, now, calendarKnown: true, closed: dd.holidayType === 'closed', recentRanges: engine.recentOvernightRanges(archive, history, day),
-          pmEligible: dd.score !== -2 && !['closed', 'half', 'bank'].includes(dd.holidayType) && (dd.segs || []).some(s => s[2] !== 'r' && toMin(s[0]) < 960 && toMin(s[1]) > 810) });
+        const a = engine.evaluate(record, { day, now, calendarKnown: true, closed: dd.holidayType === 'closed', calendarSitOut: dd.score === -2, recentRanges: engine.recentOvernightRanges(archive, history, day) });
+        calendarRestricted = a.restricted;
+        overnightRisky = a.large && !a.restricted && dd.holidayType !== 'closed';
         if (a.restricted && a.level !== dd.label) extra = ' · ' + a.level;
-        else if (a.overnightTrend?.desens === 'light') extra = ' · Light size';
         note = '\n\nMarket conditions: ' + a.plan;
       } catch (e) {}
     }
+    const dayLabel = overnightRisky ? 'Risky' : (dd.label || '');
     const blocks = (dd.segs || []).map(([a, b, k, n]) => `${clock(toMin(a))}–${clock(toMin(b))}  ${k === 'g' ? 'Trade' : k === 'y' ? 'Risky' : 'No trade'} · ${n}`).join('\n');
     const news = (dd.news || []).filter(isRed).map(n => `${n.time} ${n.name}`).join('\n');
     const next = addDays(day, 1).replace(/-/g, '');
-    const dayCls = dd.holidayType === 'closed' || dd.score === -2 || /sit out/i.test(extra) ? 'red' : dd.score >= 1 && !extra ? 'green' : 'yellow';
+    const dayCls = dd.holidayType === 'closed' || dd.score === -2 || calendarRestricted || /sit out/i.test(extra) ? 'red' : overnightRisky ? 'yellow' : dd.score >= 1 && !extra ? 'green' : 'yellow';
     event(dayCls, `day-${day}`, [`DTSTART;VALUE=DATE:${day.replace(/-/g, '')}`, `DTEND;VALUE=DATE:${next}`, 'TRANSP:TRANSPARENT',
-      `SUMMARY:${esc(`NQ ${dd.label || ''}${extra}`)}`,
+      `SUMMARY:${esc(`NQ ${dayLabel}${extra}`)}`,
       `DESCRIPTION:${esc(`${dd.why || ''}${note}\n\nRed folder news:\n${news || 'None'}\n\nBlocks (New York):\n${blocks}\n\n${link}`)}`, `URL:${link}`]);
     if (dd.holidayType === 'closed') continue;
     for (const [a, b, k, n] of dd.segs || []) {
       if (!GRADE[k]) continue;
       event(k === 'g' ? 'green' : 'yellow', `seg-${day}-${a}-${b}`, [`DTSTART:${stamp(nyEpoch(day, toMin(a)))}`, `DTEND:${stamp(nyEpoch(day, toMin(b)))}`, 'TRANSP:TRANSPARENT',
-        `SUMMARY:${esc(`${GRADE[k]} · ${n}`)}`, `DESCRIPTION:${esc(`${dd.label || ''} day. ${dd.why || ''}\n\n${link}`)}`, `URL:${link}`]);
+        `SUMMARY:${esc(`${GRADE[k]} · ${n}`)}`, `DESCRIPTION:${esc(`${dayLabel} day. ${dd.why || ''}${note}\n\n${link}`)}`, `URL:${link}`]);
     }
     // Asia & London: these blocks belong to this trading day but run the evening before.
     const eve = addDays(day, -1);

@@ -41,14 +41,14 @@ Vercel sign-in. No credentials, account data or private notes belong in the arch
   leaves exact range and net unavailable.
 - `overnight-history.json` is a legacy continuous-contract backfill. It is
   historical context only, not verified same-contract evidence. It must not
-  supply or clear a current 500-point threshold, count toward the recent-night
-  desensitization rule, or fill missing dated archive ranges.
+  supply or clear a current 500-point threshold, count as verified recent-night
+  evidence, or fill missing dated archive ranges.
 - If the full range is unavailable, `mcOvernightRangeMin` records only the high–low
   **lower bound** from nonempty bars of the same dated NQ contract. Its source
   names the observed high/low minutes, first observed minute and missing-bar
   count. The last 01:59 one-minute bar (or complete 01:55 five-minute bar) is
   required. A lower bound at or above 500 proves the threshold was crossed and
-  can block New York AM; a lower bound below 500 cannot clear the rule or label
+  can mark the day Risky; a lower bound below 500 cannot clear the rule or label
   the night safe. The field is retired when a complete final range is recorded.
 - RTH opening gap: 09:30 open minus previous RTH last-minute close, same contract.
   Current/prior RTH high-low require complete bars, including holiday early closes.
@@ -114,28 +114,31 @@ Historical session views remain explicitly dated.
 
 User rules: VIX >18 adds sizing context; VIX >18 and >2% above previous close reduces
 aggression. VIX >20 (2026-11-05) labels Volatility "Very volatile" and raises an
-informational sizing update; it does not lower the day grade. An overnight high–low range of at least 500 points
-blocks the New York AM session and raises a red alert. Once the final 02:00
-reading is available, an otherwise eligible 13:30–16:00 NY segment becomes a
-yellow PM watch if the AM session was choppy and a cleaner setup confirms.
-This is a conditional observation window, not a claim that PM will trade well.
-Original red calendar windows, Election Day and closed/short sessions remain
-blocked. The illustrated 04:15–07:15 NY move describes a later premarket move
-outside the defined overnight measurement; it is not the PM trading window.
+informational sizing update; it does not lower the day grade. An overnight high–low
+range of at least 500 points makes the day **Risky (yellow)** and raises a caution
+alert. The overnight move alone does not impose an AM sit-out or promise a cleaner
+PM session. Existing red calendar windows, Election Day restrictions and closed or
+shortened sessions remain in force; Risky does not turn them yellow. A clean setup
+still has to confirm within an eligible window. Recent-night comparisons are context
+and do not erase a verified 500-point Risky grade. The illustrated 04:15–07:15 NY
+move describes a later premarket move outside the defined overnight measurement.
 Before the final reading, use `mcOvernightSoFar` with its actual source minute
-and keep a provisional restriction in effect until the final
-`mcOvernight` reading supersedes it and uses the 18:00-to-02:00 NY definition.
+and label any threshold crossing provisional until the final 02:00 reading
+supersedes it and uses the 18:00-to-02:00 NY definition.
 Old 09:29-window readings must not be labeled as 02:00-window readings. The
 evaluation accepts final overnight sources only when observed at 01:59 NY.
 **Updated 2026-11-04 (user's call):** the rule uses the overnight high–low range,
 not the signed net, so a 900-point drop that comes back still counts. Without a
 final range (provisional, or range data incomplete), observed-bar high–low and
 |net| are lower bounds, each labeled as such. Neither can clear the rule below 500.
-Updates show both: "Range 896 · net −193".
-**Legs (2026-11-04):** each night's final reading also records the overnight open, high,
-low, 1:59 close and the minutes after 18:00 when the high and low printed
+Updates show both when sourced: "Range 896 · net −193".
+**Updated 2026-11-16 (user's call):** reaching 500 points changes the day grade
+to Risky, with a yellow caution update. It no longer creates a red AM sit-out.
+**Legs (2026-11-04):** when every bar is available, the final reading also records
+the overnight open, high, low, 1:59 close and the minutes after 18:00 when the high and low printed
 (`mcOvernightOpen/High/Low/Close/HighMin/LowMin`, sourced at 01:59 like the range).
-The Updates title keeps the range. The opened update describes Leg 1 (first extreme
+The Updates title shows the measured points. Details identify an exact range or
+lower bound; when all bars support it, they also describe Leg 1 (first extreme
 to second extreme) and Leg 2 (second extreme to the 1:59 close).
 
 **Updated Election Day rule:** do not trade after 09:30 New York; the user expects
@@ -144,14 +147,14 @@ The established pre-open restriction remains. The calendar generator paints
 Election Day NY windows red and assigns Sit out; no claim is made that every
 Election Day must statistically have poor price action.
 
-The Updates control beside Market conditions has a red unread count and a persistent
-high-risk indicator. Alerts use stable date/type/threshold identifiers, allowing
+The Updates control beside Market conditions has an unread count and a persistent
+risk indicator. Alerts use stable date/type/threshold identifiers, allowing
 read warnings to stay available without repeatedly becoming new. A materially
 larger overnight bucket (50 points) or final measurement gets a new identifier.
 Opening a specific update marks it read on that device. It never clears the risk
 rule or day warning. The list scrolls after four entries, and the date appears
 in an opened update. Each new published snapshot gets its own update entry.
-Updates also shows the signed overnight net move each trading day. The
+Updates also shows the signed overnight net move when exact endpoints exist. The
 provisional entry updates as measurements arrive. The final 02:00 NY reading
 takes its place. Market conditions is a separate weekly navigation view beside
 Show list, with day-specific recorded readings and source times.
@@ -192,7 +195,7 @@ turns missing range bars into a low-risk reading.
 Time-window picks are stored per native push subscription through
 `/api/push-plan`. New published market observations reach that device during
 its selected window, beginning 30 minutes before the window starts. The 9 PM
-preview, 8 AM overnight summary, overnight red restriction and scheduled news
+preview, 8 AM overnight summary, overnight Risky alert and scheduled news
 alerts still arrive independently of window picks. The old ntfy delivery route
 is disabled; alerts use NQ Planner native push only. Collection runs on the
 recorded schedule, so these are

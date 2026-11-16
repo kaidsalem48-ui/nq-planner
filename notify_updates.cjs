@@ -142,6 +142,10 @@ async function main() {
   for (const d of Object.keys(sent)) if (d < nyDay(now - 7 * 864e5)) delete sent[d];
   const done = new Set(sent[day] || []);
   const save = () => { sent[day] = [...done]; fs.writeFileSync(file, JSON.stringify(sent, null, 2) + '\n'); };
+  const archive = JSON.parse(fs.readFileSync(here('market-conditions.json'), 'utf8'));
+  const record = archive.days?.[day];
+  const assessment = record ? engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, {}, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', calendarSitOut: base?.score === -2 }) : null;
+  const overnightRisky = !!assessment?.large && !assessment.restricted;
 
   // Block start: the grade and why, tap opens the day.
   for (const p of live) {
@@ -150,21 +154,14 @@ async function main() {
     const k = p.seg?.[2], grade = k === 'g' ? 'Trade' : k === 'y' ? 'Risky · light size' : k === 'r' ? 'No trade' : 'Your block';
     const ok = await push({
       title: `${clock(p.A)}–${clock(p.B)} · ${grade}`,
-      message: `${p.seg?.[3] ? p.seg[3] + '. ' : ''}Day: ${base?.label || ''}${base?.why ? '. ' + base.why : ''}`.trim(),
+      message: `${p.seg?.[3] ? p.seg[3] + '. ' : ''}Day: ${overnightRisky ? 'Risky (500+ overnight points)' : base?.label || ''}${base?.why ? '. ' + base.why : ''}`.trim(),
       click: `${SITE}#day-${day}`, priority: 3, tags: [k === 'g' ? 'green_circle' : k === 'y' ? 'yellow_circle' : k === 'r' ? 'red_circle' : 'bell'],
     });
     if (ok) { done.add(id); console.log(`notify: block ${p.key} sent`); }
   }
 
-  const record = JSON.parse(fs.readFileSync(here('market-conditions.json'), 'utf8')).days?.[day];
   if (!record) { console.log(`notify: no reading for ${day}`); save(); return; }
-  // Same PM-watch eligibility as the site.
-  const pmEligible = !!base && base.score !== -2 && !['closed', 'half', 'bank'].includes(base.holidayType)
-    && (base.segs || []).some(s => s[2] !== 'r' && toMin(s[0]) < 960 && toMin(s[1]) > 810);
-  const archive = JSON.parse(fs.readFileSync(here('market-conditions.json'), 'utf8'));
-  const history = fs.existsSync(here('overnight-history.json')) ? JSON.parse(fs.readFileSync(here('overnight-history.json'), 'utf8')).ranges : {};
-  const a = engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, history, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', pmEligible });
-  const fresh = a.alerts.filter(x => !done.has(x.id) && notificationContent.shouldPushConditionAlert(x,a) && (live.length || ALWAYS(x.id)))
+  const fresh = assessment.alerts.filter(x => !done.has(x.id) && notificationContent.shouldPushConditionAlert(x,assessment) && (live.length || ALWAYS(x.id)))
     .sort((x, y) => ({ danger: 0, caution: 1, info: 2 }[x.severity] - { danger: 0, caution: 1, info: 2 }[y.severity]));
   for (const x of fresh) {
     const ok = await push({

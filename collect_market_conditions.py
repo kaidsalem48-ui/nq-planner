@@ -146,7 +146,7 @@ def build(results, now, calendar):
         elif cutoff >= overnight_end:
             # Missing bars prevent an exact range, but observed highs and lows are
             # still a valid *lower bound*. A 500+ floor alone establishes that the
-            # user's 500-point no-AM threshold was crossed. Never call it full.
+            # user's 500-point Risky threshold was crossed. Never call it full.
             candidates = []
             for data, step, last_bar, label in [(nq, 60, overnight_end, "1m")]:
                 floor = observed_range_floor(data["bars"], overnight_start, last_bar, step)
