@@ -17,6 +17,25 @@
   const timeLabel=value=>{const minute=toMinute(value),hour=Math.floor(minute/60)%24;return `${hour%12||12}:${String(minute%60).padStart(2,'0')} ${hour<12?'AM':'PM'}`;};
   const label=day=>day?.label==='Great'?'Great':day?.label==='Good'?'Good':day?.label==='Light'?'Light':day?.label==='Sit out'?'Sit out':'OK';
   const redNews=day=>(day?.news||[]).filter(item=>item.impact==='red'||/sentiment|consumer confidence/i.test(item.name)).sort((a,b)=>toMinute(a.time)-toMinute(b.time));
+  const isRedNews=item=>item.impact==='red'||/sentiment|consumer confidence/i.test(item.name);
+  function newsReminder(time,list){
+    const red=list.some(isRedNews);
+    return {
+      title:red?'Red-folder news in 2 min':'Medium news in 2 min',
+      message:`${timeLabel(time)} NY · ${list.map(item=>item.name).join(', ')}. ${red?'Red folder; keep the saved pre-release restriction.':'Medium impact, not red folder; follow your saved window.'}`,
+      severity:red?'danger':'info'
+    };
+  }
+  function shouldPushConditionAlert(alert,assessment){
+    if([':stale',':missing',':connection'].some(suffix=>alert.id.endsWith(suffix)))return false;
+    if(!alert.id.includes(':overnight-1800-0200-'))return true;
+    const n=assessment?.n||{};
+    if(typeof n.mcOvernightRange==='number')return true;
+    const bound=Math.max(typeof n.mcOvernightRangeMin==='number'?n.mcOvernightRangeMin:0,
+      typeof n.mcOvernight==='number'?Math.abs(n.mcOvernight):0,
+      typeof n.mcOvernightSoFar==='number'?Math.abs(n.mcOvernightSoFar):0);
+    return bound>=500;
+  }
   function preview(day,following){
     if(!day||!/^\d{4}-\d{2}-\d{2}$/.test(day.date))return null;
     const date=day.date,news=redNews(day),main=news.find(item=>/FOMC Rate Decision|\bCPI\b|Non-Farm Payrolls/i.test(item.name))||news[0];
@@ -72,7 +91,9 @@
     return {id:`${date}:tomorrow-preview:v1`,day:date,title,message,severity,updatedAt:new Date(nyWallEpoch(addDays(date,-1),21*60)).toISOString(),delivery:'always'};
   }
   function morningSummary(day,assessment,record){
-    const range=assessment?.n?.mcOvernightRange,net=assessment?.n?.mcOvernight;
+    const range=assessment?.n?.mcOvernightRange,minRange=assessment?.n?.mcOvernightRangeMin,net=assessment?.n?.mcOvernight;
+    // Missing provider bars are an in-app data-quality state, not a device alert.
+    if(typeof range!=='number'&&!(typeof minRange==='number'&&minRange>=500)&&!(typeof net==='number'&&Math.abs(net)>=500))return null;
     const signed=value=>(value>0?'+':'')+Number(value.toFixed(2));
     const points=value=>Number(value.toFixed(2)).toLocaleString('en-US',{maximumFractionDigits:2});
     let title,message,severity='info';
@@ -83,15 +104,21 @@
       else if(assessment.overnightTrend?.desens==='light'){message=`${reading} Size light under your recent-night rule.`;severity='caution';}
       else if(assessment.overnightTrend?.desens==='normal'){message=`${reading} Normal size under your recent-night rule; calendar restrictions still apply.`;}
       else message=`${reading} Below your 500-point sit-out level; follow the calendar plan.`;
-    }else if(typeof net==='number'){
-      title=`Overnight move ${signed(net)} points (net only)`;
-      message=assessment.large?'Full range unavailable. Net alone reached 500 points; sit out NY AM.':'Full range unavailable. Net alone cannot clear your 500-point rule.';severity=assessment.large?'danger':'caution';
-    }else{
-      title='Overnight move awaiting data';
-      message='Verified 6 PM–2 AM NY range unavailable. Check Updates before trading.';severity='caution';
+    }else if(typeof minRange==='number'&&minRange>=500){
+      title=`Overnight move at least ${points(Math.max(minRange,typeof net==='number'?Math.abs(net):0))} points`;
+      const reading='Observed 6 PM–2 AM NY bars; the full high–low range is still incomplete.';
+      if(assessment.large){message=`${reading} NY AM: sit out.${assessment.pmWatch?' PM watch only if AM was choppy and a cleaner setup confirms.':''}`;severity='danger';}
+      else if(assessment.overnightTrend?.desens==='light'){message=`${reading} Size light under your recent-night rule.`;severity='caution';}
+      else message=`${reading} Follow the calendar plan and recent-night rule.`;
+    }else if(typeof net==='number'&&Math.abs(net)>=500){
+      title=`Overnight move at least ${points(Math.abs(net))} points`;
+      message=assessment.large?'Net move alone proves at least 500 points; full range incomplete. NY AM: sit out.':'Net move alone proves at least 500 points; full range incomplete. Follow the recent-night rule.';
+      severity=assessment.large?'danger':'caution';
     }
-    const source=record?.sources?.find(s=>Array.isArray(s.fields)&&s.fields.includes('mcOvernightRange')&&nyDay(s.asOf)===day&&nyMinute(s.asOf)===119);
-    return {id:`${day}:overnight-8am:v1`,day,title,message,severity,updatedAt:new Date(nyWallEpoch(day,480)).toISOString(),observedAt:source?.asOf||null,delivery:'always'};
+    const sourceKey=typeof range==='number'?'mcOvernightRange':typeof minRange==='number'&&minRange>=500&&!(typeof net==='number'&&Math.abs(net)>minRange)?'mcOvernightRangeMin':'mcOvernight';
+    const source=record?.sources?.find(s=>Array.isArray(s.fields)&&s.fields.includes(sourceKey)&&nyDay(s.asOf)===day);
+    const engineAlert=assessment?.alerts?.find(item=>item.id?.includes(':overnight-1800-0200-'));
+    return {id:engineAlert?.id||`${day}:overnight-8am:v1`,day,title,message,severity,updatedAt:new Date(nyWallEpoch(day,480)).toISOString(),observedAt:source?.asOf||null,delivery:'always'};
   }
   const testChoices=Object.freeze([
     {type:'overnight',label:'Overnight move'},
@@ -112,7 +139,7 @@
     };
     const value=examples[type];return value?{title:'Test · '+value[0],message:value[1]}:null;
   }
-  const api={preview,morningSummary,testChoices,testSample,nyDay,nyMinute,nyWallEpoch,addDays,timeLabel,toMinute};
+  const api={preview,morningSummary,newsReminder,shouldPushConditionAlert,testChoices,testSample,nyDay,nyMinute,nyWallEpoch,addDays,timeLabel,toMinute};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   root.NQNotifications=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

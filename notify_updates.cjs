@@ -18,12 +18,12 @@
 'use strict';
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const engine = require('./conditions-engine.js');
+const notificationContent = require('./notification-content.js');
 const here = (...p) => path.join(__dirname, ...p);
 // The channel name is private: a GitHub secret in the cloud, a file outside the repo on the PC.
 const TOPIC = (process.env.NTFY_TOPIC || '').trim();
 if (!TOPIC) { console.log('notify: NTFY_TOPIC not set, skipping'); process.exit(0); }
 const SITE = 'https://nq-planner.vercel.app/';
-const SKIP = [':stale', ':missing', ':connection']; // housekeeping, not market news
 const LEAD = 30; // minutes before a picked block when its pushes start
 // Overnight-session updates go out whatever is picked, by 8 AM: the first morning recording
 // (6:07) sends them, and later ones catch up if the overnight reading lands late.
@@ -103,7 +103,7 @@ async function scheduleNews(now) {
   const queued = new Set();
   try {
     const res = await fetch(`https://ntfy.sh/${encodeURIComponent(TOPIC)}/json?poll=1&since=all&scheduled=1`);
-    for (const line of (await res.text()).split(/\r?\n/)) { try { const m = JSON.parse(line); if (m.title === 'News in 2 min') queued.add(m.time); } catch {} }
+    for (const line of (await res.text()).split(/\r?\n/)) { try { const m = JSON.parse(line); if (/^(?:News|Red-folder news|Medium news) in 2 min$/.test(m.title)) queued.add(m.time); } catch {} }
   } catch {}
   for (const dd of days.filter(d => horizon.includes(d.date) && d.holidayType !== 'closed')) {
     const byTime = {};
@@ -112,10 +112,11 @@ async function scheduleNews(now) {
       const id = `${dd.date}:news:${time}`, at = nyEpoch(dd.date, toMin(time)) - NEWS_LEAD * 6e4;
       if ((sent[dd.date] || []).includes(id) || at < now + 30e3) continue;
       if (queued.has(Math.floor(at / 1000))) { (sent[dd.date] = sent[dd.date] || []).push(id); changed = true; continue; }
-      const red = list.some(n => n.impact === 'red' || /sentiment|consumer confidence/i.test(n.name));
+      const reminder = notificationContent.newsReminder(time,list);
+      const red = reminder.severity === 'danger';
       const ok = await push({
-        title: 'News in 2 min',
-        message: `${clock(toMin(time))} · ${list.map(n => `${n.name}${n.impact === 'red' || /sentiment|consumer confidence/i.test(n.name) ? ' (red folder)' : ''}`).join(', ')}`,
+        title: reminder.title,
+        message: reminder.message,
         click: `${SITE}#day-${dd.date}`, priority: red ? 4 : 3, tags: [red ? 'red_circle' : 'orange_circle'],
         delay: String(Math.floor(at / 1000)),
       });
@@ -163,7 +164,7 @@ async function main() {
   const archive = JSON.parse(fs.readFileSync(here('market-conditions.json'), 'utf8'));
   const history = fs.existsSync(here('overnight-history.json')) ? JSON.parse(fs.readFileSync(here('overnight-history.json'), 'utf8')).ranges : {};
   const a = engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, history, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', pmEligible });
-  const fresh = a.alerts.filter(x => !done.has(x.id) && !SKIP.some(s => x.id.endsWith(s)) && (live.length || ALWAYS(x.id)))
+  const fresh = a.alerts.filter(x => !done.has(x.id) && notificationContent.shouldPushConditionAlert(x,a) && (live.length || ALWAYS(x.id)))
     .sort((x, y) => ({ danger: 0, caution: 1, info: 2 }[x.severity] - { danger: 0, caution: 1, info: 2 }[y.severity]));
   for (const x of fresh) {
     const ok = await push({

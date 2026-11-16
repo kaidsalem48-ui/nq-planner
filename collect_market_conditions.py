@@ -47,6 +47,18 @@ def legs(stamped, start):
             "mcOvernightLow": round(lo[1][2], 2), "mcOvernightClose": round(stamped[-1][1][3], 2),
             "mcOvernightHighMin": (hi[0] - start) // 60, "mcOvernightLowMin": (lo[0] - start) // 60}
 
+def observed_range_floor(bars, start, end, step):
+    """Return a high-low lower bound from actual same-contract bars, never a full range."""
+    observed = [(k, bars[k]) for k in range(start, end + 1, step) if k in bars]
+    if not observed or end not in bars:
+        return None
+    high = max(observed, key=lambda kb: kb[1][1])
+    low = min(observed, key=lambda kb: kb[1][2])
+    expected = (end - start) // step + 1
+    return {"range": round(high[1][1] - low[1][2], 2), "high": high,
+            "low": low, "first": observed[0][0], "missing": expected - len(observed),
+            "expected": expected}
+
 def direction(change, tolerance):
     return "Rising" if change > tolerance else "Falling" if change < -tolerance else "Flat"
 
@@ -137,6 +149,28 @@ def build(results, now, calendar):
                 add(nq, {"mcLondonHigh": round(lh, 2), "mcLondonLow": round(ll, 2), "mcLondonAsiaHigh": ah, "mcLondonAsiaLow": al,
                          "mcLondonTook": took, "mcLondonThrough": datetime.fromtimestamp(last + 60, NY).strftime("%H:%M")},
                     last, nq_symbols[0] + " London 02:00 NY to " + datetime.fromtimestamp(last + 60, NY).strftime("%H:%M") + " vs Asia 18:00-02:00 high/low")
+        elif cutoff >= overnight_end:
+            # Missing bars prevent an exact range, but observed highs and lows are
+            # still a valid *lower bound*. A 500+ floor alone establishes that the
+            # user's 500-point no-AM threshold was crossed. Never call it full.
+            candidates = []
+            for data, step, last_bar, label in [(nq, 60, overnight_end, "1m")]:
+                floor = observed_range_floor(data["bars"], overnight_start, last_bar, step)
+                if floor:
+                    candidates.append((floor, data, label))
+            five = results.get(nq_symbols[0] + ":5m")
+            if five:
+                floor = observed_range_floor(five["bars"], overnight_start, overnight_end - 240, 300)
+                if floor:
+                    candidates.append((floor, five, "5m"))
+            if candidates:
+                floor, data, label = max(candidates, key=lambda item: item[0]["range"])
+                clock = lambda stamp: datetime.fromtimestamp(stamp, NY).strftime("%H:%M")
+                title = (nq_symbols[0] + " 18:00-02:00 NY observed high-low lower bound " + label +
+                         "; high " + str(floor["high"][1][1]) + " @" + clock(floor["high"][0]) +
+                         ", low " + str(floor["low"][1][2]) + " @" + clock(floor["low"][0]) +
+                         "; " + str(floor["missing"]) + "/" + str(floor["expected"]) + " bars missing, first " + clock(floor["first"]))
+                add(data, {"mcOvernightRangeMin": floor["range"]}, overnight_end, title)
         rth_start = instant(today, 9, 30)
         end = min(cutoff, instant(today, close_hour) - 60, latest)
         current = complete(bars, rth_start, end) if end >= rth_start else None
@@ -150,7 +184,11 @@ def build(results, now, calendar):
         else:
             diagnostics.append("NQ RTH bars not yet available or incomplete")
         if not overnight:
-            diagnostics.append("Full defined overnight window not yet available or incomplete")
+            if "mcOvernightRangeMin" in values:
+                diagnostics.append("Exact overnight range incomplete; observed-bar high-low lower bound " +
+                                   str(values["mcOvernightRangeMin"]) + " NQ points only")
+            else:
+                diagnostics.append("Full defined overnight window not yet available or incomplete")
         # All eight instruments must share the exact same completed minute and a previous RTH baseline.
         if all(s in results for s in TECH):
             common = set(bars)

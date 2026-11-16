@@ -71,14 +71,19 @@ assert.equal(content.preview(day('2026-11-12')).message, 'No red folder tmrw. No
 for(const calendarDay of data.days)assert.doesNotMatch(content.preview(calendarDay).message, /overnight range/i, 'The 9 PM preview leaves overnight readings to the separate 8 AM alert');
 assert.match(beforeCpi.message, /size down/i);
 
-// At 8 AM, unknown overnight data is not turned into a small or safe move.
+// Only the release's real impact appears in a two-minute warning.
+const mediumNews=dispatch.newsEvents(ny('2026-11-16',8*60+28));
+assert.equal(mediumNews.length,1);
+assert.equal(mediumNews[0].title,'Medium news in 2 min');
+assert.match(mediumNews[0].message,/Medium impact, not red folder/);
+const redNews=dispatch.newsEvents(ny('2026-11-17',8*60+28));
+assert(redNews.some(item=>item.title==='Red-folder news in 2 min'&&item.severity==='danger'));
+
+// A missing overnight range stays in the app; the phone gets measured values only.
 const awaiting = content.morningSummary('2026-11-16', { n: {} }, null);
-assert.equal(awaiting.severity, 'caution');
-assert.equal(awaiting.title, 'Overnight move awaiting data');
-assert.match(awaiting.message, /Verified 6 PM–2 AM NY range unavailable/);
+assert.equal(awaiting,null);
 assert.equal(dispatch.morningEvents(ny('2026-11-16', 7 * 60 + 59)).length, 0);
-assert.equal(dispatch.morningEvents(ny('2026-11-16', 8 * 60)).length, 1);
-assert.equal(dispatch.morningEvents(ny('2026-11-16', 8 * 60))[0].id, '2026-11-16:overnight-8am:v1');
+assert.equal(dispatch.morningEvents(ny('2026-11-16', 8 * 60)).length, 0);
 assert.equal(dispatch.morningEvents(ny('2026-11-16', 8 * 60 + 10)).length, 0);
 assert.equal(dispatch.morningEvents(ny('2026-11-26', 8 * 60)).length, 0, 'Closed holidays do not get an overnight trading alert');
 
@@ -88,19 +93,35 @@ assert.equal(restricted.severity, 'danger');
 assert.equal(restricted.title, 'Overnight move 896.25 points');
 assert.match(restricted.message, /high–low range; net -193 points\. NY AM: sit out/);
 assert.equal(restricted.observedAt, '2026-11-04T01:59:00-05:00');
+const sharedId = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 896.25 }, large: true, alerts: [{id: '2026-11-04:overnight-1800-0200-large-final-17'}] }, overnightSource);
+assert.equal(sharedId.id, '2026-11-04:overnight-1800-0200-large-final-17', '8 AM and live overnight pushes share an ID to prevent duplicates');
 const pmWatch = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 600 }, large: true, pmWatch: true }, overnightSource);
 assert.match(pmWatch.message, /PM watch only if AM was choppy and a cleaner setup confirms/);
 const incompleteRange = content.morningSummary('2026-11-04', { n: { mcOvernight: 75 }, large: false }, null);
-assert.equal(incompleteRange.title, 'Overnight move +75 points (net only)');
-assert.match(incompleteRange.message, /Full range unavailable\. Net alone cannot clear your 500-point rule/);
+assert.equal(incompleteRange,null);
+const lowerBound=content.morningSummary('2026-11-16',{n:{mcOvernightRangeMin:621.25},large:true},{sources:[{asOf:'2026-11-16T06:59:00Z',fields:['mcOvernightRangeMin']}]});
+assert.equal(lowerBound.title,'Overnight move at least 621.25 points');
+assert.equal(lowerBound.severity,'danger');
+assert.match(lowerBound.message,/full high–low range is still incomplete\. NY AM: sit out/);
+assert.equal(lowerBound.observedAt,'2026-11-16T06:59:00Z');
+assert.equal(content.morningSummary('2026-11-16',{n:{mcOvernightRangeMin:499.75},large:false},null),null);
+const partialAlert={id:'2026-11-16:overnight-1800-0200-final'};
+assert.equal(content.shouldPushConditionAlert(partialAlert,{n:{mcOvernightRangeMin:499.75}}),false);
+assert.equal(content.shouldPushConditionAlert(partialAlert,{n:{mcOvernightRangeMin:621.25}}),true);
+assert.equal(content.shouldPushConditionAlert(partialAlert,{n:{mcOvernightRange:350.5}}),true);
 
-// The selected-window reminder fires only in its lead window and remains conditional.
-assert.equal(dispatch.windowEvents(ny('2026-11-17', 7 * 60 + 59)).some(item => item.windowKey === '8:30-9:25'), false);
+// A new archive collection alone is not a reason to interrupt the device.
+assert(dispatch.updateEvents(ny('2026-11-16',9*60+30)).every(item=>!item.id.includes(':snapshot:')&&!/open nq planner/i.test(item.message)));
+
+// The selected-window reminder follows the current calendar segment.
+const firstTuesdayWindow=day('2026-11-17').segs.find(seg=>seg[0]==='8:30');
+const firstTuesdayKey=`${firstTuesdayWindow[0]}-${firstTuesdayWindow[1]}`;
+assert.equal(dispatch.windowEvents(ny('2026-11-17', 7 * 60 + 59)).some(item => item.windowKey === firstTuesdayKey), false);
 const windows = dispatch.windowEvents(ny('2026-11-17', 8 * 60));
-assert(windows.some(item => item.windowKey === '8:30-9:25' && item.delivery === 'selected-window'));
+assert(windows.some(item => item.windowKey === firstTuesdayKey && item.delivery === 'selected-window'));
 assert(windows.every(item => /Check live Updates before trading/.test(item.message)));
-assert(dispatch.windowEvents(ny('2026-11-17', 8 * 60 + 2)).some(item => item.windowKey === '8:30-9:25'));
-assert.equal(dispatch.windowEvents(ny('2026-11-17', 8 * 60 + 10)).some(item => item.windowKey === '8:30-9:25'), false);
+assert(dispatch.windowEvents(ny('2026-11-17', 8 * 60 + 2)).some(item => item.windowKey === firstTuesdayKey));
+assert.equal(dispatch.windowEvents(ny('2026-11-17', 8 * 60 + 10)).some(item => item.windowKey === firstTuesdayKey), false);
 assert.equal(dispatch.windowEvents(ny('2026-11-26', 8 * 60)).length, 0);
 
 // Test choices are samples, never invented live market observations.
@@ -112,14 +133,15 @@ for (const choice of content.testChoices) {
 assert.equal(content.testSample('unknown'), null);
 
 // A device's picked windows gate live snapshots, while scheduled essentials remain on.
-const picked={'2026-11-17':['8:30-9:25']},snapshot={day:'2026-11-17',delivery:'window-if-picked'};
+const picked={'2026-11-17':[firstTuesdayKey]},snapshot={day:'2026-11-17',delivery:'window-if-picked'};
 assert.equal(shouldDeliver(snapshot,picked,'2026-11-17',8*60),true);
-assert.equal(shouldDeliver(snapshot,picked,'2026-11-17',9*60+24),true);
-assert.equal(shouldDeliver(snapshot,picked,'2026-11-17',9*60+25),false);
+const firstTuesdayEnd=content.toMinute(firstTuesdayWindow[1]);
+assert.equal(shouldDeliver(snapshot,picked,'2026-11-17',firstTuesdayEnd-1),true);
+assert.equal(shouldDeliver(snapshot,picked,'2026-11-17',firstTuesdayEnd),false);
 assert.equal(shouldDeliver(snapshot,picked,'2026-11-18',8*60),false);
-assert.equal(shouldDeliver(snapshot,{},'2026-11-17',9*60+25),true);
-assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:'8:30-9:25'},picked,'2026-11-17',8*60),true);
-assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:'8:30-9:25'},picked,'2026-11-17',8*60+11),false,'A delayed 8 AM reminder is stale after its lead window');
+assert.equal(shouldDeliver(snapshot,{},'2026-11-17',firstTuesdayEnd),true);
+assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:firstTuesdayKey},picked,'2026-11-17',8*60),true);
+assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:firstTuesdayKey},picked,'2026-11-17',8*60+11),false,'A delayed 8 AM reminder is stale after its lead window');
 assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:'9:30-10:25'},picked,'2026-11-17',9*60),false);
 assert.equal(shouldDeliver({id:'2026-11-17:news:8:30',day:'2026-11-17',delivery:'always'},picked,'2026-11-17',8*60+28),true);
 assert.equal(shouldDeliver({id:'2026-11-17:news:8:30',day:'2026-11-17',delivery:'always'},picked,'2026-11-17',8*60+30),false,'Pre-release news must not be sent after the print');

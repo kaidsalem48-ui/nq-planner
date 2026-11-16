@@ -23,11 +23,11 @@ ARCHIVE = HERE / "market-conditions.json"
 # The UI comes from production; server functions come from the fast-forwarded main checkout.
 LIVE_ASSETS = [
     "index.html", "data.json", "icon.png", "manifest.json", "robots.txt",
-    "sw.js", "conditions-engine.js", "notification-content.js",
+    "sw.js", "conditions-engine.js", "notification-content.js", "weekly-outlook.js",
     "OUTLOOK_STYLE.md", "RECORDING.md", "events.json", "plan.json",
     "notified.json", "overnight-history.json",
 ]
-NUMBERS = {"mcVixChange", "mcYieldChangeBp", "mcDxyChange", "mcMacroYieldChangeBp", "mcMacroDxyChange", "mcOvernightSoFar", "mcVix", "mcOvernight", "mcOvernightRange", "mcOvernightOpen", "mcOvernightHigh", "mcOvernightLow", "mcOvernightClose", "mcOvernightHighMin", "mcOvernightLowMin", "marketGapPoints", "mcRange",
+NUMBERS = {"mcVixChange", "mcYieldChangeBp", "mcDxyChange", "mcMacroYieldChangeBp", "mcMacroDxyChange", "mcOvernightSoFar", "mcVix", "mcOvernight", "mcOvernightRange", "mcOvernightRangeMin", "mcOvernightOpen", "mcOvernightHigh", "mcOvernightLow", "mcOvernightClose", "mcOvernightHighMin", "mcOvernightLowMin", "marketGapPoints", "mcRange",
            "mcPriorRange", "mcGammaFlip", "mcYieldLevel", "mcDxy", "mcAAPL", "mcMSFT", "mcNVDA",
            "mcAMZN", "mcGOOGL", "mcMETA", "mcTSLA", "mcLondonHigh", "mcLondonLow", "mcLondonAsiaHigh", "mcLondonAsiaLow"}
 ENUMS = {"mcOvernightType": {"Trend up", "Trend down", "Reversal", "Balanced"},
@@ -43,7 +43,7 @@ ENUMS = {"mcOvernightType": {"Trend up", "Trend down", "Reversal", "Balanced"},
          "mcRebalance": {"None confirmed", "Possible", "Confirmed"},
          "mcLondonTook": {"both", "high", "low", "none"}}
 TEXT = {"mcGammaSource", "mcComment", "mcLondonThrough"}
-NONNEGATIVE = {"mcGammaFlip", "mcVix", "mcOvernightRange", "mcOvernightOpen", "mcOvernightHigh", "mcOvernightLow", "mcOvernightClose", "mcOvernightHighMin", "mcOvernightLowMin", "mcRange", "mcPriorRange", "mcDxy", "mcYieldLevel"}
+NONNEGATIVE = {"mcGammaFlip", "mcVix", "mcOvernightRange", "mcOvernightRangeMin", "mcOvernightOpen", "mcOvernightHigh", "mcOvernightLow", "mcOvernightClose", "mcOvernightHighMin", "mcOvernightLowMin", "mcRange", "mcPriorRange", "mcDxy", "mcYieldLevel"}
 
 
 def instant(value):
@@ -140,6 +140,8 @@ def record(snapshot, deploy=False):
     if existing:
         incoming = set(entry["values"])
         retired = {"mcOvernightSoFar"} if "mcOvernight" in incoming else set()
+        if "mcOvernightRange" in incoming:
+            retired.add("mcOvernightRangeMin")
         retained_sources = []
         for source in existing.get("sources", []):
             fields = [key for key in source["fields"] if key not in incoming | retired]

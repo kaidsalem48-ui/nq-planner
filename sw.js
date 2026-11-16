@@ -1,8 +1,8 @@
 'use strict';
 self.addEventListener('push', event => {
   let data = {};
-  try { data = event.data?.json() || {}; } catch { data = { title: 'NQ Planner update', body: event.data?.text() || '' }; }
-  const title = String(data.title || 'NQ Planner update');
+  try { data = event.data?.json() || {}; } catch { data = { title: 'Update', body: event.data?.text() || '' }; }
+  const title = String(data.title || 'Update');
   const options = { body: String(data.body || ''), icon: '/icon.png', badge: '/icon.png', tag: String(data.id || 'nq-planner-update'), data: { url: data.url || '/', id: data.id || '' }, timestamp: data.updatedAt ? Date.parse(data.updatedAt) : Date.now(), renotify: false };
   event.waitUntil(Promise.all([
     self.registration.showNotification(title, options),

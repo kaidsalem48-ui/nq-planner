@@ -35,8 +35,16 @@ Vercel sign-in. No credentials, account data or private notes belong in the arch
   suffice for net; full range and behavior require every
   bar in the window. Complete 5-minute bars may replace incomplete 1-minute bars
   for the whole overnight window; null/missing bars are never forward-filled.
-  The provider publishes empty NQ bars for 23:59–00:08 NY every night; range and
-  behavior skip only those minutes and say so in the source title.
+  The provider sometimes publishes empty NQ bars for 23:59–00:08 NY; range and
+  behavior skip only those minutes and say so in the source title. A missing
+  Sunday 18:00 opening bar is never skipped for an exact range or net.
+- If the full range is unavailable, `mcOvernightRangeMin` records only the high–low
+  **lower bound** from nonempty bars of the same dated NQ contract. Its source
+  names the observed high/low minutes, first observed minute and missing-bar
+  count. The last 01:59 one-minute bar (or complete 01:55 five-minute bar) is
+  required. A lower bound at or above 500 proves the threshold was crossed and
+  can block New York AM; a lower bound below 500 cannot clear the rule or label
+  the night safe. The field is retired when a complete final range is recorded.
 - RTH opening gap: 09:30 open minus previous RTH last-minute close, same contract.
   Current/prior RTH high-low require complete bars, including holiday early closes.
 - Overnight/current behavior: net divided by full high-low range >=60% is Trend
@@ -116,7 +124,8 @@ Old 09:29-window readings must not be labeled as 02:00-window readings. The
 evaluation accepts final overnight sources only when observed at 01:59 NY.
 **Updated 2026-11-04 (user's call):** the rule uses the overnight high–low range,
 not the signed net, so a 900-point drop that comes back still counts. Without a
-final range (provisional, or range data incomplete), |net| is used as a lower bound.
+final range (provisional, or range data incomplete), observed-bar high–low and
+|net| are lower bounds, each labeled as such. Neither can clear the rule below 500.
 Updates show both: "Range 896 · net −193".
 **Legs (2026-11-04):** each night's final reading also records the overnight open, high,
 low, 1:59 close and the minutes after 18:00 when the high and low printed

@@ -544,6 +544,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
 
 <script src="conditions-engine.js"></script>
 <script src="notification-content.js"></script>
+<script src="weekly-outlook.js"></script>
 <script>
 (() => {
   const T0 = 120, T8 = 480, T1 = 960;
@@ -754,7 +755,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       case 'volatility':
         return n.mcVix==null?'VIX unavailable':[`VIX ${n.mcVix.toFixed(2)}`,signed(n.mcVixChange==null?null:+n.mcVixChange.toFixed(2),'% vs. prior close')].filter(Boolean).join(' · ')+lastTag;
       case 'overnight':
-        return assessment.overnight==null?'Awaiting 6 PM–2 AM NY data':(!assessment.preliminary&&n.mcOvernightRange!=null?`Range ${n.mcOvernightRange} · net ${signed(assessment.overnight,' pts')}`:signed(assessment.overnight,' NQ pts'))+(assessment.preliminary?' · So far':' · Final · 6 PM–2 AM NY');
+        return n.mcOvernightRange!=null?`Range ${n.mcOvernightRange} pts${assessment.overnight==null?'':` · net ${signed(assessment.overnight,' pts')}`}`:n.mcOvernightRangeMin!=null?`At least ${n.mcOvernightRangeMin} pts · partial bars`:assessment.overnight==null?'Awaiting 6 PM–2 AM NY data':`${signed(assessment.overnight,' NQ pts')} · net only`;
       case 'range':
         return [n.marketGapPoints==null?'':n.marketGapPoints===0?'Gap N/A':`Gap ${signed(n.marketGapPoints,' pts')}`,n.mcRange==null?'':`${n.mcRange} pt range`,n.mcPriorRange>0&&n.mcRange!=null?`${Math.round(100*n.mcRange/n.mcPriorRange)}% of prior session`:''].filter(Boolean).join(' · ').replace(/.+/,m=>m+lastTag)||'Gap N/A until the 9:30 open';
       case 'tech':
@@ -886,17 +887,10 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   function conditionUpdates(){
     const a=marketAssessment(NOW.date),record=AUTO_CONDITIONS.days?.[NOW.date];
     const items=a.alerts.map(item=>({...item,updatedAt:record?.recordedAt||null}));
-    if(a.overnight==null&&![0,6].includes(wd(NOW.date))&&BY[NOW.date]?.holidayType!=='closed'){
-      items.push({id:NOW.date+':overnight-pending',day:NOW.date,title:'Overnight move · awaiting data',message:'The 6 PM–2 AM New York high–low range will appear here when a verified reading is available.',severity:'info'});
-    }
-    if(record)items.push({id:NOW.date+':snapshot:'+record.recordedAt,day:NOW.date,title:'Market conditions updated',message:'New snapshot collected '+stampNY(Date.parse(record.recordedAt))+'. Open the evaluation for each condition and its source time.',severity:'info',updatedAt:record.recordedAt,timeKind:'Snapshot updated'});
     const previewDay=NOW.min>=1260?addDays(NOW.date,1):NOW.date,previewBase=BY[previewDay];
     if(previewBase){
       const following=DATA.days.find(day=>day.date>previewDay&&day.holidayType!=='closed'&&![0,6].includes(wd(day.date)));
       items.push(NQNotifications.preview(previewBase,following));
-    }
-    if(NOW.min>=480&&BY[NOW.date]&&BY[NOW.date].holidayType!=='closed'&&![0,6].includes(wd(NOW.date))){
-      items.push(NQNotifications.morningSummary(NOW.date,a,record));
     }
     for(const key of planBlocks(NOW.date)){
       const seg=(BY[NOW.date]?.segs||[]).find(s=>s[0]+'-'+s[1]===key);
@@ -1086,7 +1080,6 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       [/^Nothing before/, "The market builds liquidity before news, so you don't take trades before a red-folder release."],
       [/in < 10 min$/, "Within 10 minutes of a red-folder release is too close to news. Even 6 minutes counts as close."],
       [/^Post-news volatility/, "Red-folder data makes price volatile, which gives better price action. The 1-min wick of the 8:30 candle (the data high or low) is the strongest level to trade off."],
-      [/^Too close to 9:30/, "Your rule is not to trade too close to the 9:30 open. Wait for the open candle."],
       [/^Pre-open, light/, "There's no red folder at 8:30, so pre-market is slower. On days like this you normally wait for 9:30."],
       [/^Pre-open setups OK/, "It's a no-news Monday with red folder tomorrow, so before 9:30 is the best spot today if a setup forms."],
       [/^NY AM, main window/, news ? "9:30 onward is your best window, with the 10am reversal at 9:55–10:15. It's a news day, so the move can run until the 12:00 cutoff." : "9:30 onward is your best window, with the 10am reversal at 9:55–10:15. With no red folder, the move is usually done by 10:30."],
@@ -1699,61 +1692,11 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const contextDay=scope==='day'?selected:contextDates.at(-1),record=contextDay?AUTO_CONDITIONS.days?.[contextDay]:null;
     return {scope,start,end,title,days,keyDays,missing,intro,focus,contextDay,record};
   }
-  // Hand-written weekly outlooks, keyed by the week's Monday. They replace the generated text.
-  const WRITTEN_WEEKS={
-    '2026-11-09':{
-      paras:[
-        '<strong>Inflation week.</strong> <strong>CPI</strong> lands Tuesday at <strong>8:30 AM NY</strong>. It is the last inflation print the Fed sees before its December meeting, so it carries more weight than usual. Price may consolidate into Tuesday; once it hits, a hot or soft print can run hard in either direction in the first few minutes.',
-        '<strong>Wednesday is Veterans Day</strong>, a US bank holiday. Futures are open, but with banks closed volume can be thinner, so be careful chasing moves. <strong>PPI</strong> follows Friday morning and closes out the week’s inflation picture.'
-      ],
-      events:[
-        'Mon 10:00 AM · Wholesale Inventories (quietest day of the week)',
-        'Tue 8:30 AM · <strong>Consumer Price Index (CPI)</strong> + Real Earnings',
-        'Wed · <strong>Veterans Day</strong> (US bank holiday, markets open)',
-        'Thu 8:30 AM · Initial Jobless Claims · 10:00 AM Existing Home Sales',
-        'Fri 8:30 AM · <strong>Producer Price Index (PPI)</strong> · 10:00 AM UMich Sentiment (est.)'
-      ],
-      plan:'Monday stays Light as the day before CPI. Tuesday: nothing before the 8:30 print. Wednesday’s bank holiday and Thursday after it are light-size days. Friday: stay out the 10 minutes before PPI and UMich.'
-    }
-  };
   function weeklyBrief(m){
-    const w=WRITTEN_WEEKS[m.start];
-    if(w)return `<div class="weekly-brief">${w.paras.map(x=>`<p>${x}</p>`).join('')}<p><strong>🔴 Key events</strong></p><ul class="written-events">${w.events.map(x=>`<li>${x}</li>`).join('')}</ul>${w.plan?`<p><strong>Trading plan.</strong> ${w.plan}</p>`:''}</div>`;
-    const releases=m.days.flatMap(day=>(day.news||[]).map(event=>({day:day.date,...event})));
-    const priorities=[
-      [/FOMC.*(?:rate|decision)|Rate Decision/i,'Fed week','The decision and the Fed’s guidance can move rate expectations. Price can react again during the press conference.'],
-      [/\bCPI\b|Consumer Price/i,'Inflation week','A hotter or cooler print can reset rate expectations. Watch the reaction in yields and NQ around the release.'],
-      [/Non.?farm|payroll/i,'Jobs week','A surprise in hiring or unemployment can shift rate expectations quickly. Be ready for sharp moves in either direction around the release.'],
-      [/\bPCE\b/i,'Inflation week','The inflation reading gives traders another check on the path of prices and interest rates.'],
-      [/\bGDP\b/i,'Growth week','The report can change how markets read the pace of growth. Check the release window before planning entries.']
-    ];
-    const priority=priorities.find(([pattern])=>releases.some(event=>pattern.test(event.name)));
-    const lead=priority?releases.find(event=>priority[0].test(event.name)):releases.find(event=>event.impact==='red')||releases[0];
-    const paragraphs=[];
-    const election=m.days.find(isElectionDay);
-    const electionNote=election?` <strong>Election Day</strong> on ${esc(short(election.date))} adds headline risk.`:'';
-    if(lead){
-      const weekday=D(lead.day).toLocaleDateString('en-US',{weekday:'long',timeZone:'UTC'});
-      const time=toMin(lead.time);
-      const hour=Math.floor(time/60);
-      const clock=`${hour%12||12}:${String(time%60).padStart(2,'0')} ${hour<12?'AM':'PM'} NY`;
-      paragraphs.push(m.start==='2026-11-02'
-        ?'<strong>Jobs week.</strong> <strong>Nonfarm Payrolls</strong> arrives Friday at <strong>8:30 AM NY</strong> and sets the tone for the week, with the <strong>midterm elections</strong> on Tuesday in the middle. Watch for consolidation ahead of the release. The first minutes after payrolls can move hard in either direction.'
-        :`<strong>${priority?.[1]||'This week'}.</strong> <strong>${esc(lead.name)}</strong> lands ${weekday} at <strong>${clock}</strong>.${electionNote} ${priority?.[2]||'Use the release time to plan your trading window.'}`);
-    }else{
-      paragraphs.push(esc(m.intro));
-    }
-    if(m.start==='2026-11-02'){
-      paragraphs.push('New York clocks moved back on Sunday, Nov 1. Release times stay the same in New York. Check your local conversion if you trade from another time zone. <a href="https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst">NIST timing note</a>');
-      paragraphs.push('September added <strong>29,000 jobs</strong> and unemployment was <strong>4.2%</strong>. FactSet’s October payroll forecast was <strong>65,000</strong> as reported on Nov 3. Friday’s read is about whether hiring improves and what the unemployment rate says alongside it. <a href="https://www.bls.gov/news.release/archives/empsit_10022026.htm">September jobs report</a> · <a href="https://apnews.com/article/4f6f06216c943fc2f8306306fd3056e3">Nov 3 forecast</a>');
-    }
-    const plan=[];
-    if(election)plan.push(`Stay out after 9:30 AM NY on ${esc(short(election.date))} under your Election Day rule.`);
-    if(m.days.some(day=>/Day before NFP/.test(day.why||'')))plan.push('Keep the day before payrolls Light.');
-    if(m.days.some(day=>day.conditionsPmWatch))plan.push('After a verified 500-point overnight move, sit out the New York AM session. Watch 1:30–4:00 PM NY only if the morning was choppy and a cleaner setup confirms.');
-    if(m.days.some(day=>day.conditionsDanger&&!day.conditionsPmWatch))plan.push('Respect any full-session block from the overnight and calendar rules.');
-    if(plan.length)paragraphs.push('<strong>Trading plan.</strong> '+plan.join(' '));
-    return `<div class="weekly-brief">${paragraphs.map(paragraph=>`<p>${paragraph}</p>`).join('')}</div>`;
+    const brief=NQWeeklyOutlook.build(m);
+    const paragraphs=brief.paragraphs.map((paragraph,i)=>'<p>'+(i===0?'<strong>'+esc(brief.theme)+'</strong> ':'')+esc(paragraph)+'</p>').join('');
+    const events=brief.events.map(day=>'<li><strong>'+esc(day.weekday)+'</strong> · '+day.items.map(item=>(item.time?esc(NQWeeklyOutlook.timeLabel(item.time))+' NY · ':'')+(item.main?'<strong>'+esc(item.name)+'</strong>':esc(item.name))+(item.impact==='orange'?' <small>(medium)</small>':'')).join(' · ')+'</li>').join('');
+    return '<div class="weekly-brief">'+paragraphs+(events?'<p><strong>🔴 Key events</strong></p><ul class="written-events">'+events+'</ul>':'')+(brief.plan?'<p><strong>Trading plan.</strong> '+esc(brief.plan)+'</p>':'')+'</div>';
   }
   function renderOutlook(){
     const m=outlookModel(view,cursor);$('title').textContent=m.title;
@@ -1764,7 +1707,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     }).join('');
     const weekly=m.scope==='week';
     const eventList=rows||'<p class="outlook-empty">No verified event entries are available for this period.</p>';
-    const weeklyDetails=`<details class="weekly-support"><summary>Key events · ${m.keyDays.length} days</summary>${eventList}</details>`;
+    const weeklyDetails=`<details class="weekly-support"><summary>Daily schedule · ${m.keyDays.length} days</summary>${eventList}</details>`;
     const standardDetails=`<div class="outlook-cols"><section><h3>Key events</h3>${eventList}</section><aside class="outlook-side"><section><h3>Trading focus</h3>${m.focus.length?`<ul>${m.focus.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:'<p>No day-specific trading plan is recorded for this period.</p>'}</section></aside></div>`;
     $('view').innerHTML=`<section class="panel outlook${weekly?' outlook-weekly':''}"><header class="outlook-head"><div>${weekly?'':'<span class="eyebrow">NQ Planner · Outlook</span>'}<h2>${esc(m.title)}</h2></div><button class="btn" data-outlook-schedule>View schedule</button></header><div class="outlook-tabs" role="group" aria-label="Outlook period">${[['month','Monthly'],['week','Weekly'],['day','Daily']].map(([k,label])=>`<button class="btn" data-outlook-scope="${k}" aria-pressed="${view===k}">${label}</button>`).join('')}</div>${weekly?weeklyBrief(m):`<p class="outlook-lede">${esc(m.intro)}</p>`}${m.missing?`<p class="outlook-warning">${m.missing} weekday${m.missing===1?'':'s'} ${m.missing===1?'is':'are'} outside the recorded calendar coverage. This outlook is partial.</p>`:''}${weekly?weeklyDetails:standardDetails}<footer class="outlook-source">Based on the planner calendar, updated ${esc(DATA.updated)}. All release times are New York time. Entries marked “est.” remain estimated.<br>Calendar sources: ${DATA.sources.map(esc).join(' · ')}.</footer></section>`;
     $('view').querySelectorAll('[data-outlook-scope]').forEach(b=>b.onclick=()=>{view=b.dataset.outlookScope;render();});

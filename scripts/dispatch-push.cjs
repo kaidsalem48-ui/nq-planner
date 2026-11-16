@@ -8,7 +8,6 @@ const read = name => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8'));
 const nyDay = time => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(time));
 const nyMinute = time => { const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(time)); return Number(parts.find(p => p.type === 'hour').value) * 60 + Number(parts.find(p => p.type === 'minute').value); };
 const toMinute = text => { const [h, m] = text.split(':').map(Number); return h * 60 + m; };
-const atNY = time => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' }).format(new Date(time));
 function updateEvents(now) {
   const day = nyDay(now), archive = read('market-conditions.json'), record = archive.days?.[day];
   if (!record) return [];
@@ -16,16 +15,15 @@ function updateEvents(now) {
   const history = fs.existsSync(path.join(root, 'overnight-history.json')) ? read('overnight-history.json').ranges : {};
   const pmEligible = !!base && base.score !== -2 && !['closed', 'half', 'bank'].includes(base.holidayType) && (base.segs || []).some(s => s[2] !== 'r' && toMinute(s[0]) < 960 && toMinute(s[1]) > 810);
   const result = engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, history, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', pmEligible });
-  const events = result.alerts.filter(a => ![':stale', ':missing', ':connection'].some(s => a.id.endsWith(s))).map(a => ({ ...a, updatedAt: record.recordedAt, delivery: a.id.includes(':overnight-1800-0200-') ? 'always' : 'window-if-picked' }));
-  events.push({ id: `${day}:snapshot:${record.recordedAt}`, day, title: 'Market conditions updated', message: `New snapshot collected ${atNY(record.recordedAt)} NY. Open NQ Planner to see the recorded conditions and source times.`, severity: 'info', updatedAt: record.recordedAt, delivery: 'window-if-picked' });
-  return events;
+  return result.alerts.filter(a => content.shouldPushConditionAlert(a,result))
+    .map(a => ({ ...a, updatedAt: a.observedAt || record.recordedAt, delivery: a.id.includes(':overnight-1800-0200-') ? 'always' : 'window-if-picked' }));
 }
 function newsEvents(now) {
   const day = nyDay(now), minute = nyMinute(now), base = (read('data.json').days || []).find(d => d.date === day);
   if (!base || base.holidayType === 'closed') return [];
   const grouped = new Map();
   for (const item of base.news || []) if (toMinute(item.time) - minute === 2) grouped.set(item.time, [...(grouped.get(item.time) || []), item]);
-  return [...grouped].map(([time, list]) => ({ id: `${day}:news:${time}`, day, title: 'News in 2 min', message: `${content.timeLabel(time)} NY · ${list.map(n => n.name).join(', ')}. Check the release before trading.`, severity: list.some(n => n.impact === 'red' || /sentiment|consumer confidence/i.test(n.name)) ? 'danger' : 'caution', updatedAt: new Date(now).toISOString(), delivery: 'always' }));
+  return [...grouped].map(([time, list]) => ({ id: `${day}:news:${time}`, day, ...content.newsReminder(time,list), updatedAt: new Date(now).toISOString(), delivery: 'always' }));
 }
 function previewEvents(now){
   const minute=nyMinute(now);
@@ -44,7 +42,8 @@ function morningEvents(now){
   const archive=read('market-conditions.json'),record=archive.days?.[day];
   const history=fs.existsSync(path.join(root,'overnight-history.json'))?read('overnight-history.json').ranges:{};
   const result=engine.evaluate(record,{day,now,recentRanges:engine.recentOvernightRanges(archive,history,day),calendarKnown:true,closed:false,pmEligible:false});
-  return [{...content.morningSummary(day,result,record),updatedAt:new Date(now).toISOString()}];
+  const alert=content.morningSummary(day,result,record);
+  return alert?[{...alert,updatedAt:alert.observedAt||new Date(now).toISOString()}]:[];
 }
 function windowEvents(now){
   const day=nyDay(now),minute=nyMinute(now),base=(read('data.json').days||[]).find(d=>d.date===day);
