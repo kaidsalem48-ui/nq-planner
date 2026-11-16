@@ -10,8 +10,12 @@ function headers() {
 }
 async function github(url, options = {}) {
   const response = await fetch(url, { ...options, headers: { ...headers(), ...options.headers }, cache: 'no-store' });
-  if (response.status === 404) return null;
-  if (!response.ok) throw new Error(`Private push store returned ${response.status}`);
+  if (response.status === 404 && (!options.method || options.method === 'GET')) return null;
+  if (!response.ok) {
+    const error = new Error(`Private push store returned ${response.status}`);
+    error.statusCode = response.status;
+    throw error;
+  }
   return response.status === 204 ? {} : response.json();
 }
 async function get(endpoint) {
@@ -22,6 +26,19 @@ async function get(endpoint) {
 async function save(endpoint, value, sha) {
   const id = idFor(endpoint);
   await github(`${BASE}/${id}.json`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Update NQ Planner push device ${id.slice(0, 10)}`, content: Buffer.from(JSON.stringify(value)).toString('base64'), ...(sha ? { sha } : {}) }) });
+}
+async function update(endpoint, change) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const row = await get(endpoint);
+    const value = await change(row.value);
+    try {
+      await save(endpoint, value, row.sha);
+      return { value };
+    } catch (error) {
+      if (![409, 422].includes(error.statusCode) || attempt === 3) throw error;
+      await new Promise(resolve => setTimeout(resolve, 50 * (attempt + 1)));
+    }
+  }
 }
 async function remove(endpoint) {
   const { id, sha } = await get(endpoint);
@@ -35,4 +52,4 @@ async function getByFile(file) {
   const response = await github(file.url);
   return response ? { sha: response.sha, value: JSON.parse(Buffer.from(response.content.replace(/\s/g, ''), 'base64').toString('utf8')) } : null;
 }
-module.exports = { get, save, remove, list, getByFile };
+module.exports = { get, save, update, remove, list, getByFile };

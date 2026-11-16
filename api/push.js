@@ -18,9 +18,8 @@ module.exports = async (req, res) => {
   try {
     if (req.method === 'DELETE') await store.remove(sub.endpoint);
     else {
-      const old = await store.get(sub.endpoint);
       const seeded = Array.isArray(req.body?.currentIds) ? req.body.currentIds.filter(id => typeof id === 'string' && id.length < 180).slice(0, 80) : [];
-      await store.save(sub.endpoint, { subscription: sub, sentIds: old.value?.sentIds || seeded, plans: old.value?.plans || {}, lastTestAt: old.value?.lastTestAt || null, createdAt: old.value?.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() }, old.sha);
+      await store.update(sub.endpoint, current => ({ subscription: sub, sentIds: current?.sentIds || seeded, plans: current?.plans || {}, lastTestAt: current?.lastTestAt || null, createdAt: current?.createdAt || new Date().toISOString(), updatedAt: new Date().toISOString() }));
     }
     return res.status(200).json({ ok: true });
   } catch (error) {

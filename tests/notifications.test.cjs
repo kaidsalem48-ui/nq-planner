@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const data = require('../data.json');
 const content = require('../notification-content.js');
 const dispatch = require('../scripts/dispatch-push.cjs');
-const {shouldDeliver}=require('../api/push-dispatch.js');
+const {shouldDeliver,ttlFor}=require('../api/push-dispatch.js');
 
 const day = date => data.days.find(item => item.date === date);
 const ny = (date, minute) => content.nyWallEpoch(date, minute);
@@ -23,6 +23,10 @@ assert.equal(fomcAtNine[0].id, '2026-12-09:tomorrow-preview:v1');
 assert.equal(dispatch.previewEvents(ny('2026-12-08', 21 * 60 + 9))[0].id, fomcAtNine[0].id);
 assert.equal(dispatch.previewEvents(ny('2026-12-08', 21 * 60 + 10)).length, 0);
 assert.equal(dispatch.scheduledEvents(ny('2026-12-08', 21 * 60)).filter(item => item.id.includes('tomorrow-preview')).length, 1);
+assert.equal(ttlFor({id:'2026-11-16:tomorrow-preview:v1',delivery:'always'}),600);
+assert.equal(ttlFor({id:'2026-11-16:selected-window:9:30-10:00',delivery:'selected-window'}),0,'A 9 AM reminder must not arrive well after its window starts');
+assert.equal(ttlFor({id:'2026-11-16:news:8:30',delivery:'always'}),0,'Pre-release news must not arrive after the release');
+assert.equal(ttlFor({id:'2026-11-16:overnight-8am:v1',delivery:'always'}),300);
 assert.equal(dispatch.eventsForMode(['--news'],ny('2026-12-08',21*60))[0].id,'2026-12-09:tomorrow-preview:v1','Already-running recorders still call the legacy mode');
 
 // Closure and half-day language must take priority over ordinary grades and news.
@@ -62,7 +66,7 @@ assert.equal(monday.label, 'OK', 'A non-red Empire State release does not lower 
 assert(monday.news.some(item => item.name === 'Empire State Manufacturing Survey' && item.time === '8:30' && item.impact === 'orange'));
 const mondayPreview = previewAt('2026-11-15')[0];
 assert.match(mondayPreview.title, /^OK day tomorrow.*Empire State Manufacturing Survey 8:30 AM NY/);
-assert.equal(mondayPreview.message, 'No red folder tmrw. Best trading window (green): 9:30–10:00 AM NY.');
+assert.equal(mondayPreview.message, 'No red folder tmrw. Best trading window: 9:30–10:00 AM NY.');
 assert.equal(content.preview(day('2026-11-12')).message, 'No red folder tmrw. No green window; size light or skip.');
 for(const calendarDay of data.days)assert.doesNotMatch(content.preview(calendarDay).message, /overnight range/i, 'The 9 PM preview leaves overnight readings to the separate 8 AM alert');
 assert.match(beforeCpi.message, /size down/i);
@@ -113,7 +117,10 @@ assert.equal(shouldDeliver(snapshot,picked,'2026-11-17',9*60+25),false);
 assert.equal(shouldDeliver(snapshot,picked,'2026-11-18',8*60),false);
 assert.equal(shouldDeliver(snapshot,{},'2026-11-17',9*60+25),true);
 assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:'8:30-9:25'},picked,'2026-11-17',8*60),true);
+assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:'8:30-9:25'},picked,'2026-11-17',8*60+11),false,'A delayed 8 AM reminder is stale after its lead window');
 assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:'9:30-10:25'},picked,'2026-11-17',9*60),false);
+assert.equal(shouldDeliver({id:'2026-11-17:news:8:30',day:'2026-11-17',delivery:'always'},picked,'2026-11-17',8*60+28),true);
+assert.equal(shouldDeliver({id:'2026-11-17:news:8:30',day:'2026-11-17',delivery:'always'},picked,'2026-11-17',8*60+30),false,'Pre-release news must not be sent after the print');
 assert.equal(shouldDeliver({day:'2026-11-18',delivery:'always'},picked,'2026-11-17',21*60),true);
 
 console.log('notification content and schedule tests passed');

@@ -4,11 +4,27 @@ const content = require('../notification-content.js');
 const AUDIENCE = 'https://nq-planner.vercel.app/api/push-dispatch';
 let jwks;
 function shouldDeliver(event,plans,currentDay,currentMinute){
-  if(event.delivery==='selected-window')return (plans?.[event.day]||[]).includes(event.windowKey);
+  if(event.delivery==='selected-window'){
+    if(event.day!==currentDay||typeof event.windowKey!=='string'||!(plans?.[event.day]||[]).includes(event.windowKey))return false;
+    const start=content.toMinute(event.windowKey.split('-')[0]);
+    return currentMinute>=start-30&&currentMinute<start-20;
+  }
+  if(String(event.id||'').includes(':news:')){
+    const match=/:news:(\d{1,2}:\d{2})$/.exec(event.id);
+    if(!match||event.day!==currentDay)return false;
+    const release=content.toMinute(match[1]);
+    return currentMinute>=release-2&&currentMinute<release;
+  }
   if(event.delivery!=='window-if-picked')return true;
   const selected=plans?.[event.day]||[];
   if(!selected.length)return true;
   return event.day===currentDay&&selected.some(key=>{const [start,end]=key.split('-');return currentMinute>=content.toMinute(start)-30&&currentMinute<content.toMinute(end);});
+}
+function ttlFor(event){
+  // A delayed reminder or pre-release warning is misleading after its moment has passed.
+  if(event.delivery==='selected-window'||event.id.includes(':news:'))return 0;
+  if(event.id.includes(':tomorrow-preview:'))return 600;
+  return 300;
 }
 async function authenticated(req) {
   const token = /^Bearer (.+)$/.exec(req.headers.authorization || '')?.[1];
@@ -37,22 +53,25 @@ module.exports = async (req, res) => {
       if (!row?.value?.subscription?.endpoint) continue;
       const { subscription, sentIds = [] } = row.value;
       const done = new Set(sentIds);
+      const sentNow = [];
       const currentDay=content.nyDay(Date.now()),currentMinute=content.nyMinute(Date.now());
       let dead = false;
       for (const event of events) {
         if (done.has(event.id)) continue;
         if (!shouldDeliver(event,row.value.plans,currentDay,currentMinute)) continue;
         try {
-          await webpush.sendNotification(subscription, JSON.stringify({ id: event.id, title: event.title, body: event.message, day: event.day, severity: event.severity || 'info', updatedAt: event.updatedAt || new Date().toISOString(), url: `https://nq-planner.vercel.app/?push=${encodeURIComponent(event.id)}` }), { TTL: 3600, urgency: event.severity === 'danger' ? 'high' : 'normal' });
-          done.add(event.id); sent++;
+          await webpush.sendNotification(subscription, JSON.stringify({ id: event.id, title: event.title, body: event.message, day: event.day, severity: event.severity || 'info', updatedAt: event.updatedAt || new Date().toISOString(), url: `https://nq-planner.vercel.app/?push=${encodeURIComponent(event.id)}` }), { TTL: ttlFor(event), urgency: event.severity === 'danger' ? 'high' : 'normal' });
+          done.add(event.id);sentNow.push(event.id);sent++;
         } catch (error) {
           if ([404, 410].includes(error.statusCode)) { await store.remove(subscription.endpoint); removed++; dead = true; break; }
           failed++; console.error('Push delivery failed:', error.statusCode || error.message);
         }
       }
-      if (!dead && done.size !== sentIds.length) {
-        const keep = [...done].slice(-180);
-        try { await store.save(subscription.endpoint, { ...row.value, sentIds: keep, updatedAt: new Date().toISOString() }, row.sha); }
+      if (!dead && sentNow.length) {
+        try { await store.update(subscription.endpoint, current => {
+          if(current?.subscription?.endpoint!==subscription.endpoint)throw new Error('Device subscription was removed during delivery');
+          return { ...current, sentIds: [...new Set([...(current.sentIds||[]),...sentNow])].slice(-180), updatedAt: new Date().toISOString() };
+        }); }
         catch (error) { failed++; console.error('Push deduplication save failed:', error.message); }
       }
     }
@@ -63,3 +82,4 @@ module.exports = async (req, res) => {
   }
 };
 module.exports.shouldDeliver=shouldDeliver;
+module.exports.ttlFor=ttlFor;
