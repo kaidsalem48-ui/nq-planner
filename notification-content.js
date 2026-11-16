@@ -66,7 +66,7 @@
       if(green){
         const start=timeLabel(green[0]),end=timeLabel(green[1]);
         const window=start.slice(-2)===end.slice(-2)?`${start.slice(0,-3)}–${end}`:`${start}–${end}`;
-        message=`No red folder tmrw. Best trading window: ${window} NY.`;
+        message=`No red folder tmrw. Prime time: ${window} NY.`;
       }else message='No red folder tmrw. No green window; size light or skip.';
     }
     return {id:`${date}:tomorrow-preview:v1`,day:date,title,message,severity,updatedAt:new Date(nyWallEpoch(addDays(date,-1),21*60)).toISOString(),delivery:'always'};
