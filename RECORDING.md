@@ -181,7 +181,8 @@ restricted to this repository's main-branch recorder workflows. The recorder
 sends new condition updates after each cloud collection. The continuous loop
 also checks for a 9:00 PM New York preview of the next calendar day's saved
 grade, catalyst and plan; an 8:00 AM New York summary of the verified prior
-6 PM–2 AM range and net (or an explicit missing-data notice); red-news alerts
+6 PM–2 AM range, or a clearly labeled observed lower bound when provider bars
+are missing; calendar-release alerts
 two minutes before scheduled releases; and reminders about 30 minutes before
 a selected time window. Stable event IDs deduplicate per device. The 9 PM
 preview is a calendar plan, subject to the verified overnight reading and
@@ -192,7 +193,7 @@ Time-window picks are stored per native push subscription through
 `/api/push-plan`. New published market observations reach that device during
 its selected window, beginning 30 minutes before the window starts. The 9 PM
 preview, 8 AM overnight summary, overnight red restriction and scheduled news
-alerts still arrive independently of window picks. The old ntfy route remains
-available for existing users without native push. NQ Planner native alerts
-require no ntfy app. Collection runs on the recorded schedule, so these are
+alerts still arrive independently of window picks. The old ntfy delivery route
+is disabled; alerts use NQ Planner native push only. Collection runs on the
+recorded schedule, so these are
 published observations rather than instant exchange-price alerts.
