@@ -74,8 +74,8 @@ assert.match(beforeCpi.message, /size down/i);
 // At 8 AM, unknown overnight data is not turned into a small or safe move.
 const awaiting = content.morningSummary('2026-11-16', { n: {} }, null);
 assert.equal(awaiting.severity, 'caution');
-assert.match(awaiting.title, /awaiting verified data/);
-assert.match(awaiting.message, /Do not treat missing data as a small move/);
+assert.equal(awaiting.title, 'Overnight move awaiting data');
+assert.match(awaiting.message, /Verified 6 PM–2 AM NY range unavailable/);
 assert.equal(dispatch.morningEvents(ny('2026-11-16', 7 * 60 + 59)).length, 0);
 assert.equal(dispatch.morningEvents(ny('2026-11-16', 8 * 60)).length, 1);
 assert.equal(dispatch.morningEvents(ny('2026-11-16', 8 * 60))[0].id, '2026-11-16:overnight-8am:v1');
@@ -85,12 +85,14 @@ assert.equal(dispatch.morningEvents(ny('2026-11-26', 8 * 60)).length, 0, 'Closed
 const overnightSource = { sources: [{ asOf: '2026-11-04T01:59:00-05:00', fields: ['mcOvernightRange'] }] };
 const restricted = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 896.25, mcOvernight: -193 }, large: true }, overnightSource);
 assert.equal(restricted.severity, 'danger');
-assert.match(restricted.title, /Overnight range 896\.25.*net -193/);
-assert.match(restricted.message, /500-point AM sit-out rule/);
+assert.equal(restricted.title, 'Overnight move 896.25 points');
+assert.match(restricted.message, /high–low range; net -193 points\. NY AM: sit out/);
 assert.equal(restricted.observedAt, '2026-11-04T01:59:00-05:00');
+const pmWatch = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 600 }, large: true, pmWatch: true }, overnightSource);
+assert.match(pmWatch.message, /PM watch only if AM was choppy and a cleaner setup confirms/);
 const incompleteRange = content.morningSummary('2026-11-04', { n: { mcOvernight: 75 }, large: false }, null);
-assert.match(incompleteRange.title, /range missing/);
-assert.match(incompleteRange.message, /cannot clear your 500-point rule/);
+assert.equal(incompleteRange.title, 'Overnight move +75 points (net only)');
+assert.match(incompleteRange.message, /Full range unavailable\. Net alone cannot clear your 500-point rule/);
 
 // The selected-window reminder fires only in its lead window and remains conditional.
 assert.equal(dispatch.windowEvents(ny('2026-11-17', 7 * 60 + 59)).some(item => item.windowKey === '8:30-9:25'), false);

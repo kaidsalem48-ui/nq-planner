@@ -74,19 +74,21 @@
   function morningSummary(day,assessment,record){
     const range=assessment?.n?.mcOvernightRange,net=assessment?.n?.mcOvernight;
     const signed=value=>(value>0?'+':'')+Number(value.toFixed(2));
+    const points=value=>Number(value.toFixed(2)).toLocaleString('en-US',{maximumFractionDigits:2});
     let title,message,severity='info';
     if(typeof range==='number'){
-      title=`Overnight range ${range} · ${typeof net==='number'?`net ${signed(net)}`:'net unavailable'} NQ pts`;
-      if(assessment.large){message='The verified 6 PM–2 AM NY range meets your 500-point AM sit-out rule. Follow the saved calendar restrictions.';severity='danger';}
-      else if(assessment.overnightTrend?.desens==='light'){message='The 500-point range is common recently under your saved rule; size light. Confirm the chart before trading.';severity='caution';}
-      else if(assessment.overnightTrend?.desens==='normal'){message='Recent nights have also reached 500+; your desensitization rule leaves normal size. Calendar restrictions still apply.';}
-      else message='Below your 500-point AM sit-out threshold. Follow the calendar and confirm a clean setup.';
+      title=`Overnight move ${points(range)} points`;
+      const reading=`6 PM–2 AM NY high–low range${typeof net==='number'?`; net ${signed(net)} points`:''}.`;
+      if(assessment.large){message=`${reading} NY AM: sit out.${assessment.pmWatch?' PM watch only if AM was choppy and a cleaner setup confirms.':''}`;severity='danger';}
+      else if(assessment.overnightTrend?.desens==='light'){message=`${reading} Size light under your recent-night rule.`;severity='caution';}
+      else if(assessment.overnightTrend?.desens==='normal'){message=`${reading} Normal size under your recent-night rule; calendar restrictions still apply.`;}
+      else message=`${reading} Below your 500-point sit-out level; follow the calendar plan.`;
     }else if(typeof net==='number'){
-      title=`Overnight net ${signed(net)} NQ pts · range missing`;
-      message=assessment.large?'The net alone crosses 500 points, so the NY AM sit-out rule applies. Full range is still unavailable.':'The full 6 PM–2 AM high–low range is not verified. Net move alone cannot clear your 500-point rule.';severity=assessment.large?'danger':'caution';
+      title=`Overnight move ${signed(net)} points (net only)`;
+      message=assessment.large?'Full range unavailable. Net alone reached 500 points; sit out NY AM.':'Full range unavailable. Net alone cannot clear your 500-point rule.';severity=assessment.large?'danger':'caution';
     }else{
-      title='Overnight move · awaiting verified data';
-      message='The full 6 PM–2 AM NY range is not verified by 8 AM. Do not treat missing data as a small move; check Updates for the later reading.';severity='caution';
+      title='Overnight move awaiting data';
+      message='Verified 6 PM–2 AM NY range unavailable. Check Updates before trading.';severity='caution';
     }
     const source=record?.sources?.find(s=>Array.isArray(s.fields)&&s.fields.includes('mcOvernightRange')&&nyDay(s.asOf)===day&&nyMinute(s.asOf)===119);
     return {id:`${day}:overnight-8am:v1`,day,title,message,severity,updatedAt:new Date(nyWallEpoch(day,480)).toISOString(),observedAt:source?.asOf||null,delivery:'always'};
