@@ -9,13 +9,12 @@ main() {
   git config user.email "kaidsalem48@gmail.com"
   git pull --rebase -q origin main || true
   python collect_market_conditions.py || { echo "collect failed"; exit 0; }
-  node notify_updates.cjs
   published=1
-  if [ -z "$(git status --porcelain -- market-conditions.json notified.json plan.json)" ]; then
+  if [ -z "$(git status --porcelain -- market-conditions.json)" ]; then
     echo "No change to record"
   else
     published=0
-    git add -- market-conditions.json notified.json plan.json 2>/dev/null || git add -- market-conditions.json notified.json
+    git add -- market-conditions.json
     git commit -q -m "Record sourced market conditions for $(TZ=America/New_York date +%F) (cloud)"
     for i in 1 2 3; do
       if git pull --rebase -q origin main && git push -q origin HEAD:main; then published=1; break; fi

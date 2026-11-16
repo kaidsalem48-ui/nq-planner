@@ -8,13 +8,12 @@ const read = name => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8'));
 const nyDay = time => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(time));
 const nyMinute = time => { const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(time)); return Number(parts.find(p => p.type === 'hour').value) * 60 + Number(parts.find(p => p.type === 'minute').value); };
 const toMinute = text => { const [h, m] = text.split(':').map(Number); return h * 60 + m; };
+const pmEligible = base => !!base && base.score !== -2 && !['closed', 'half', 'bank'].includes(base.holidayType) && (base.segs || []).some(s => s[2] !== 'r' && toMinute(s[0]) < 960 && toMinute(s[1]) > 810);
 function updateEvents(now) {
   const day = nyDay(now), archive = read('market-conditions.json'), record = archive.days?.[day];
   if (!record) return [];
   const base = (read('data.json').days || []).find(d => d.date === day);
-  const history = fs.existsSync(path.join(root, 'overnight-history.json')) ? read('overnight-history.json').ranges : {};
-  const pmEligible = !!base && base.score !== -2 && !['closed', 'half', 'bank'].includes(base.holidayType) && (base.segs || []).some(s => s[2] !== 'r' && toMinute(s[0]) < 960 && toMinute(s[1]) > 810);
-  const result = engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, history, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', pmEligible });
+  const result = engine.evaluate(record, { day, now, recentRanges: engine.recentOvernightRanges(archive, {}, day), expiry: '', upcomingExpiry: [], calendarKnown: !!base, closed: base?.holidayType === 'closed', pmEligible: pmEligible(base) });
   return result.alerts.filter(a => content.shouldPushConditionAlert(a,result))
     .map(a => ({ ...a, updatedAt: a.observedAt || record.recordedAt, delivery: a.id.includes(':overnight-1800-0200-') ? 'always' : 'window-if-picked' }));
 }
@@ -40,8 +39,7 @@ function morningEvents(now){
   const base=(read('data.json').days||[]).find(d=>d.date===day);
   if(!base||base.holidayType==='closed')return [];
   const archive=read('market-conditions.json'),record=archive.days?.[day];
-  const history=fs.existsSync(path.join(root,'overnight-history.json'))?read('overnight-history.json').ranges:{};
-  const result=engine.evaluate(record,{day,now,recentRanges:engine.recentOvernightRanges(archive,history,day),calendarKnown:true,closed:false,pmEligible:false});
+  const result=engine.evaluate(record,{day,now,recentRanges:engine.recentOvernightRanges(archive,{},day),calendarKnown:true,closed:false,pmEligible:pmEligible(base)});
   const alert=content.morningSummary(day,result,record);
   return alert?[{...alert,updatedAt:alert.observedAt||new Date(now).toISOString()}]:[];
 }

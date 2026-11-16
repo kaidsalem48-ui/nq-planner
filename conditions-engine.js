@@ -110,7 +110,7 @@
       const action=`${desens==='light'?'Size light':'Normal size'} under your recent-night rule (${bigRecent}/${recent.length} nights at 500+).`;
       alert('overnight-1800-0200-'+desens+'-'+stage,overnightAlertTitle,overnightAlertReading+' '+action,'info',String(ruleMove));
     }
-    if(ruleMove!==null&&!big&&(useRange||preliminary||overnight!==null)){
+    if(ruleMove!==null&&!big&&(useRange||preliminary||overnight!==null||overnightRangeMin!==null)){
       const stage=preliminary?'provisional':'final';
       const action=preliminary?'Below 500 so far; final 2 AM range pending.':useRange?'Below your 500-point threshold; follow calendar restrictions.':'The partial reading cannot clear the 500-point rule without the full range.';
       alert('overnight-1800-0200-'+stage,overnightAlertTitle,overnightAlertReading+' '+action,'info',String(ruleMove));
@@ -220,10 +220,10 @@
     return {day,n,expiry,vix,overnight,overnightTrend:{recent,bigRecent,desens},seekDestroy,breadth,management,reasons,watch,missing:missingGroups,groups,alerts,level,plan,restricted,large,preliminary,pmWatch,stale,last};
   }
   // Previous trading nights' overnight ranges, newest first: the archive's final readings win,
-  // overnight-history.json fills days recorded before the archive started.
-  function recentOvernightRanges(archive,history,day,n=5){
+  // Only exact same-contract archive ranges may justify relaxing the 500-point rule.
+  // The legacy continuous-contract history is deliberately ignored.
+  function recentOvernightRanges(archive,_history,day,n=5){
     const all={};
-    for(const [d,v] of Object.entries(history||{}))if(typeof v==='number'&&Number.isFinite(v))all[d]=v;
     for(const [d,rec] of Object.entries(archive?.days||{})){const v=rec?.values?.mcOvernightRange;if(typeof v==='number'&&Number.isFinite(v))all[d]=v;}
     const prior=[],cursor=new Date(day+'T12:00:00Z');
     while(prior.length<n){

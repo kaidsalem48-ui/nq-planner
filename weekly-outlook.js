@@ -229,7 +229,8 @@
     if (second) paragraphs.push(second);
     return {
       theme: (model.missing || 0) > 0 ? 'Partial weekly outlook.' : theme(primary, secondary, redCount),
-      paragraphs, events: keyEvents(days, primary, secondary),
+      paragraphs, highlights: [primary, secondary].filter(Boolean).map(name),
+      events: keyEvents(days, primary, secondary),
       plan: tradingPlan(days, primary, secondary), partial: !!model.missing
     };
   }

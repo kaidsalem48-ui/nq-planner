@@ -37,7 +37,6 @@ jobs:
           python-version: "3.12"
       - name: Record every 30 minutes during the trading day
         env:
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           MINUTES: ${{ inputs.minutes || '340' }}
         run: |
           end=$(( $(date +%s) + MINUTES*60 ))
@@ -51,7 +50,7 @@ jobs:
               bash scripts/record-once.sh
               sleep 60
             elif [ "$min" -eq 22 ] || [ "$min" -eq 52 ]; then
-              bash scripts/sync-plan.sh   # phone alert picks, any day and hour
+              bash scripts/sync-plan.sh   # refresh native alert rules between recordings
               sleep 60
             fi
             node scripts/dispatch-push.cjs --scheduled

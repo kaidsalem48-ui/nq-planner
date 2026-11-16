@@ -50,8 +50,6 @@ jobs:
           if [ "$live" = "0" ]; then gh workflow run recorder-loop.yml --ref main -R "$GITHUB_REPOSITORY" && echo "Loop restarted"; fi
       - name: Record, notify, commit
         if: ${{ !inputs.verify_push }}
-        env:
-          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: |
           if [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
             dow=$(TZ=America/New_York date +%u)

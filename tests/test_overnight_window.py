@@ -50,6 +50,31 @@ class OvernightWindowTest(unittest.TestCase):
         self.assertIn("10/480 bars missing, first 18:10", source["title"])
         validate(snapshot)
 
+    def test_midnight_provider_gap_is_only_a_lower_bound(self):
+        day = datetime(2026, 11, 13, tzinfo=NY).date()
+        start = instant(day - timedelta(days=1), 18)
+        end = instant(day, 2) - 60
+        midnight = instant(day, 0)
+        bars = {stamp: [1000, 1000, 1000, 1000]
+                for stamp in range(start, end + 1, 60)}
+        for stamp in range(midnight - 60, midnight + 9 * 60, 60):
+            del bars[stamp]
+        bars[start + 40 * 60] = [1500, 1500, 1500, 1500]
+        bars[end - 20 * 60] = [900, 900, 900, 900]
+        contract = {"bars": bars, "url": "https://example.com/NQZ26.CME"}
+        now = datetime(2026, 11, 13, 9, 30, tzinfo=NY)
+
+        snapshot, _ = build({"NQZ26.CME": contract}, now, {day.isoformat(): {}})
+        self.assertEqual(snapshot["values"]["mcOvernight"], 0)
+        self.assertEqual(snapshot["values"]["mcOvernightRangeMin"], 600)
+        for field in ("mcOvernightRange", "mcOvernightType", "mcOvernightHigh",
+                      "mcLondonTook"):
+            self.assertNotIn(field, snapshot["values"])
+        source = next(source for source in snapshot["sources"]
+                      if "mcOvernightRangeMin" in source["fields"])
+        self.assertIn("10/480 bars missing", source["title"])
+        validate(snapshot)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -34,7 +34,8 @@
     const bound=Math.max(typeof n.mcOvernightRangeMin==='number'?n.mcOvernightRangeMin:0,
       typeof n.mcOvernight==='number'?Math.abs(n.mcOvernight):0,
       typeof n.mcOvernightSoFar==='number'?Math.abs(n.mcOvernightSoFar):0);
-    return bound>=500;
+    if(alert.id.includes('-provisional'))return bound>=500;
+    return typeof n.mcOvernightRangeMin==='number'||(typeof n.mcOvernight==='number'&&Math.abs(n.mcOvernight)>0);
   }
   function preview(day,following){
     if(!day||!/^\d{4}-\d{2}-\d{2}$/.test(day.date))return null;
@@ -93,7 +94,7 @@
   function morningSummary(day,assessment,record){
     const range=assessment?.n?.mcOvernightRange,minRange=assessment?.n?.mcOvernightRangeMin,net=assessment?.n?.mcOvernight;
     // Missing provider bars are an in-app data-quality state, not a device alert.
-    if(typeof range!=='number'&&!(typeof minRange==='number'&&minRange>=500)&&!(typeof net==='number'&&Math.abs(net)>=500))return null;
+    if(typeof range!=='number'&&typeof minRange!=='number'&&!(typeof net==='number'&&Math.abs(net)>0))return null;
     const signed=value=>(value>0?'+':'')+Number(value.toFixed(2));
     const points=value=>Number(value.toFixed(2)).toLocaleString('en-US',{maximumFractionDigits:2});
     let title,message,severity='info';
@@ -104,18 +105,18 @@
       else if(assessment.overnightTrend?.desens==='light'){message=`${reading} Size light under your recent-night rule.`;severity='caution';}
       else if(assessment.overnightTrend?.desens==='normal'){message=`${reading} Normal size under your recent-night rule; calendar restrictions still apply.`;}
       else message=`${reading} Below your 500-point sit-out level; follow the calendar plan.`;
-    }else if(typeof minRange==='number'&&minRange>=500){
+    }else if(typeof minRange==='number'){
       title=`Overnight move at least ${points(Math.max(minRange,typeof net==='number'?Math.abs(net):0))} points`;
       const reading='Observed 6 PM–2 AM NY bars; the full high–low range is still incomplete.';
       if(assessment.large){message=`${reading} NY AM: sit out.${assessment.pmWatch?' PM watch only if AM was choppy and a cleaner setup confirms.':''}`;severity='danger';}
       else if(assessment.overnightTrend?.desens==='light'){message=`${reading} Size light under your recent-night rule.`;severity='caution';}
-      else message=`${reading} Follow the calendar plan and recent-night rule.`;
-    }else if(typeof net==='number'&&Math.abs(net)>=500){
+      else {message=`${reading} The 500-point rule cannot be cleared from partial bars; follow the calendar plan.`;severity='caution';}
+    }else if(typeof net==='number'){
       title=`Overnight move at least ${points(Math.abs(net))} points`;
-      message=assessment.large?'Net move alone proves at least 500 points; full range incomplete. NY AM: sit out.':'Net move alone proves at least 500 points; full range incomplete. Follow the recent-night rule.';
+      message=assessment.large?`6 PM–2 AM NY net ${signed(net)} points; full range incomplete. NY AM: sit out.`:`6 PM–2 AM NY net ${signed(net)} points; full range incomplete. This cannot clear the 500-point rule; follow the calendar plan.`;
       severity=assessment.large?'danger':'caution';
     }
-    const sourceKey=typeof range==='number'?'mcOvernightRange':typeof minRange==='number'&&minRange>=500&&!(typeof net==='number'&&Math.abs(net)>minRange)?'mcOvernightRangeMin':'mcOvernight';
+    const sourceKey=typeof range==='number'?'mcOvernightRange':typeof minRange==='number'&&!(typeof net==='number'&&Math.abs(net)>minRange)?'mcOvernightRangeMin':'mcOvernight';
     const source=record?.sources?.find(s=>Array.isArray(s.fields)&&s.fields.includes(sourceKey)&&nyDay(s.asOf)===day);
     const engineAlert=assessment?.alerts?.find(item=>item.id?.includes(':overnight-1800-0200-'));
     return {id:engineAlert?.id||`${day}:overnight-8am:v1`,day,title,message,severity,updatedAt:new Date(nyWallEpoch(day,480)).toISOString(),observedAt:source?.asOf||null,delivery:'always'};

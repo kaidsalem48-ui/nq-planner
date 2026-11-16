@@ -98,15 +98,19 @@ assert.equal(sharedId.id, '2026-11-04:overnight-1800-0200-large-final-17', '8 AM
 const pmWatch = content.morningSummary('2026-11-04', { n: { mcOvernightRange: 600 }, large: true, pmWatch: true }, overnightSource);
 assert.match(pmWatch.message, /PM watch only if AM was choppy and a cleaner setup confirms/);
 const incompleteRange = content.morningSummary('2026-11-04', { n: { mcOvernight: 75 }, large: false }, null);
-assert.equal(incompleteRange,null);
+assert.equal(incompleteRange.title,'Overnight move at least 75 points');
+assert.match(incompleteRange.message,/full range incomplete.*cannot clear the 500-point rule/);
 const lowerBound=content.morningSummary('2026-11-16',{n:{mcOvernightRangeMin:621.25},large:true},{sources:[{asOf:'2026-11-16T06:59:00Z',fields:['mcOvernightRangeMin']}]});
 assert.equal(lowerBound.title,'Overnight move at least 621.25 points');
 assert.equal(lowerBound.severity,'danger');
 assert.match(lowerBound.message,/full high–low range is still incomplete\. NY AM: sit out/);
 assert.equal(lowerBound.observedAt,'2026-11-16T06:59:00Z');
-assert.equal(content.morningSummary('2026-11-16',{n:{mcOvernightRangeMin:499.75},large:false},null),null);
+const partialBelow=content.morningSummary('2026-11-16',{n:{mcOvernightRangeMin:499.75},large:false},null);
+assert.equal(partialBelow.title,'Overnight move at least 499.75 points');
+assert.equal(partialBelow.severity,'caution');
 const partialAlert={id:'2026-11-16:overnight-1800-0200-final'};
-assert.equal(content.shouldPushConditionAlert(partialAlert,{n:{mcOvernightRangeMin:499.75}}),false);
+assert.equal(content.shouldPushConditionAlert(partialAlert,{n:{mcOvernightRangeMin:499.75}}),true);
+assert.equal(content.shouldPushConditionAlert({id:'2026-11-16:overnight-1800-0200-provisional'},{n:{mcOvernightSoFar:300}}),false);
 assert.equal(content.shouldPushConditionAlert(partialAlert,{n:{mcOvernightRangeMin:621.25}}),true);
 assert.equal(content.shouldPushConditionAlert(partialAlert,{n:{mcOvernightRange:350.5}}),true);
 

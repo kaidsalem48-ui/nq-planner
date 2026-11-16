@@ -22,9 +22,9 @@ for(const r of [R(520,250,220,310,280),R(896,500,220,310,280)]){a=assess({mcOver
 a=assess({mcOvernightRange:600},{recentRanges:R(896,500,620,310,280)});assert.equal(a.large,false);assert.equal(a.level,'Reviewed');assert.equal(a.groups.find(g=>g.id==='overnight').state,'Normal lately');assert(a.alerts.some(x=>x.id.endsWith(':overnight-1800-0200-normal-final')&&x.severity==='info'));
 // Back to 200-300 nights: the sit-out returns.
 a=assess({mcOvernightRange:600},{recentRanges:R(250,300,220,310,280,900)});assert.equal(a.level,'Sit out');
-// Only the previous 5 trading nights count, and the archive beats the backfill.
+// Only exact same-contract archive ranges count; a continuous-contract backfill cannot fill gaps.
 const rr=engine.recentOvernightRanges({days:{'2026-11-05':{values:{mcOvernightRange:500.75}},'2026-11-06':{values:{mcOvernightRange:792.75}}}},{'2026-11-05':453,'2026-11-04':896.25,'2026-11-03':222.75,'2026-11-02':219.25,'2026-10-30':358.5,'2026-10-29':311.75},'2026-11-06');
-assert.deepEqual(rr.map(x=>x.range),[500.75,896.25,222.75,219.25,358.5]);}
+assert.deepEqual(rr.map(x=>x.range),[500.75,null,null,null,null]);}
 {const archive={days:{'2026-11-10':{values:{mcOvernightRange:240}},'2026-11-11':{values:{mcOvernightRange:432.25}},'2026-11-12':{values:{mcOvernightRange:237}},'2026-11-13':{values:{mcOvernightRange:350.5}},'2026-11-06':{values:{mcOvernightRange:792.75}}}};
 const recent=engine.recentOvernightRanges(archive,{},'2026-11-16');
 assert.deepEqual(recent.map(x=>x.day),['2026-11-13','2026-11-12','2026-11-11','2026-11-10','2026-11-09']);

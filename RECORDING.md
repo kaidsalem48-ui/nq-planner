@@ -35,9 +35,14 @@ Vercel sign-in. No credentials, account data or private notes belong in the arch
   suffice for net; full range and behavior require every
   bar in the window. Complete 5-minute bars may replace incomplete 1-minute bars
   for the whole overnight window; null/missing bars are never forward-filled.
-  The provider sometimes publishes empty NQ bars for 23:59–00:08 NY; range and
-  behavior skip only those minutes and say so in the source title. A missing
-  Sunday 18:00 opening bar is never skipped for an exact range or net.
+  The provider sometimes publishes empty NQ bars for 23:59–00:08 NY. Such a
+  gap makes the exact range and behavior unavailable; observed high and low
+  can establish only a lower bound. A missing Sunday 18:00 opening bar also
+  leaves exact range and net unavailable.
+- `overnight-history.json` is a legacy continuous-contract backfill. It is
+  historical context only, not verified same-contract evidence. It must not
+  supply or clear a current 500-point threshold, count toward the recent-night
+  desensitization rule, or fill missing dated archive ranges.
 - If the full range is unavailable, `mcOvernightRangeMin` records only the high–low
   **lower bound** from nonempty bars of the same dated NQ contract. Its source
   names the observed high/low minutes, first observed minute and missing-bar
