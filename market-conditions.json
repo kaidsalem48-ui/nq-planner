@@ -1842,13 +1842,13 @@
       ]
     },
     "2026-11-17": {
-      "recordedAt": "2026-11-17T21:21:35Z",
+      "recordedAt": "2026-11-17T21:37:16.825409+00:00",
       "values": {
-        "mcVix": 25.28,
-        "mcVixChange": 10.3448,
+        "mcVix": 25.46,
+        "mcVixChange": 11.1305,
         "mcVol": "Expanding",
-        "mcDxy": 103.515,
-        "mcDxyChange": -0.034,
+        "mcDxy": 103.53,
+        "mcDxyChange": -0.019,
         "mcDollar": "Flat",
         "mcPriorRange": 481.5,
         "mcOvernight": -18.25,
@@ -1874,9 +1874,33 @@
       },
       "sources": [
         {
+          "title": "U.S. Census Bureau, October 2026 retail sales release, November 17, 2026",
+          "url": "https://www.census.gov/retail/marts/www/marts_current.pdf?release=20261117",
+          "asOf": "2026-11-17T21:19:35Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Federal Reserve, October 2026 industrial production release, November 17, 2026",
+          "url": "https://www.federalreserve.gov/releases/g17/20261117/g17.pdf",
+          "asOf": "2026-11-17T21:19:35Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Federal Reserve, November 2026 calendar, FOMC minutes November 18 at 2:00 PM",
+          "url": "https://www.federalreserve.gov/newsevents/2026-November.htm",
+          "asOf": "2026-11-17T21:19:35Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-17T21:03:46+00:00",
+          "asOf": "2026-11-17T21:15:01+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -1896,7 +1920,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-17T21:09:01+00:00",
+          "asOf": "2026-11-17T21:27:13+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -1906,7 +1930,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-16 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-17T21:09:00+00:00",
+          "asOf": "2026-11-17T21:27:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -2018,33 +2042,9 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
-        },
-        {
-          "title": "U.S. Census Bureau, October 2026 retail sales release, November 17, 2026",
-          "url": "https://www.census.gov/retail/marts/www/marts_current.pdf?release=20261117",
-          "asOf": "2026-11-17T21:19:35Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "Federal Reserve, October 2026 industrial production release, November 17, 2026",
-          "url": "https://www.federalreserve.gov/releases/g17/20261117/g17.pdf",
-          "asOf": "2026-11-17T21:19:35Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "Federal Reserve, November 2026 calendar, FOMC minutes November 18 at 2:00 PM",
-          "url": "https://www.federalreserve.gov/newsevents/2026-November.htm",
-          "asOf": "2026-11-17T21:19:35Z",
-          "fields": [
-            "mcComment"
-          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-17T21:21:42.852147+00:00"
+  "updatedAt": "2026-11-17T21:37:16.891263+00:00"
 }
