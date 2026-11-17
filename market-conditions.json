@@ -1842,7 +1842,7 @@
       ]
     },
     "2026-11-17": {
-      "recordedAt": "2026-11-17T21:19:04.141633+00:00",
+      "recordedAt": "2026-11-17T21:21:35Z",
       "values": {
         "mcVix": 25.28,
         "mcVixChange": 10.3448,
@@ -1869,7 +1869,8 @@
         "mcMacroDxyChange": -0.064,
         "mcRange": 692.5,
         "marketType": "Range",
-        "marketGapPoints": 46.75
+        "marketGapPoints": 46.75,
+        "mcComment": "October retail sales rose 0.2%, down from September's 0.8% gain, while industrial production fell 0.4%. Wednesday's 2:00 PM NY FOMC minutes are the next policy catalyst. If they shift rate expectations, NQ may swing in both directions; follow the saved windows and red-calendar restrictions."
       },
       "sources": [
         {
@@ -2017,9 +2018,33 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "U.S. Census Bureau, October 2026 retail sales release, November 17, 2026",
+          "url": "https://www.census.gov/retail/marts/www/marts_current.pdf?release=20261117",
+          "asOf": "2026-11-17T21:19:35Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Federal Reserve, October 2026 industrial production release, November 17, 2026",
+          "url": "https://www.federalreserve.gov/releases/g17/20261117/g17.pdf",
+          "asOf": "2026-11-17T21:19:35Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Federal Reserve, November 2026 calendar, FOMC minutes November 18 at 2:00 PM",
+          "url": "https://www.federalreserve.gov/newsevents/2026-November.htm",
+          "asOf": "2026-11-17T21:19:35Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-17T21:19:04.753428+00:00"
+  "updatedAt": "2026-11-17T21:21:42.852147+00:00"
 }
