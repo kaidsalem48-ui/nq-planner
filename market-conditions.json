@@ -1842,13 +1842,13 @@
       ]
     },
     "2026-11-17": {
-      "recordedAt": "2026-11-17T22:19:33.662465+00:00",
+      "recordedAt": "2026-11-17T22:37:12.381865+00:00",
       "values": {
         "mcVix": 25.46,
         "mcVixChange": 11.1305,
         "mcVol": "Expanding",
-        "mcDxy": 103.555,
-        "mcDxyChange": 0.006,
+        "mcDxy": 103.554,
+        "mcDxyChange": 0.005,
         "mcDollar": "Flat",
         "mcPriorRange": 481.5,
         "mcOvernight": -18.25,
@@ -1920,7 +1920,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-17T22:09:29+00:00",
+          "asOf": "2026-11-17T22:27:10+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -2046,5 +2046,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-17T22:19:34.204216+00:00"
+  "updatedAt": "2026-11-17T22:37:12.417326+00:00"
 }
