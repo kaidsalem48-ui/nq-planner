@@ -186,8 +186,11 @@ also checks for a 9:00 PM New York preview of the next calendar day's saved
 grade, catalyst and plan; an 8:00 AM New York summary of the verified prior
 6 PM–2 AM range, or a clearly labeled observed lower bound when provider bars
 are missing; calendar-release alerts
-two minutes before scheduled releases; and reminders about 30 minutes before
-a selected time window. Stable event IDs deduplicate per device. The 9 PM
+two minutes before scheduled releases; and selected-window alerts five minutes
+before each window and when it starts. Overnight Asia/London windows are stored
+under the following trading date but alert on the correct New York calendar day.
+Only windows selected on that device receive these two alerts. Stable event IDs
+deduplicate per device. The 9 PM
 preview is a calendar plan, subject to the verified overnight reading and
 later news; estimated releases stay marked estimated. The 8 AM summary never
 turns missing range bars into a low-risk reading.

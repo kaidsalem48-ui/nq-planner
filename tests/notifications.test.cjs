@@ -24,7 +24,7 @@ assert.equal(dispatch.previewEvents(ny('2026-12-08', 21 * 60 + 9))[0].id, fomcAt
 assert.equal(dispatch.previewEvents(ny('2026-12-08', 21 * 60 + 10)).length, 0);
 assert.equal(dispatch.scheduledEvents(ny('2026-12-08', 21 * 60)).filter(item => item.id.includes('tomorrow-preview')).length, 1);
 assert.equal(ttlFor({id:'2026-11-16:tomorrow-preview:v1',delivery:'always'}),600);
-assert.equal(ttlFor({id:'2026-11-16:selected-window:9:30-10:00',delivery:'selected-window'}),0,'A 9 AM reminder must not arrive well after its window starts');
+assert.equal(ttlFor({id:'2026-11-16:selected-window:segs:9:30-10:00:five',delivery:'selected-window'}),0,'A selected-window reminder must not arrive late');
 assert.equal(ttlFor({id:'2026-11-16:news:8:30',delivery:'always'}),0,'Pre-release news must not arrive after the release');
 assert.equal(ttlFor({id:'2026-11-16:overnight-8am:v1',delivery:'always'}),300);
 assert.equal(dispatch.eventsForMode(['--news'],ny('2026-12-08',21*60))[0].id,'2026-12-09:tomorrow-preview:v1','Already-running recorders still call the legacy mode');
@@ -121,16 +121,44 @@ assert.equal(content.shouldPushConditionAlert(partialAlert,{n:{mcOvernightRange:
 // A new archive collection alone is not a reason to interrupt the device.
 assert(dispatch.updateEvents(ny('2026-11-16',9*60+30)).every(item=>!item.id.includes(':snapshot:')&&!/open nq planner/i.test(item.message)));
 
-// The selected-window reminder follows the current calendar segment.
+// Selected windows get two minute-precise alerts, with separate deduplication IDs.
 const firstTuesdayWindow=day('2026-11-17').segs.find(seg=>seg[0]==='8:30');
 const firstTuesdayKey=`${firstTuesdayWindow[0]}-${firstTuesdayWindow[1]}`;
-assert.equal(dispatch.windowEvents(ny('2026-11-17', 7 * 60 + 59)).some(item => item.windowKey === firstTuesdayKey), false);
-const windows = dispatch.windowEvents(ny('2026-11-17', 8 * 60));
-assert(windows.some(item => item.windowKey === firstTuesdayKey && item.delivery === 'selected-window'));
-assert(windows.every(item => /Check live Updates before trading/.test(item.message)));
-assert(dispatch.windowEvents(ny('2026-11-17', 8 * 60 + 2)).some(item => item.windowKey === firstTuesdayKey));
-assert.equal(dispatch.windowEvents(ny('2026-11-17', 8 * 60 + 10)).some(item => item.windowKey === firstTuesdayKey), false);
-assert.equal(dispatch.windowEvents(ny('2026-11-26', 8 * 60)).length, 0);
+const forFirstWindow=minute=>dispatch.windowEvents(ny('2026-11-17',minute)).filter(item=>item.windowKey===firstTuesdayKey);
+assert.equal(forFirstWindow(8*60+24).length,0);
+const five=forFirstWindow(8*60+25);
+assert.equal(five.length,1);
+assert.equal(five[0].windowPhase,'five');
+assert.equal(five[0].delivery,'selected-window');
+assert.equal(five[0].id,'2026-11-17:selected-window:segs:8:30-9:30:five');
+assert.match(five[0].title,/begins in five minutes$/);
+assert.equal(forFirstWindow(8*60+25)[0].id,five[0].id,'Retries within the minute keep one deduplication ID');
+assert.equal(forFirstWindow(8*60+26).length,0);
+const begun=forFirstWindow(8*60+30);
+assert.equal(begun.length,1);
+assert.equal(begun[0].windowPhase,'start');
+assert.equal(begun[0].id,'2026-11-17:selected-window:segs:8:30-9:30:start');
+assert.match(begun[0].title,/has begun$/);
+assert.notEqual(five[0].id,begun[0].id);
+assert.equal(forFirstWindow(8*60+31).length,0);
+assert.equal(dispatch.windowEvents(ny('2026-11-26',8*60+25)).length,0);
+
+// Asia belongs to the next trading date but starts the prior evening.
+const asia=day('2026-11-18').asia.find(seg=>seg[0]==='20:00');
+const asiaKey=`${asia[0]}-${asia[1]}`;
+const asiaFive=dispatch.windowEvents(ny('2026-11-17',19*60+55)).find(item=>item.windowKey===asiaKey&&item.windowGroup==='asia');
+const asiaStart=dispatch.windowEvents(ny('2026-11-17',20*60)).find(item=>item.windowKey===asiaKey&&item.windowGroup==='asia');
+assert.equal(asiaFive.day,'2026-11-18');
+assert.equal(asiaFive.title,'Asia session begins in five minutes');
+assert.equal(asiaStart.title,'Asia session has begun');
+assert.equal(asiaStart.id,'2026-11-18:selected-window:asia:20:00-24:00:start');
+assert.equal(dispatch.windowEvents(ny('2026-11-17',19*60+56)).some(item=>item.windowKey===asiaKey&&item.windowGroup==='asia'),false);
+assert.equal(dispatch.windowEvents(ny('2026-11-17',20*60+1)).some(item=>item.windowKey===asiaKey&&item.windowGroup==='asia'),false);
+const london=dispatch.windowEvents(ny('2026-11-18',2*60)).find(item=>item.windowGroup==='asia'&&item.windowKey==='26:00-29:00');
+assert.equal(london.title,'London session has begun');
+assert.equal(london.day,'2026-11-18');
+assert.equal(new Date(content.windowStartEpoch('2026-03-09','asia','20:00-24:00')).toISOString(),'2026-03-09T00:00:00.000Z');
+assert.equal(new Date(content.windowStartEpoch('2026-11-02','asia','20:00-24:00')).toISOString(),'2026-11-02T01:00:00.000Z');
 
 // Test choices are samples, never invented live market observations.
 for (const choice of content.testChoices) {
@@ -150,9 +178,17 @@ assert.equal(shouldDeliver(snapshot,picked,'2026-11-17',firstTuesdayEnd-1),true)
 assert.equal(shouldDeliver(snapshot,picked,'2026-11-17',firstTuesdayEnd),false);
 assert.equal(shouldDeliver(snapshot,picked,'2026-11-18',8*60),false);
 assert.equal(shouldDeliver(snapshot,{},'2026-11-17',firstTuesdayEnd),true);
-assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:firstTuesdayKey},picked,'2026-11-17',8*60),true);
-assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:firstTuesdayKey},picked,'2026-11-17',8*60+11),false,'A delayed 8 AM reminder is stale after its lead window');
-assert.equal(shouldDeliver({day:'2026-11-17',delivery:'selected-window',windowKey:'9:30-10:25'},picked,'2026-11-17',9*60),false);
+assert.equal(shouldDeliver(five[0],picked,'2026-11-17',8*60+25),true);
+assert.equal(shouldDeliver(five[0],picked,'2026-11-17',8*60+26),false,'A five-minute warning is stale one minute later');
+assert.equal(shouldDeliver(begun[0],picked,'2026-11-17',8*60+30),true);
+assert.equal(shouldDeliver(begun[0],picked,'2026-11-17',8*60+31),false,'A start alert is stale one minute later');
+assert.equal(shouldDeliver(five[0],{},'2026-11-17',8*60+25),false,'Unselected windows never alert');
+assert.equal(shouldDeliver({...five[0],windowKey:'9:30-10:25'},picked,'2026-11-17',8*60+25),false);
+assert.equal(shouldDeliver(asiaFive,{'2026-11-18':[asiaKey]},'2026-11-17',19*60+55),true);
+assert.equal(shouldDeliver(asiaStart,{'2026-11-18':[asiaKey]},'2026-11-17',20*60),true);
+assert.equal(shouldDeliver(asiaStart,{'2026-11-18':[asiaKey]},'2026-11-17',20*60+1),false);
+assert.equal(shouldDeliver(asiaStart,{},'2026-11-17',20*60),false);
+assert.equal(shouldDeliver(london,{'2026-11-18':['26:00-29:00']},'2026-11-18',2*60),true);
 assert.equal(shouldDeliver({id:'2026-11-17:news:8:30',day:'2026-11-17',delivery:'always'},picked,'2026-11-17',8*60+28),true);
 assert.equal(shouldDeliver({id:'2026-11-17:news:8:30',day:'2026-11-17',delivery:'always'},picked,'2026-11-17',8*60+30),false,'Pre-release news must not be sent after the print');
 assert.equal(shouldDeliver({day:'2026-11-18',delivery:'always'},picked,'2026-11-17',21*60),true);

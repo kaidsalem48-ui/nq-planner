@@ -566,7 +566,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   if ("topic" in PLAN) { delete PLAN.topic; planSave(); }
   const planBlocks = d => (PLAN.days[d] && PLAN.days[d].blocks) || [];
   const planStart = k => toMin(k.split("-")[0]);
-  function segKey(d, B){ const seg = ((BY[d] && BY[d].segs) || []).find(x => toMin(x[1]) === +B); return seg ? seg[0] + "-" + seg[1] : null; }
+  function segKey(d, B){ const day=BY[d]; const seg = [...(day?.segs||[]),...(day?.asia||[])].find(x => toMin(x[1]) === +B); return seg ? seg[0] + "-" + seg[1] : null; }
   async function publishPlan(d){
     planSync = "Saving…"; renderPlan();
     try {
@@ -587,7 +587,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     for(const [date,entry] of Object.entries(PLAN.days).sort(([a],[b])=>a.localeCompare(b))){
       if(Object.keys(plans).length>=40)break;
       if(date<addDays(NOW.date,-3)||date>addDays(NOW.date,40)||!BY[date]||!Array.isArray(entry?.blocks))continue;
-      const allowed=new Set((BY[date].segs||[]).map(seg=>seg[0]+'-'+seg[1]));
+      const allowed=new Set([...(BY[date].segs||[]),...(BY[date].asia||[])].map(seg=>seg[0]+'-'+seg[1]));
       plans[date]=entry.blocks.filter(key=>allowed.has(key));
     }
     return plans;
@@ -604,7 +604,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   function renderPlan(){
     const host = $("plan-host"); if (!host) return;
     host.innerHTML = planHTML();
-    host.querySelectorAll("[data-plan-key]").forEach(b => b.onclick = () => togglePlan(cursor, b.dataset.planKey));
+    host.querySelectorAll("[data-plan-key]").forEach(b => b.onclick = () => togglePlan(b.dataset.planDay || cursor, b.dataset.planKey));
     const enable=host.querySelector('#plan-enable-device');if(enable)enable.onclick=enableNativePush;
     const retry=host.querySelector('#plan-retry');if(retry)retry.onclick=()=>publishPlan(cursor);
   }
@@ -613,11 +613,21 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const head = `<div class="plan-h"><span class="plan-k">PHONE ALERTS · ${esc(dow(d).slice(0,3).toUpperCase())} ${esc(short(d).toUpperCase())}</span></div>`;
     if (!pushEnabled) return `${head}<p class="plan-note">Enable NQ Planner device alerts, then pick the time windows you want to follow.</p><button class="btn" id="plan-enable-device" type="button">Enable device alerts</button>`;
     if (!dd) return `${head}<p class="plan-note">No schedule for this day yet.</p>`;
-    const picks = planBlocks(d);
-    const segs = dd.segs.filter(x => !(x[2] === "r" && toMin(x[1]) <= T8));
-    const rows = segs.map(([a, b, k, n]) => { const key = a + "-" + b, on = picks.includes(key); return `<button class="plan-seg${on ? " on" : ""}" data-plan-key="${esc(key)}" aria-pressed="${on}"><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span><span class="pb">${on ? "🔔 On" : "Off"}</span></button>`; }).join("");
-    const status = picks.length ? `Selected ${dow(d).slice(0,3)} windows: ${picks.map(k => fmtR(planStart(k), toMin(k.split("-")[1]))).join(", ")}.` : `No time windows selected for this day.`;
-    return `${head}<p class="plan-note">Pick a time window for live alerts when new market conditions are recorded, starting 30 minutes before it opens. The 9 PM next-day plan, 8 AM overnight summary and news alerts arrive independently.</p>${rows}<p class="plan-status">${esc(status)}${planSync ? " · " + esc(planSync) : ""}</p>${planSync.startsWith('Could not save')?'<button class="btn" id="plan-retry" type="button">Retry saving alerts</button>':''}`;
+    let overnightDate=addDays(d,1);
+    for(let i=0;i<4&&!BY[overnightDate];i++)overnightDate=addDays(overnightDate,1);
+    const overnight=BY[overnightDate];
+    const row = owner => ([a, b, k, n]) => { const key = a + "-" + b, on = planBlocks(owner).includes(key); return `<button class="plan-seg${on ? " on" : ""}" data-plan-day="${esc(owner)}" data-plan-key="${esc(key)}" aria-pressed="${on}"><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span><span class="pb">${on ? "🔔 On" : "Off"}</span></button>`; };
+    const evening = (overnight?.asia||[]).filter(seg => toMin(seg[0]) < 1440);
+    const early = (overnight?.asia||[]).filter(seg => toMin(seg[0]) >= 1440);
+    const day = dd.segs.filter(seg => !(seg[2] === "r" && toMin(seg[1]) <= T8));
+    const group = (label,segs,owner) => segs.length ? `<span class="plan-k">${esc(label)}</span>${segs.map(row(owner)).join("")}` : "";
+    const rows = group(`NEW YORK · ${dow(d).slice(0,3)} ${short(d)} (NY)`,day,d)
+      + group(`OVERNIGHT FOR ${dow(overnightDate).slice(0,3)} ${short(overnightDate)} · ${dow(addDays(overnightDate,-1)).slice(0,3)} EVENING (NY)`,evening,overnightDate)
+      + group(`OVERNIGHT FOR ${dow(overnightDate).slice(0,3)} ${short(overnightDate)} · EARLY MORNING (NY)`,early,overnightDate);
+    const selectedDay=day.filter(seg=>planBlocks(d).includes(seg[0]+'-'+seg[1])).length;
+    const selectedOvernight=[...evening,...early].filter(seg=>planBlocks(overnightDate).includes(seg[0]+'-'+seg[1])).length;
+    const status = selectedDay||selectedOvernight ? `Selected: ${selectedDay} New York, ${selectedOvernight} overnight.` : `No time windows selected here.`;
+    return `${head}<p class="plan-note">Pick a window for alerts five minutes before it starts and when it begins, plus live market updates around it. The 9 PM next-day plan, 8 AM overnight summary and news alerts arrive independently.</p>${rows}<p class="plan-status">${esc(status)}${planSync ? " · " + esc(planSync) : ""}</p>${planSync.startsWith('Could not save')?'<button class="btn" id="plan-retry" type="button">Retry saving alerts</button>':''}`;
   }
   const D = iso => new Date(iso + "T12:00:00Z");
   const iso = d => d.toISOString().slice(0,10);
@@ -847,12 +857,22 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       const following=DATA.days.find(day=>day.date>previewDay&&day.holidayType!=='closed'&&![0,6].includes(wd(day.date)));
       items.push(NQNotifications.preview(previewBase,following));
     }
-    for(const key of planBlocks(NOW.date)){
-      const seg=(BY[NOW.date]?.segs||[]).find(s=>s[0]+'-'+s[1]===key);
-      if(!seg||NOW.min<toMin(seg[0])-30||NOW.min>=toMin(seg[1]))continue;
+    const selectedWindow=(day,group,seg,start,end)=>{
+      const key=seg[0]+'-'+seg[1];
+      if(!pushEnabled||!planBlocks(day).includes(key)||NOW.min<start-5||NOW.min>=end)return;
+      const name=NQNotifications.windowName(seg,group);
       const grade=seg[2]==='r'?'Sit out':seg[2]==='y'?'Light':'Good';
-      items.push({id:`${NOW.date}:selected-window:${key}`,day:NOW.date,title:`Selected window · ${NQNotifications.timeLabel(seg[0])} NY`,message:`Your selected ${NQNotifications.timeLabel(seg[0])}–${NQNotifications.timeLabel(seg[1])} NY window is approaching. Calendar plan: ${grade.toLowerCase()}. Review live market conditions before trading.`,severity:seg[2]==='r'?'danger':seg[2]==='y'?'caution':'info',updatedAt:new Date(NQNotifications.nyWallEpoch(NOW.date,toMin(seg[0])-30)).toISOString()});
-    }
+      const severity=seg[2]==='r'?'danger':seg[2]==='y'?'caution':'info';
+      const startsAt=NQNotifications.windowStartEpoch(day,group,key);
+      if(!Number.isFinite(startsAt))return;
+      const prefix=`${day}:selected-window:${group}:${key}`;
+      if(NOW.min<start)items.push({id:`${prefix}:five`,day,title:`${name} begins in five minutes`,message:`Starts ${NQNotifications.timeLabel(seg[0])} NY. Calendar window: ${grade.toLowerCase()}.`,severity,updatedAt:new Date(startsAt-5*60000).toISOString()});
+      if(NOW.min>=start)items.push({id:`${prefix}:start`,day,title:`${name} has begun`,message:`${NQNotifications.timeLabel(seg[0])}–${NQNotifications.timeLabel(seg[1])} NY. Calendar window: ${grade.toLowerCase()}.`,severity,updatedAt:new Date(startsAt).toISOString()});
+    };
+    for(const seg of BY[NOW.date]?.segs||[])selectedWindow(NOW.date,'segs',seg,toMin(seg[0]),toMin(seg[1]));
+    for(const seg of BY[NOW.date]?.asia||[])if(toMin(seg[0])>=1440)selectedWindow(NOW.date,'asia',seg,toMin(seg[0])-1440,toMin(seg[1])-1440);
+    const nextDate=addDays(NOW.date,1);
+    for(const seg of BY[nextDate]?.asia||[])if(toMin(seg[0])<=1440)selectedWindow(nextDate,'asia',seg,toMin(seg[0]),toMin(seg[1]));
     if(selectedUpdate?.includes(':tomorrow-preview:')&&!items.some(item=>item.id===selectedUpdate)){
       const day=selectedUpdate.slice(0,10),base=BY[day];
       if(base){const following=DATA.days.find(item=>item.date>day&&item.holidayType!=='closed'&&![0,6].includes(wd(item.date)));items.push(NQNotifications.preview(base,following));}

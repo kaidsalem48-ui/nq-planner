@@ -43,16 +43,27 @@ function morningEvents(now){
   return alert?[{...alert,updatedAt:alert.observedAt||new Date(now).toISOString()}]:[];
 }
 function windowEvents(now){
-  const day=nyDay(now),minute=nyMinute(now),base=(read('data.json').days||[]).find(d=>d.date===day);
-  if(!base||base.holidayType==='closed')return [];
-  const archive=read('market-conditions.json'),record=archive.days?.[day];
-  const assessment=record?engine.evaluate(record,{day,now,recentRanges:engine.recentOvernightRanges(archive,{},day),calendarKnown:true,closed:false,calendarSitOut:base.score===-2}):null;
-  const overnightRisky=!!assessment?.large&&!assessment.restricted;
-  return (base.segs||[]).filter(seg=>toMinute(seg[0])-30<=minute&&minute<toMinute(seg[0])-20&&toMinute(seg[0])>=30).map(seg=>{
-    const key=seg[0]+'-'+seg[1],grade=seg[2]==='r'?'Sit out':seg[2]==='y'?'Light':'Good';
-    const riskNote=overnightRisky?'Day grade: Risky from 500+ overnight points; size light. ':'';
-    return {id:`${day}:selected-window:${key}`,day,title:`Selected window · ${content.timeLabel(seg[0])} NY`,message:`Your ${content.timeLabel(seg[0])}–${content.timeLabel(seg[1])} NY window is coming up. Calendar window: ${grade.toLowerCase()}. ${riskNote}Check live Updates before trading.`,severity:seg[2]==='r'?'danger':seg[2]==='y'||overnightRisky?'caution':'info',updatedAt:new Date(now).toISOString(),delivery:'selected-window',windowKey:key};
-  });
+  const today=nyDay(now),currentMinute=Math.floor(now/60000),days=read('data.json').days||[];
+  const events=[];
+  for(const base of days.filter(d=>[today,content.addDays(today,1)].includes(d.date)&&d.holidayType!=='closed')){
+    for(const [group,segments] of [['segs',base.segs||[]],['asia',base.asia||[]]]){
+      for(const seg of segments){
+        const key=seg[0]+'-'+seg[1],start=content.windowStartEpoch(base.date,group,key);
+        if(!Number.isFinite(start))continue;
+        const phase=currentMinute===Math.floor((start-5*60000)/60000)?'five':currentMinute===Math.floor(start/60000)?'start':null;
+        if(!phase)continue;
+        const name=content.windowName(seg,group);
+        const plan=seg[2]==='r'?'Sit out under your saved calendar plan.':seg[2]==='y'?'Light size or skip; wait for a clean setup.':'Follow your saved green window; wait for a clean setup.';
+        events.push({id:`${base.date}:selected-window:${group}:${key}:${phase}`,day:base.date,
+          title:phase==='five'?`${name} begins in five minutes`:`${name} has begun`,
+          message:`${content.timeLabel(seg[0])}–${content.timeLabel(seg[1])} NY. ${plan}`,
+          severity:seg[2]==='r'?'danger':seg[2]==='y'?'caution':'info',
+          updatedAt:new Date(phase==='five'?start-5*60000:start).toISOString(),
+          delivery:'selected-window',windowKey:key,windowGroup:group,windowPhase:phase});
+      }
+    }
+  }
+  return events;
 }
 function scheduledEvents(now){return [...newsEvents(now),...previewEvents(now),...morningEvents(now),...windowEvents(now)];}
 function eventsForMode(args,now){return args.includes('--check')?[]:args.includes('--scheduled')||args.includes('--news')?scheduledEvents(now):updateEvents(now);}

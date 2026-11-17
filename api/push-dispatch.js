@@ -5,9 +5,12 @@ const AUDIENCE = 'https://nq-planner.vercel.app/api/push-dispatch';
 let jwks;
 function shouldDeliver(event,plans,currentDay,currentMinute){
   if(event.delivery==='selected-window'){
-    if(event.day!==currentDay||typeof event.windowKey!=='string'||!(plans?.[event.day]||[]).includes(event.windowKey))return false;
-    const start=content.toMinute(event.windowKey.split('-')[0]);
-    return currentMinute>=start-30&&currentMinute<start-20;
+    if(typeof event.windowKey!=='string'||!(plans?.[event.day]||[]).includes(event.windowKey))return false;
+    if(!['five','start'].includes(event.windowPhase))return false;
+    const start=content.windowStartEpoch(event.day,event.windowGroup,event.windowKey);
+    if(!Number.isFinite(start))return false;
+    const due=start-(event.windowPhase==='five'?5*60000:0);
+    return content.nyDay(due)===currentDay&&content.nyMinute(due)===currentMinute;
   }
   if(String(event.id||'').includes(':news:')){
     const match=/:news:(\d{1,2}:\d{2})$/.exec(event.id);

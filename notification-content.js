@@ -15,6 +15,31 @@
   }
   const toMinute=value=>{const [hour,minute]=String(value).split(':').map(Number);return hour*60+(minute||0);};
   const timeLabel=value=>{const minute=toMinute(value),hour=Math.floor(minute/60)%24;return `${hour%12||12}:${String(minute%60).padStart(2,'0')} ${hour<12?'AM':'PM'}`;};
+  function windowStartEpoch(day,group,key){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(day)||!/^\d{1,2}:\d{2}-\d{1,2}:\d{2}$/.test(key)||!['segs','asia'].includes(group))return NaN;
+    const minute=toMinute(key.split('-')[0]);
+    if(!Number.isInteger(minute)||minute<0||minute>=48*60)return NaN;
+    // Asia entries belong to the following trading day: 20:00 is the prior
+    // evening, while 24:00 and 26:00 are midnight and 2 AM on that day.
+    const startDay=group==='asia'&&minute<24*60?addDays(day,-1):day;
+    const wallMinute=group==='asia'&&minute>=24*60?minute-24*60:minute;
+    if(wallMinute>=24*60)return NaN;
+    const epoch=nyWallEpoch(startDay,wallMinute);
+    return nyDay(epoch)===startDay&&nyMinute(epoch)===wallMinute?epoch:NaN;
+  }
+  function windowName(seg,group){
+    const name=String(seg?.[3]||'');
+    if(group==='asia'){
+      if(/Asia kill zone/i.test(name))return 'Asia session';
+      if(/London kill zone/i.test(name))return 'London session';
+      if(/Late Asia/i.test(name))return 'Late Asia window';
+      if(/Globex/i.test(name))return 'Globex window';
+    }
+    if(/NY AM/i.test(name))return 'NY AM window';
+    if(/^PM\b/i.test(name))return 'PM window';
+    if(/Lunch/i.test(name))return 'Lunch window';
+    return `${timeLabel(seg[0])} window`;
+  }
   const label=day=>day?.label==='Great'?'Great':day?.label==='Good'?'Good':day?.label==='Light'?'Light':day?.label==='Sit out'?'Sit out':'OK';
   const redNews=day=>(day?.news||[]).filter(item=>item.impact==='red'||/sentiment|consumer confidence/i.test(item.name)).sort((a,b)=>toMinute(a.time)-toMinute(b.time));
   const isRedNews=item=>item.impact==='red'||/sentiment|consumer confidence/i.test(item.name);
@@ -139,7 +164,7 @@
     };
     const value=examples[type];return value?{title:'Test · '+value[0],message:value[1]}:null;
   }
-  const api={preview,morningSummary,newsReminder,shouldPushConditionAlert,testChoices,testSample,nyDay,nyMinute,nyWallEpoch,addDays,timeLabel,toMinute};
+  const api={preview,morningSummary,newsReminder,shouldPushConditionAlert,testChoices,testSample,nyDay,nyMinute,nyWallEpoch,addDays,timeLabel,toMinute,windowStartEpoch,windowName};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   root.NQNotifications=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

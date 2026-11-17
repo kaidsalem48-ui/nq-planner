@@ -13,7 +13,8 @@ module.exports = async (req, res) => {
     const updates = {};
     for (const [date, blocks] of Object.entries(requested)) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Array.isArray(blocks) || blocks.length > 30 || !byDate.has(date)) return res.status(400).json({ error: 'Unknown day or alert window' });
-      const allowed = new Set((byDate.get(date).segs || []).map(seg => seg[0] + '-' + seg[1]));
+      const day = byDate.get(date);
+      const allowed = new Set([...(day.segs || []), ...(day.asia || [])].map(seg => seg[0] + '-' + seg[1]));
       if (blocks.some(key => typeof key !== 'string' || !allowed.has(key))) return res.status(400).json({ error: 'Unknown alert window' });
       updates[date] = [...new Set(blocks)];
     }
