@@ -2046,22 +2046,22 @@
       ]
     },
     "2026-11-18": {
-      "recordedAt": "2026-11-18T21:37:06.722753+00:00",
+      "recordedAt": "2026-11-18T22:07:18.808535+00:00",
       "values": {
         "mcVix": 24.56,
         "mcVixChange": -3.535,
         "mcVol": "Contracting",
-        "mcDxy": 103.808,
-        "mcDxyChange": 0.323,
+        "mcDxy": 103.797,
+        "mcDxyChange": 0.312,
         "mcDollar": "Rising",
         "mcPriorRange": 692.5,
         "mcOvernight": -153.5,
         "mcOvernightRangeMin": 516.75,
         "mcDirection": "Up",
-        "mcAAPL": 0.105,
+        "mcAAPL": 0.111,
         "mcMSFT": 0.4,
-        "mcNVDA": -2.959,
-        "mcAMZN": 3.808,
+        "mcNVDA": -2.949,
+        "mcAMZN": 3.812,
         "mcGOOGL": 0.771,
         "mcMETA": -0.449,
         "mcTSLA": 0.893,
@@ -2074,7 +2074,7 @@
         "mcComment": "Fed minutes released at 2 PM NY: almost all participants expected further hikes under their October baseline, and some viewed market pricing of December and later tightening as broadly consistent. AI investment's inflation and financing risks were also discussed. Rate and big-tech reactions need price confirmation. Observed overnight bars span at least 516.75 NQ points, making today Risky; your saved 9:30-11:00 AM window has ended.",
         "mcRange": 403.75,
         "marketType": "Range",
-        "marketGapPoints": 166.5
+        "marketGapPoints": 165.5
       },
       "sources": [
         {
@@ -2124,7 +2124,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-18T21:27:04+00:00",
+          "asOf": "2026-11-18T21:57:17+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -2134,7 +2134,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-17 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-18T21:27:00+00:00",
+          "asOf": "2026-11-18T21:57:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -2250,5 +2250,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-18T21:37:07.089471+00:00"
+  "updatedAt": "2026-11-18T22:07:18.846913+00:00"
 }
