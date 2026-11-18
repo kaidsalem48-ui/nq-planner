@@ -2046,7 +2046,7 @@
       ]
     },
     "2026-11-18": {
-      "recordedAt": "2026-11-18T21:15:18.793871+00:00",
+      "recordedAt": "2026-11-18T21:16:17Z",
       "values": {
         "mcVix": 24.46,
         "mcVixChange": -3.9277,
@@ -2071,44 +2071,12 @@
         "mcMacro": "Mixed",
         "mcMacroYieldChangeBp": -3.7,
         "mcMacroDxyChange": 0.378,
-        "mcComment": "Fed minutes day. October's decision held rates at 3.75%-4%, with two votes for a hike. Today's 2:00 PM NY minutes could shift rate expectations and make NQ headline-sensitive. Observed overnight bars span at least 516.75 points, so today is Risky under your 500-point rule. Size light in your saved 9:30-11:00 AM window; stay out after 11.",
+        "mcComment": "Fed minutes released at 2 PM NY: almost all participants expected further hikes under their October baseline, and some viewed market pricing of December and later tightening as broadly consistent. AI investment's inflation and financing risks were also discussed. Rate and big-tech reactions need price confirmation. Observed overnight bars span at least 516.75 NQ points, making today Risky; your saved 9:30-11:00 AM window has ended.",
         "mcRange": 403.75,
         "marketType": "Range",
         "marketGapPoints": 165.5
       },
       "sources": [
-        {
-          "title": "Federal Reserve, October 28, 2026 FOMC statement",
-          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
-          "asOf": "2026-11-18T14:26:21Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "Federal Reserve, November 2026 calendar; November 18 FOMC minutes at 2 PM",
-          "url": "https://www.federalreserve.gov/newsevents/2026-November.htm",
-          "asOf": "2026-11-18T14:26:21Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQZ26.CME observed overnight high-low lower bound; 10 of 480 one-minute bars missing",
-          "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-18T06:59:00+00:00",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner saved November 18 time windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-18T14:26:21Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
@@ -2254,9 +2222,33 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "Federal Reserve, November 18 release of October 27-28 FOMC minutes",
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20261028.htm",
+          "asOf": "2026-11-18T21:16:10Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQZ26.CME observed overnight high-low lower bound; 10 of 480 one-minute bars missing",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
+          "asOf": "2026-11-18T06:59:00Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner saved November 18 time windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-18T14:26:21Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-18T21:15:19.604830+00:00"
+  "updatedAt": "2026-11-18T21:16:43.041648+00:00"
 }
