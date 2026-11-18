@@ -2046,22 +2046,22 @@
       ]
     },
     "2026-11-18": {
-      "recordedAt": "2026-11-18T21:16:17Z",
+      "recordedAt": "2026-11-18T21:37:06.722753+00:00",
       "values": {
-        "mcVix": 24.46,
-        "mcVixChange": -3.9277,
+        "mcVix": 24.56,
+        "mcVixChange": -3.535,
         "mcVol": "Contracting",
-        "mcDxy": 103.773,
-        "mcDxyChange": 0.288,
+        "mcDxy": 103.808,
+        "mcDxyChange": 0.323,
         "mcDollar": "Rising",
         "mcPriorRange": 692.5,
         "mcOvernight": -153.5,
         "mcOvernightRangeMin": 516.75,
         "mcDirection": "Up",
-        "mcAAPL": 0.111,
+        "mcAAPL": 0.105,
         "mcMSFT": 0.4,
-        "mcNVDA": -2.949,
-        "mcAMZN": 3.812,
+        "mcNVDA": -2.959,
+        "mcAMZN": 3.808,
         "mcGOOGL": 0.771,
         "mcMETA": -0.449,
         "mcTSLA": 0.893,
@@ -2074,13 +2074,37 @@
         "mcComment": "Fed minutes released at 2 PM NY: almost all participants expected further hikes under their October baseline, and some viewed market pricing of December and later tightening as broadly consistent. AI investment's inflation and financing risks were also discussed. Rate and big-tech reactions need price confirmation. Observed overnight bars span at least 516.75 NQ points, making today Risky; your saved 9:30-11:00 AM window has ended.",
         "mcRange": 403.75,
         "marketType": "Range",
-        "marketGapPoints": 165.5
+        "marketGapPoints": 166.5
       },
       "sources": [
         {
+          "title": "Federal Reserve, November 18 release of October 27-28 FOMC minutes",
+          "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20261028.htm",
+          "asOf": "2026-11-18T21:16:10Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQZ26.CME observed overnight high-low lower bound; 10 of 480 one-minute bars missing",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
+          "asOf": "2026-11-18T06:59:00Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner saved November 18 time windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-18T14:26:21Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-18T21:00:01+00:00",
+          "asOf": "2026-11-18T21:15:01+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -2100,7 +2124,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-18T21:05:15+00:00",
+          "asOf": "2026-11-18T21:27:04+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -2110,7 +2134,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-17 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-18T21:05:00+00:00",
+          "asOf": "2026-11-18T21:27:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -2222,33 +2246,9 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
-        },
-        {
-          "title": "Federal Reserve, November 18 release of October 27-28 FOMC minutes",
-          "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20261028.htm",
-          "asOf": "2026-11-18T21:16:10Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQZ26.CME observed overnight high-low lower bound; 10 of 480 one-minute bars missing",
-          "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-18T06:59:00Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner saved November 18 time windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-18T14:26:21Z",
-          "fields": [
-            "mcComment"
-          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-18T21:16:43.041648+00:00"
+  "updatedAt": "2026-11-18T21:37:07.089471+00:00"
 }
