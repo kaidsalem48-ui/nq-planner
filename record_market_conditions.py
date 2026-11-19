@@ -103,8 +103,23 @@ def validate(snapshot):
 
 
 def download(name):
-    req = Request(f"{SITE}/{name}?daily-recording={datetime.now(timezone.utc).timestamp()}",
-                  headers={"User-Agent": "NQPlannerDailyRecorder/1.0"})
+    url = f"{SITE}/{name}?daily-recording={datetime.now(timezone.utc).timestamp()}"
+    headers = {"User-Agent": "NQPlannerDailyRecorder/1.0"}
+    # On Windows Python 3.14, urllib can time out reading a complete Vercel
+    # response even when its headers and bytes are available. requests handles
+    # that response; keep urllib for the dependency-free cloud runner.
+    try:
+        import requests
+    except ImportError:
+        pass
+    else:
+        try:
+            response = requests.get(url, headers=headers, timeout=30)
+            response.raise_for_status()
+            return response.content
+        except requests.RequestException:
+            pass
+    req = Request(url, headers=headers)
     with urlopen(req, timeout=30) as response:
         return response.read()
 
