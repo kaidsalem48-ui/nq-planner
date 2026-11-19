@@ -2250,7 +2250,7 @@
       ]
     },
     "2026-11-19": {
-      "recordedAt": "2026-11-19T14:24:27.468821+00:00",
+      "recordedAt": "2026-11-19T14:25:42Z",
       "values": {
         "mcVix": 22.51,
         "mcVixChange": -8.3469,
@@ -2274,7 +2274,8 @@
         "mcYields": "Rising",
         "mcMacro": "Mixed",
         "mcMacroYieldChangeBp": 2.0,
-        "mcMacroDxyChange": -0.208
+        "mcMacroDxyChange": -0.208,
+        "mcComment": "Thursday's 8:30 AM releases: jobless claims were 203K, up 1K, while Philly Fed activity slowed to 6.3 from 20.9 and prices paid rose to 58.2 from 43.2. Growth and price signals are mixed, so let rates and NQ price action confirm direction. Observed overnight bars span at least 529 NQ points, making today Risky under your 500-point rule. Size light in your saved 9:30-10:30 AM NY prime time if price confirms; be done by 10:30."
       },
       "sources": [
         {
@@ -2412,9 +2413,41 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "US Labor Department, November 19 weekly unemployment claims release",
+          "url": "https://www.dol.gov/ui/data.pdf?os=vb",
+          "asOf": "2026-11-19T14:24:50Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Philadelphia Fed, November 2026 Manufacturing Business Outlook Survey",
+          "url": "https://www.philadelphiafed.org/surveys-and-data/regional-economic-analysis/mbos-2026-11",
+          "asOf": "2026-11-19T14:24:50Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQZ26.CME observed overnight high-low lower bound; 10 of 480 one-minute bars missing",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
+          "asOf": "2026-11-19T06:59:00Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner saved November 19 time windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-19T14:25:05Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-19T14:24:28.648744+00:00"
+  "updatedAt": "2026-11-19T14:26:09.075340+00:00"
 }
