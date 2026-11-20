@@ -2462,7 +2462,7 @@
       ]
     },
     "2026-11-20": {
-      "recordedAt": "2026-11-20T21:17:48.078171+00:00",
+      "recordedAt": "2026-11-20T21:18:34Z",
       "values": {
         "mcVix": 39.53,
         "mcVixChange": 38.9944,
@@ -2487,36 +2487,12 @@
         "mcMacro": "Supportive",
         "mcMacroYieldChangeBp": -14.0,
         "mcMacroDxyChange": -0.088,
-        "mcComment": "Final U-Mich sentiment rose to 51.5 from 48.0 in October. Year-ahead inflation expectations fell to 3.7% from 4.7%, and long-run expectations to 3.3% from 3.5%. Cooler inflation expectations could ease rate pressure on tech, but yields and price must confirm; do not assume NQ direction. OPEX remains Light under your saved plan: 1:1 targets, no partials, and be done by 10:30.",
+        "mcComment": "Final U-Mich sentiment rose to 51.5 from 48.0 in October while year-ahead inflation expectations fell to 3.7% from 4.7%. Fed Governor Cook later said she favored a 25 bp hike instead of October's hold and still sees inflation as too high. The softer survey and her hawkish view leave a mixed rate story; confirm with yields, tech participation and price rather than assume NQ direction. OPEX remains Light under your saved 1:1, no-partials plan; the 10:30 AM window has ended.",
         "mcRange": 1527.75,
         "marketType": "Trend down",
         "marketGapPoints": -268.5
       },
       "sources": [
-        {
-          "title": "University of Michigan final November 2026 Surveys of Consumers: sentiment and inflation expectations",
-          "url": "https://www.sca.isr.umich.edu/",
-          "asOf": "2026-11-20T15:19:54Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "Cboe 2026 standard options expiration calendar: November third Friday",
-          "url": "https://res-certification.cboe.com/resources/options/Cboe2026OPTIONSCalendar.pdf",
-          "asOf": "2026-11-20T15:19:54Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner saved OPEX day plan and window timing for November 20",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-20T15:19:54Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
@@ -2662,9 +2638,41 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "University of Michigan final November 2026 Surveys of Consumers: sentiment and inflation expectations",
+          "url": "https://www.sca.isr.umich.edu/",
+          "asOf": "2026-11-20T21:18:33Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Fed Governor Cook November 20 speech: October dissent and inflation outlook",
+          "url": "https://www.federalreserve.gov/newsevents/speech/files/cook20261120a.pdf",
+          "asOf": "2026-11-20T21:18:33Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Cboe 2026 standard options expiration calendar: November third Friday",
+          "url": "https://res-certification.cboe.com/resources/options/Cboe2026OPTIONSCalendar.pdf",
+          "asOf": "2026-11-20T21:18:33Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner saved OPEX day plan and window timing for November 20",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-20T21:18:33Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-20T21:17:49.158009+00:00"
+  "updatedAt": "2026-11-20T21:19:11.952962+00:00"
 }
