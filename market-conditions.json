@@ -2462,7 +2462,7 @@
       ]
     },
     "2026-11-20": {
-      "recordedAt": "2026-11-20T14:24:48.220750+00:00",
+      "recordedAt": "2026-11-20T14:28:31Z",
       "values": {
         "mcVix": 29.76,
         "mcVixChange": 4.6414,
@@ -2486,7 +2486,8 @@
         "mcYields": "Falling",
         "mcMacro": "Supportive",
         "mcMacroYieldChangeBp": -6.4,
-        "mcMacroDxyChange": -0.189
+        "mcMacroDxyChange": -0.189,
+        "mcComment": "Expiry day. Final November consumer sentiment and inflation expectations are scheduled for 10:00 AM NY. Preliminary sentiment was 51.0, up from 48.0 in October; the final print could change the rates read and bring two-way moves around 10. Your OPEX day remains Light: target 1:1, no partials. Stay out of the 9:50–10:00 red news window and require clean price action in any eligible window."
       },
       "sources": [
         {
@@ -2624,9 +2625,33 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "University of Michigan Surveys of Consumers: preliminary November reading and November 20 final release time",
+          "url": "https://www.sca.isr.umich.edu/",
+          "asOf": "2026-11-20T14:28:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Cboe 2026 standard options expiration calendar: November third Friday",
+          "url": "https://res-certification.cboe.com/resources/options/Cboe2026OPTIONSCalendar.pdf",
+          "asOf": "2026-11-20T14:28:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner saved OPEX and news-window rules for November 20",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-20T14:28:30Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-20T14:24:49.351244+00:00"
+  "updatedAt": "2026-11-20T14:28:57.313659+00:00"
 }
