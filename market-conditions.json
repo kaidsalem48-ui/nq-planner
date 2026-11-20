@@ -2462,7 +2462,7 @@
       ]
     },
     "2026-11-20": {
-      "recordedAt": "2026-11-20T22:11:23.041615+00:00",
+      "recordedAt": "2026-11-20T22:37:05.086449+00:00",
       "values": {
         "mcVix": 35.89,
         "mcVixChange": 26.1955,
@@ -2471,16 +2471,16 @@
         "mcDxyChange": -0.055,
         "mcDollar": "Falling",
         "mcPriorRange": 1278.75,
-        "mcOvernight": -255.75,
+        "mcOvernight": -239.0,
         "mcOvernightRangeMin": 332.5,
         "mcDirection": "Down",
-        "mcAAPL": -1.839,
+        "mcAAPL": -1.842,
         "mcMSFT": -2.64,
         "mcNVDA": -13.842,
         "mcAMZN": -3.887,
         "mcGOOGL": -2.504,
         "mcMETA": -5.825,
-        "mcTSLA": -7.553,
+        "mcTSLA": -7.547,
         "mcYieldLevel": 4.912,
         "mcYieldChangeBp": -14.0,
         "mcYields": "Falling",
@@ -2490,7 +2490,7 @@
         "mcComment": "Final U-Mich sentiment rose to 51.5 from 48.0 in October while year-ahead inflation expectations fell to 3.7% from 4.7%. Fed Governor Cook later said she favored a 25 bp hike instead of October's hold and still sees inflation as too high. The softer survey and her hawkish view leave a mixed rate story; confirm with yields, tech participation and price rather than assume NQ direction. OPEX remains Light under your saved 1:1, no-partials plan; the 10:30 AM window has ended.",
         "mcRange": 1527.75,
         "marketType": "Trend down",
-        "marketGapPoints": -268.5
+        "marketGapPoints": -267.25
       },
       "sources": [
         {
@@ -2558,7 +2558,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-19 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-20T21:58:00+00:00",
+          "asOf": "2026-11-20T21:59:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -2674,5 +2674,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-20T22:11:24.061863+00:00"
+  "updatedAt": "2026-11-20T22:37:05.382597+00:00"
 }
