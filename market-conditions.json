@@ -2674,7 +2674,7 @@
       ]
     },
     "2026-11-23": {
-      "recordedAt": "2026-11-23T14:24:45.131782+00:00",
+      "recordedAt": "2026-11-23T14:29:50Z",
       "values": {
         "mcVix": 27.73,
         "mcVixChange": -2.4965,
@@ -2697,7 +2697,8 @@
         "mcYields": "Rising",
         "mcMacro": "Headwinds",
         "mcMacroYieldChangeBp": 6.6,
-        "mcMacroDxyChange": 0.352
+        "mcMacroDxyChange": 0.352,
+        "mcComment": "October's Chicago Fed activity index slipped to -0.06 from September's +0.05, a below-trend reading. Flash US PMI is due at 9:45 AM New York inside today's 9:30-10:00 saved window, and New York Fed President Williams speaks at 4 PM. PMI is the next checkpoint: a stronger or weaker print may change the growth story, but confirm with price before assuming an NQ direction. Today's calendar grade remains OK; stay selective around the 9:45 release."
       },
       "sources": [
         {
@@ -2827,9 +2828,41 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "St. Louis Fed FRED: Chicago Fed National Activity Index, October and September 2026",
+          "url": "https://fred.stlouisfed.org/series/CFNAI",
+          "asOf": "2026-11-23T13:35:00Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "S&P Global November 2026 flash US PMI release schedule, 09:45 EST November 23",
+          "url": "https://www.pmi.spglobal.com/Public/Home/PDF/UK_Rel_Dates",
+          "asOf": "2026-11-23T14:29:49Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "New York Fed November 23 schedule for President Williams remarks",
+          "url": "https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
+          "asOf": "2026-11-23T14:29:49Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner November 23 saved calendar grade and windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-23T14:29:49Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-23T14:24:46.577575+00:00"
+  "updatedAt": "2026-11-23T14:30:23.795924+00:00"
 }
