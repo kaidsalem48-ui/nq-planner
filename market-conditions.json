@@ -2674,24 +2674,24 @@
       ]
     },
     "2026-11-23": {
-      "recordedAt": "2026-11-23T22:16:25Z",
+      "recordedAt": "2026-11-23T22:37:12.483727+00:00",
       "values": {
         "mcVix": 26.62,
         "mcVixChange": -6.3994,
         "mcVol": "Contracting",
-        "mcDxy": 104.355,
-        "mcDxyChange": 0.548,
+        "mcDxy": 104.336,
+        "mcDxyChange": 0.529,
         "mcDollar": "Rising",
         "mcPriorRange": 1527.75,
         "mcOvernightRangeMin": 483.0,
         "mcDirection": "Up",
-        "mcAAPL": 2.046,
+        "mcAAPL": 2.025,
         "mcMSFT": 1.641,
         "mcNVDA": 31.318,
         "mcAMZN": 3.346,
         "mcGOOGL": 6.261,
         "mcMETA": 6.492,
-        "mcTSLA": 11.472,
+        "mcTSLA": 11.465,
         "mcYieldLevel": 4.918,
         "mcYieldChangeBp": 0.6,
         "mcYields": "Flat",
@@ -2704,6 +2704,30 @@
         "marketGapPoints": 1736.5
       },
       "sources": [
+        {
+          "title": "S&P Global November 23 US flash PMI commentary: composite output and price pressures",
+          "url": "https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/11/us-flash-pmi-indicates-still-elevated-but-cooling-business-activity-growth-and-price-pressures",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "New York Fed President Williams November 23 prepared remarks",
+          "url": "https://www.newyorkfed.org/newsevents/speeches/2026/wil261123",
+          "asOf": "2026-11-23T22:15:33Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner November 23 saved calendar grade and windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
@@ -2727,7 +2751,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-23T22:05:20+00:00",
+          "asOf": "2026-11-23T22:27:07+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -2737,7 +2761,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-20 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-23T21:58:00+00:00",
+          "asOf": "2026-11-23T21:59:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -2841,33 +2865,9 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
-        },
-        {
-          "title": "S&P Global November 23 US flash PMI commentary: composite output and price pressures",
-          "url": "https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/11/us-flash-pmi-indicates-still-elevated-but-cooling-business-activity-growth-and-price-pressures",
-          "asOf": "2026-11-23T21:11:30Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "New York Fed President Williams November 23 prepared remarks",
-          "url": "https://www.newyorkfed.org/newsevents/speeches/2026/wil261123",
-          "asOf": "2026-11-23T22:15:33Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner November 23 saved calendar grade and windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-23T21:11:30Z",
-          "fields": [
-            "mcComment"
-          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-23T22:16:48.068964+00:00"
+  "updatedAt": "2026-11-23T22:37:12.784225+00:00"
 }
