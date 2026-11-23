@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-20",
+  "updated": "2026-11-23",
   "range": ["2026-10-01", "2026-12-31"],
   "sources": [
     "fedratecalc.com US economic calendar (BLS/BEA/Census/Fed dates)",
@@ -8,7 +8,10 @@
     "Kiplinger weekly economic calendar",
     "Dorman Trading November 2026 calendar",
     "New York Fed November 2026 Economic Indicators Calendar: https://www.newyorkfed.org/research/calendars/i-nov26.html",
-    "University of Michigan Surveys of Consumers release schedule: https://www.sca.isr.umich.edu/"
+    "University of Michigan Surveys of Consumers release schedule: https://www.sca.isr.umich.edu/",
+    "Chicago Fed CFNAI release calendar: https://www.chicagofed.org/research/data/data-release-calendar",
+    "S&P Global Flash US PMI release calendar: https://www.pmi.spglobal.com/Public/Home/PDF/UK_Rel_Dates",
+    "New York Fed November 23 Williams remarks advisory: https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026"
   ],
   "holidays": {
     "2026-10-12": {"type": "bank", "name": "Columbus Day"},
@@ -59,6 +62,9 @@
     {"date": "2026-11-18", "time": "14:00", "name": "FOMC Minutes", "short": "Minutes", "impact": "red", "kind": "minutes"},
     {"date": "2026-11-19", "time": "8:30", "name": "Philly Fed + Jobless Claims", "short": "Philly", "impact": "orange", "kind": "data", "est": true},
     {"date": "2026-11-20", "time": "10:00", "name": "UMich Sentiment (final)", "short": "UMich", "impact": "red", "kind": "data"},
+    {"date": "2026-11-23", "time": "8:30", "name": "Chicago Fed National Activity Index", "short": "CFNAI", "impact": "orange", "kind": "data"},
+    {"date": "2026-11-23", "time": "9:45", "name": "S&P Global Flash US PMI", "short": "Flash PMI", "impact": "orange", "kind": "data"},
+    {"date": "2026-11-23", "time": "16:00", "name": "New York Fed President Williams remarks", "short": "Williams", "impact": "orange", "kind": "speech"},
     {"date": "2026-11-24", "time": "10:00", "name": "Consumer Confidence", "short": "Conf.", "impact": "red", "kind": "data", "est": true},
     {"date": "2026-11-25", "time": "8:30", "name": "GDP (2nd) + Core PCE + Durables", "short": "GDP·PCE", "impact": "red", "kind": "data"},
     {"date": "2026-11-30", "time": "9:45", "name": "Chicago PMI", "short": "Chi PMI", "impact": "orange", "kind": "data"},

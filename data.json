@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-20",
+ "updated": "2026-11-23",
  "sources": [
   "fedratecalc.com US economic calendar (BLS/BEA/Census/Fed dates)",
   "BLS CPI release schedule",
@@ -7,7 +7,10 @@
   "Kiplinger weekly economic calendar",
   "Dorman Trading November 2026 calendar",
   "New York Fed November 2026 Economic Indicators Calendar: https://www.newyorkfed.org/research/calendars/i-nov26.html",
-  "University of Michigan Surveys of Consumers release schedule: https://www.sca.isr.umich.edu/"
+  "University of Michigan Surveys of Consumers release schedule: https://www.sca.isr.umich.edu/",
+  "Chicago Fed CFNAI release calendar: https://www.chicagofed.org/research/data/data-release-calendar",
+  "S&P Global Flash US PMI release calendar: https://www.pmi.spglobal.com/Public/Home/PDF/UK_Rel_Dates",
+  "New York Fed November 23 Williams remarks advisory: https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026"
  ],
  "days": [
   {
@@ -668,7 +671,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "Columbus Day: bonds/banks closed, futures open with thin volume. No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
+   "why": "Columbus Day: bonds/banks closed, futures open with thin volume. No-news Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
    "notes": []
   },
   {
@@ -1078,7 +1081,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
    "notes": []
   },
   {
@@ -1466,7 +1469,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
    "notes": []
   },
   {
@@ -2839,7 +2842,7 @@
      "10:00",
      "10:30",
      "y",
-     "No-news Monday, light"
+     "No-red-folder Monday, light"
     ],
     [
      "10:30",
@@ -2854,7 +2857,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
+   "why": "No-red-folder Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
    "notes": []
   },
   {
@@ -3207,8 +3210,40 @@
   },
   {
    "date": "2026-11-23",
-   "news": [],
-   "marks": [],
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Chicago Fed National Activity Index",
+     "impact": "orange"
+    },
+    {
+     "time": "9:45",
+     "name": "S&P Global Flash US PMI",
+     "impact": "orange"
+    },
+    {
+     "time": "16:00",
+     "name": "New York Fed President Williams remarks",
+     "impact": "orange"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "CFNAI",
+     "minor"
+    ],
+    [
+     "9:45",
+     "Flash PMI",
+     "minor"
+    ],
+    [
+     "16:00",
+     "Williams",
+     "minor"
+    ]
+   ],
    "holiday": null,
    "asia": [
     [
@@ -3261,7 +3296,7 @@
      "10:00",
      "10:30",
      "y",
-     "No-news Monday, light"
+     "No-red-folder Monday, light"
     ],
     [
      "10:30",
@@ -3276,7 +3311,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
+   "why": "No-red-folder Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
    "notes": []
   },
   {
@@ -3626,7 +3661,7 @@
      "10:00",
      "10:30",
      "y",
-     "No-news Monday, light"
+     "No-red-folder Monday, light"
     ],
     [
      "10:30",
@@ -3641,7 +3676,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
+   "why": "No-red-folder Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
    "notes": []
   },
   {
@@ -4085,7 +4120,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
    "notes": []
   },
   {
@@ -4493,7 +4528,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Red folder tomorrow, so before 9:30 is the best spot today if a setup forms. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
    "notes": []
   },
   {
@@ -4905,7 +4940,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it.",
    "notes": []
   },
   {
@@ -5262,7 +5297,7 @@
      "Bad AM won't get better"
     ]
    ],
-   "why": "No-news Monday: 9:30-10:00 is the window worth trading. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it. Days after bank holidays usually have bad price action.",
+   "why": "No-news Monday: 9:30-10:00 is the window worth trading. Check scheduled medium-impact releases before entering. If AM is bad, lunch and PM won't be much better. Seek & destroy day: price tends to run highs and lows back and forth (stop runs, not clean targets). Size down at least, if trading at all. The 8 AM London vs Asia update confirms it. Days after bank holidays usually have bad price action.",
    "notes": []
   },
   {
