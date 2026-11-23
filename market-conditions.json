@@ -2674,24 +2674,24 @@
       ]
     },
     "2026-11-23": {
-      "recordedAt": "2026-11-23T21:11:32Z",
+      "recordedAt": "2026-11-23T21:37:11.886780+00:00",
       "values": {
-        "mcVix": 27.3,
-        "mcVixChange": -4.0084,
+        "mcVix": 26.62,
+        "mcVixChange": -6.3994,
         "mcVol": "Contracting",
-        "mcDxy": 104.34,
-        "mcDxyChange": 0.533,
+        "mcDxy": 104.33,
+        "mcDxyChange": 0.523,
         "mcDollar": "Rising",
         "mcPriorRange": 1527.75,
         "mcOvernightRangeMin": 483.0,
         "mcDirection": "Up",
-        "mcAAPL": 2.046,
+        "mcAAPL": 2.025,
         "mcMSFT": 1.641,
         "mcNVDA": 31.318,
         "mcAMZN": 3.346,
         "mcGOOGL": 6.261,
         "mcMETA": 6.492,
-        "mcTSLA": 11.472,
+        "mcTSLA": 11.465,
         "mcYieldLevel": 4.918,
         "mcYieldChangeBp": 0.6,
         "mcYields": "Flat",
@@ -2705,9 +2705,41 @@
       },
       "sources": [
         {
+          "title": "S&P Global November 23 US flash PMI commentary: composite output and price pressures",
+          "url": "https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/11/us-flash-pmi-indicates-still-elevated-but-cooling-business-activity-growth-and-price-pressures",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "St. Louis Fed FRED: Chicago Fed National Activity Index for October 2026",
+          "url": "https://fred.stlouisfed.org/series/CFNAI",
+          "asOf": "2026-11-23T13:35:00Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "New York Fed November 23 schedule for President Williams remarks",
+          "url": "https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner November 23 saved calendar grade and windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-23T20:55:31+00:00",
+          "asOf": "2026-11-23T21:15:01+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -2727,7 +2759,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-23T21:00:46+00:00",
+          "asOf": "2026-11-23T21:27:07+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -2737,7 +2769,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-20 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-23T21:00:00+00:00",
+          "asOf": "2026-11-23T21:27:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -2841,41 +2873,9 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
-        },
-        {
-          "title": "S&P Global November 23 US flash PMI commentary: composite output and price pressures",
-          "url": "https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/11/us-flash-pmi-indicates-still-elevated-but-cooling-business-activity-growth-and-price-pressures",
-          "asOf": "2026-11-23T21:11:30Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "St. Louis Fed FRED: Chicago Fed National Activity Index for October 2026",
-          "url": "https://fred.stlouisfed.org/series/CFNAI",
-          "asOf": "2026-11-23T13:35:00Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "New York Fed November 23 schedule for President Williams remarks",
-          "url": "https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
-          "asOf": "2026-11-23T21:11:30Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner November 23 saved calendar grade and windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-23T21:11:30Z",
-          "fields": [
-            "mcComment"
-          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-23T21:11:58.440863+00:00"
+  "updatedAt": "2026-11-23T21:37:12.189470+00:00"
 }
