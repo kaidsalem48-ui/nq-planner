@@ -2674,7 +2674,7 @@
       ]
     },
     "2026-11-23": {
-      "recordedAt": "2026-11-23T21:10:50.197175+00:00",
+      "recordedAt": "2026-11-23T21:11:32Z",
       "values": {
         "mcVix": 27.3,
         "mcVixChange": -4.0084,
@@ -2698,44 +2698,12 @@
         "mcMacro": "Mixed",
         "mcMacroYieldChangeBp": 0.6001,
         "mcMacroDxyChange": 0.511,
-        "mcComment": "October's Chicago Fed activity index slipped to -0.06 from September's +0.05, a below-trend reading. Flash US PMI was scheduled for 9:45 AM New York, but its result has not been added to the planner without a verified primary release. New York Fed President Williams speaks at 4 PM. Today's calendar grade remains OK; the saved 9:30-10:00 window has ended. Read verified data and price action before assuming an NQ direction.",
+        "mcComment": "The flash US composite PMI eased to 54.6 from 55.9 in October: growth remained firm but cooled, while price pressures eased yet stayed elevated. October's Chicago Fed activity index was -0.06. Together these point to mixed growth and inflation context, not an NQ direction; confirm with yields, tech participation and price. Your saved Monday 9:30-10:00 window is over. New York Fed President Williams's 4 PM remarks are a headline watch, not a new Fed decision.",
         "mcRange": 686.75,
         "marketType": "Range",
         "marketGapPoints": 1736.5
       },
       "sources": [
-        {
-          "title": "St. Louis Fed FRED: Chicago Fed National Activity Index, October and September 2026",
-          "url": "https://fred.stlouisfed.org/series/CFNAI",
-          "asOf": "2026-11-23T13:35:00Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "S&P Global November 2026 flash US PMI release schedule, 09:45 EST November 23",
-          "url": "https://www.pmi.spglobal.com/Public/Home/PDF/UK_Rel_Dates",
-          "asOf": "2026-11-23T15:12:55Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "New York Fed November 23 schedule for President Williams remarks",
-          "url": "https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
-          "asOf": "2026-11-23T15:12:55Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner November 23 saved calendar grade and windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-23T15:12:55Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
@@ -2873,9 +2841,41 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "S&P Global November 23 US flash PMI commentary: composite output and price pressures",
+          "url": "https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/11/us-flash-pmi-indicates-still-elevated-but-cooling-business-activity-growth-and-price-pressures",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "St. Louis Fed FRED: Chicago Fed National Activity Index for October 2026",
+          "url": "https://fred.stlouisfed.org/series/CFNAI",
+          "asOf": "2026-11-23T13:35:00Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "New York Fed November 23 schedule for President Williams remarks",
+          "url": "https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner November 23 saved calendar grade and windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-23T21:10:51.176023+00:00"
+  "updatedAt": "2026-11-23T21:11:58.440863+00:00"
 }
