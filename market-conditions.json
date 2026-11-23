@@ -2674,7 +2674,7 @@
       ]
     },
     "2026-11-23": {
-      "recordedAt": "2026-11-23T15:12:16.272769+00:00",
+      "recordedAt": "2026-11-23T15:13:00Z",
       "values": {
         "mcVix": 28.13,
         "mcVixChange": -1.09,
@@ -2698,44 +2698,12 @@
         "mcMacro": "Headwinds",
         "mcMacroYieldChangeBp": 4.0,
         "mcMacroDxyChange": 0.353,
-        "mcComment": "October's Chicago Fed activity index slipped to -0.06 from September's +0.05, a below-trend reading. Flash US PMI is due at 9:45 AM New York inside today's 9:30-10:00 saved window, and New York Fed President Williams speaks at 4 PM. PMI is the next checkpoint: a stronger or weaker print may change the growth story, but confirm with price before assuming an NQ direction. Today's calendar grade remains OK; stay selective around the 9:45 release.",
+        "mcComment": "October's Chicago Fed activity index slipped to -0.06 from September's +0.05, a below-trend reading. Flash US PMI was scheduled for 9:45 AM New York, but its result has not been added to the planner without a verified primary release. New York Fed President Williams speaks at 4 PM. Today's calendar grade remains OK; the saved 9:30-10:00 window has ended. Read verified data and price action before assuming an NQ direction.",
         "mcRange": 686.75,
         "marketType": "Range",
         "marketGapPoints": 1736.5
       },
       "sources": [
-        {
-          "title": "St. Louis Fed FRED: Chicago Fed National Activity Index, October and September 2026",
-          "url": "https://fred.stlouisfed.org/series/CFNAI",
-          "asOf": "2026-11-23T13:35:00Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "S&P Global November 2026 flash US PMI release schedule, 09:45 EST November 23",
-          "url": "https://www.pmi.spglobal.com/Public/Home/PDF/UK_Rel_Dates",
-          "asOf": "2026-11-23T14:29:49Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "New York Fed November 23 schedule for President Williams remarks",
-          "url": "https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
-          "asOf": "2026-11-23T14:29:49Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner November 23 saved calendar grade and windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-23T14:29:49Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
@@ -2873,9 +2841,41 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "St. Louis Fed FRED: Chicago Fed National Activity Index, October and September 2026",
+          "url": "https://fred.stlouisfed.org/series/CFNAI",
+          "asOf": "2026-11-23T13:35:00Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "S&P Global November 2026 flash US PMI release schedule, 09:45 EST November 23",
+          "url": "https://www.pmi.spglobal.com/Public/Home/PDF/UK_Rel_Dates",
+          "asOf": "2026-11-23T15:12:55Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "New York Fed November 23 schedule for President Williams remarks",
+          "url": "https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
+          "asOf": "2026-11-23T15:12:55Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner November 23 saved calendar grade and windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-23T15:12:55Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-23T15:12:17.329377+00:00"
+  "updatedAt": "2026-11-23T15:13:24.262289+00:00"
 }
