@@ -2674,7 +2674,7 @@
       ]
     },
     "2026-11-23": {
-      "recordedAt": "2026-11-23T22:15:25.608603+00:00",
+      "recordedAt": "2026-11-23T22:16:25Z",
       "values": {
         "mcVix": 26.62,
         "mcVixChange": -6.3994,
@@ -2698,44 +2698,12 @@
         "mcMacro": "Mixed",
         "mcMacroYieldChangeBp": 0.6001,
         "mcMacroDxyChange": 0.511,
-        "mcComment": "The flash US composite PMI eased to 54.6 from 55.9 in October: growth remained firm but cooled, while price pressures eased yet stayed elevated. October's Chicago Fed activity index was -0.06. Together these point to mixed growth and inflation context, not an NQ direction; confirm with yields, tech participation and price. Your saved Monday 9:30-10:00 window is over. New York Fed President Williams's 4 PM remarks are a headline watch, not a new Fed decision.",
+        "mcComment": "Flash US composite PMI eased to 54.6 from 55.9 in October. Growth stayed firm but slowed, and price pressures eased yet remained elevated. New York Fed President Williams described resilient growth and steady labor, but said inflation around 3.5% is too high; he gave no specific next rate decision. This is mixed growth and inflation context, not an NQ direction. Watch rates, dollar, big tech and price response. Your saved Monday 9:30-10:00 NY window has passed.",
         "mcRange": 686.75,
         "marketType": "Range",
         "marketGapPoints": 1736.5
       },
       "sources": [
-        {
-          "title": "S&P Global November 23 US flash PMI commentary: composite output and price pressures",
-          "url": "https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/11/us-flash-pmi-indicates-still-elevated-but-cooling-business-activity-growth-and-price-pressures",
-          "asOf": "2026-11-23T21:11:30Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "St. Louis Fed FRED: Chicago Fed National Activity Index for October 2026",
-          "url": "https://fred.stlouisfed.org/series/CFNAI",
-          "asOf": "2026-11-23T13:35:00Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "New York Fed November 23 schedule for President Williams remarks",
-          "url": "https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
-          "asOf": "2026-11-23T21:11:30Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner November 23 saved calendar grade and windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-23T21:11:30Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
@@ -2873,9 +2841,33 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "S&P Global November 23 US flash PMI commentary: composite output and price pressures",
+          "url": "https://www.spglobal.com/market-intelligence/en/news-insights/research/2026/11/us-flash-pmi-indicates-still-elevated-but-cooling-business-activity-growth-and-price-pressures",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "New York Fed President Williams November 23 prepared remarks",
+          "url": "https://www.newyorkfed.org/newsevents/speeches/2026/wil261123",
+          "asOf": "2026-11-23T22:15:33Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner November 23 saved calendar grade and windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-23T21:11:30Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-23T22:15:26.530632+00:00"
+  "updatedAt": "2026-11-23T22:16:48.068964+00:00"
 }
