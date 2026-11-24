@@ -2869,7 +2869,7 @@
       ]
     },
     "2026-11-24": {
-      "recordedAt": "2026-11-24T14:35:34.649917+00:00",
+      "recordedAt": "2026-11-24T14:36:24Z",
       "values": {
         "mcVix": 29.26,
         "mcVixChange": 9.9174,
@@ -2893,7 +2893,8 @@
         "mcYields": "Falling",
         "mcMacro": "Supportive",
         "mcMacroYieldChangeBp": -1.8,
-        "mcMacroDxyChange": -0.509
+        "mcMacroDxyChange": -0.509,
+        "mcComment": "Consumer Confidence at 10:00 AM NY is today's main catalyst. October's index was 91.7 and its Expectations Index was 72.6; today's result has not been released yet. A new reading could change the consumer-demand and rates outlook, but does not imply an NQ direction. Follow your saved 9:50-10:00 red window. Consider the 10:00-12:00 green window only after a clean post-release setup."
       },
       "sources": [
         {
@@ -3031,9 +3032,25 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "The Conference Board: October Consumer Confidence and November 24 release schedule",
+          "url": "https://www.conference-board.org/topics/consumer-confidence/",
+          "asOf": "2026-11-24T14:36:22Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner November 24 saved calendar windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-24T14:36:22Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-24T14:35:36.299627+00:00"
+  "updatedAt": "2026-11-24T14:36:47.773324+00:00"
 }
