@@ -2869,41 +2869,57 @@
       ]
     },
     "2026-11-24": {
-      "recordedAt": "2026-11-24T17:13:49Z",
+      "recordedAt": "2026-11-24T17:37:17.209098+00:00",
       "values": {
-        "mcVix": 28.2,
-        "mcVixChange": 5.9354,
+        "mcVix": 27.18,
+        "mcVixChange": 2.1037,
         "mcVol": "Expanding",
-        "mcDxy": 103.836,
-        "mcDxyChange": -0.482,
+        "mcDxy": 103.823,
+        "mcDxyChange": -0.495,
         "mcDollar": "Falling",
         "mcPriorRange": 686.75,
         "mcOvernight": 48.0,
         "mcOvernightRangeMin": 352.0,
         "mcDirection": "Down",
-        "mcAAPL": 0.512,
-        "mcMSFT": 0.874,
-        "mcNVDA": -8.66,
-        "mcAMZN": -1.584,
-        "mcGOOGL": -1.813,
-        "mcMETA": -1.707,
-        "mcTSLA": -2.25,
-        "mcYieldLevel": 4.892,
-        "mcYieldChangeBp": -2.6,
+        "mcAAPL": 0.91,
+        "mcMSFT": 1.554,
+        "mcNVDA": -7.213,
+        "mcAMZN": -0.801,
+        "mcGOOGL": -1.449,
+        "mcMETA": -0.942,
+        "mcTSLA": -0.687,
+        "mcYieldLevel": 4.898,
+        "mcYieldChangeBp": -2.0,
         "mcYields": "Falling",
         "mcMacro": "Supportive",
-        "mcMacroYieldChangeBp": -2.6,
-        "mcMacroDxyChange": -0.445,
+        "mcMacroYieldChangeBp": -2.0,
+        "mcMacroDxyChange": -0.469,
         "mcComment": "November Consumer Confidence rose to 103.3 from a revised 91.9 in October. Expectations climbed to 83.6, while 12-month inflation expectations remained elevated at 5.7%. This strengthens the consumer-demand backdrop but does not establish an NQ direction. Watch rates, big-tech participation and price response. The saved 10:00-12:00 NY green window has passed; later yellow windows require the saved conditions and a clean setup.",
         "mcRange": 511.75,
         "marketType": "Range",
-        "marketGapPoints": -454.0
+        "marketGapPoints": -454.25
       },
       "sources": [
         {
+          "title": "The Conference Board: November 24 Consumer Confidence release",
+          "url": "https://www.conference-board.org/topics/consumer-confidence/",
+          "asOf": "2026-11-24T17:13:21Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner November 24 saved calendar windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-24T17:13:21Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T16:58:01+00:00",
+          "asOf": "2026-11-24T17:22:01+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -2913,7 +2929,7 @@
         {
           "title": "^TNX quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T16:57:53+00:00",
+          "asOf": "2026-11-24T17:22:13+00:00",
           "fields": [
             "mcYieldLevel",
             "mcYieldChangeBp",
@@ -2923,7 +2939,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:02+00:00",
+          "asOf": "2026-11-24T17:27:14+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -2933,7 +2949,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-23 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -2957,7 +2973,7 @@
         {
           "title": "NQZ26.CME complete RTH bars; behavior heuristic net/range >=60%; gap versus prior RTH close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcRange",
             "marketType",
@@ -2967,7 +2983,7 @@
         {
           "title": "NQZ26.CME direction vs prior RTH close; synchronized minute",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcDirection"
           ]
@@ -2975,7 +2991,7 @@
         {
           "title": "AAPL synchronized change vs prior RTH close 2026-11-23",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcAAPL"
           ]
@@ -2983,7 +2999,7 @@
         {
           "title": "MSFT synchronized change vs prior RTH close 2026-11-23",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcMSFT"
           ]
@@ -2991,7 +3007,7 @@
         {
           "title": "NVDA synchronized change vs prior RTH close 2026-11-23",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcNVDA"
           ]
@@ -2999,7 +3015,7 @@
         {
           "title": "AMZN synchronized change vs prior RTH close 2026-11-23",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcAMZN"
           ]
@@ -3007,7 +3023,7 @@
         {
           "title": "GOOGL synchronized change vs prior RTH close 2026-11-23",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/GOOGL?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcGOOGL"
           ]
@@ -3015,7 +3031,7 @@
         {
           "title": "META synchronized change vs prior RTH close 2026-11-23",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/META?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcMETA"
           ]
@@ -3023,7 +3039,7 @@
         {
           "title": "TSLA synchronized change vs prior RTH close 2026-11-23",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T17:03:00+00:00",
+          "asOf": "2026-11-24T17:27:00+00:00",
           "fields": [
             "mcTSLA"
           ]
@@ -3031,7 +3047,7 @@
         {
           "title": "Macro heuristic at synchronized minute: yield falling, dollar falling; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T16:56:00+00:00",
+          "asOf": "2026-11-24T17:21:00+00:00",
           "fields": [
             "mcMacro",
             "mcMacroYieldChangeBp"
@@ -3040,30 +3056,14 @@
         {
           "title": "Macro heuristic at synchronized minute: yield falling, dollar falling; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T16:56:00+00:00",
+          "asOf": "2026-11-24T17:21:00+00:00",
           "fields": [
             "mcMacro",
             "mcMacroDxyChange"
-          ]
-        },
-        {
-          "title": "The Conference Board: November 24 Consumer Confidence release",
-          "url": "https://www.conference-board.org/topics/consumer-confidence/",
-          "asOf": "2026-11-24T17:13:21Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner November 24 saved calendar windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-24T17:13:21Z",
-          "fields": [
-            "mcComment"
           ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-24T17:14:09.893810+00:00"
+  "updatedAt": "2026-11-24T17:37:17.678160+00:00"
 }
