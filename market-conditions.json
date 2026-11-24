@@ -2869,7 +2869,7 @@
       ]
     },
     "2026-11-24": {
-      "recordedAt": "2026-11-24T15:14:02.324701+00:00",
+      "recordedAt": "2026-11-24T15:15:09Z",
       "values": {
         "mcVix": 27.21,
         "mcVixChange": 2.2164,
@@ -2894,28 +2894,12 @@
         "mcMacro": "Mixed",
         "mcMacroYieldChangeBp": -0.6,
         "mcMacroDxyChange": -0.529,
-        "mcComment": "Consumer Confidence at 10:00 AM NY is today's main catalyst. October's index was 91.7 and its Expectations Index was 72.6; today's result has not been released yet. A new reading could change the consumer-demand and rates outlook, but does not imply an NQ direction. Follow your saved 9:50-10:00 red window. Consider the 10:00-12:00 green window only after a clean post-release setup.",
+        "mcComment": "November Consumer Confidence rose to 103.3 from a revised 91.9 in October. Expectations climbed to 83.6, while 12-month inflation expectations remained elevated at 5.7%. This strengthens the consumer-demand backdrop but does not establish an NQ direction. Watch rates, big-tech participation and price after the release. Your saved 10:00-12:00 NY green window still requires a clean setup.",
         "mcRange": 317.75,
         "marketType": "Range",
         "marketGapPoints": -454.0
       },
       "sources": [
-        {
-          "title": "The Conference Board: October Consumer Confidence and November 24 release schedule",
-          "url": "https://www.conference-board.org/topics/consumer-confidence/",
-          "asOf": "2026-11-24T14:36:22Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner November 24 saved calendar windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-24T14:36:22Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
@@ -3061,9 +3045,25 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "The Conference Board: November 24 Consumer Confidence release",
+          "url": "https://www.conference-board.org/topics/consumer-confidence/",
+          "asOf": "2026-11-24T15:15:08Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner November 24 saved calendar windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-24T14:36:22Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-24T15:14:03.656015+00:00"
+  "updatedAt": "2026-11-24T15:15:29.478530+00:00"
 }
