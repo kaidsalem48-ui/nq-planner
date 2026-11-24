@@ -2869,21 +2869,21 @@
       ]
     },
     "2026-11-24": {
-      "recordedAt": "2026-11-24T22:10:35.433117+00:00",
+      "recordedAt": "2026-11-24T22:37:06.159885+00:00",
       "values": {
         "mcVix": 26.36,
         "mcVixChange": -0.9767,
         "mcVol": "Stable",
-        "mcDxy": 103.826,
-        "mcDxyChange": -0.492,
+        "mcDxy": 103.845,
+        "mcDxyChange": -0.473,
         "mcDollar": "Falling",
         "mcPriorRange": 686.75,
         "mcOvernight": 48.0,
         "mcOvernightRangeMin": 352.0,
         "mcDirection": "Down",
-        "mcAAPL": 1.287,
+        "mcAAPL": 1.307,
         "mcMSFT": 0.71,
-        "mcNVDA": -5.881,
+        "mcNVDA": -5.875,
         "mcAMZN": -1.218,
         "mcGOOGL": -1.162,
         "mcMETA": -1.284,
@@ -2897,7 +2897,7 @@
         "mcComment": "At the November 24 close, Consumer Confidence was 103.3 versus a revised 91.9 in October; Expectations were 83.6 and 12-month inflation expectations 5.7%. Stronger consumer views do not establish an NQ direction. The next scheduled catalyst is Wednesday at 8:30 AM NY: the GDP second estimate, October income and outlays including PCE, and durable goods. Those releases may change growth and inflation expectations; no results are available yet. Today's saved windows have ended. Follow tomorrow's pre-release red window and wait for a clean post-data setup.",
         "mcRange": 511.75,
         "marketType": "Range",
-        "marketGapPoints": -454.0
+        "marketGapPoints": -454.25
       },
       "sources": [
         {
@@ -2955,7 +2955,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T22:00:30+00:00",
+          "asOf": "2026-11-24T22:27:02+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -2965,7 +2965,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-23 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-24T21:58:00+00:00",
+          "asOf": "2026-11-24T21:59:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -3081,5 +3081,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-24T22:10:36.403401+00:00"
+  "updatedAt": "2026-11-24T22:37:06.367977+00:00"
 }
