@@ -3081,7 +3081,7 @@
       ]
     },
     "2026-11-25": {
-      "recordedAt": "2026-11-25T15:15:17.612279+00:00",
+      "recordedAt": "2026-11-25T15:16:16Z",
       "values": {
         "mcVix": 32.47,
         "mcVixChange": 23.1791,
@@ -3106,52 +3106,12 @@
         "mcMacro": "Mixed",
         "mcMacroYieldChangeBp": -7.6,
         "mcMacroDxyChange": 0.161,
-        "mcComment": "Growth and inflation share today's catalyst. At 8:30 AM NY, Q3 GDP was revised up to 4.3% annualized from 3.4%; October core PCE rose 0.3% on month and 3.3% on year (headline 3.8%). Durable goods orders rose 0.2%, or 0.5% excluding transport. Stronger growth alongside these inflation readings can move yields and NQ in either direction. Let the release settle and wait for clean price action in your saved window. New-home sales is scheduled for 10:00 AM NY; its result is not yet available.",
+        "mcComment": "GDP and PCE remain today's main catalysts: Q3 GDP was revised to 4.3% annualized from 3.4%, while October core PCE rose 0.3% monthly and 3.3% yearly; durable orders rose 0.2%. At 10 AM NY, October new-home sales were estimated at 701,000 annualized versus 614,000 in September. Census reports the 14.2% monthly rise with a ±22.6% margin, so it does not establish a clear demand surge. Growth and inflation can pull yields and NQ in either direction. Follow your saved windows and wait for clean price action.",
         "mcRange": 482.25,
         "marketType": "Range",
         "marketGapPoints": -875.0
       },
       "sources": [
-        {
-          "title": "BEA: GDP second estimate, third quarter 2026, released November 25",
-          "url": "https://www.bea.gov/sites/default/files/2026-11/gdp3q26-2nd.pdf",
-          "asOf": "2026-11-25T14:07:50Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "BEA: October 2026 personal income and PCE, released November 25",
-          "url": "https://www.bea.gov/sites/default/files/2026-11/pi1026.pdf",
-          "asOf": "2026-11-25T14:07:50Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "Census: October 2026 durable goods, released November 25",
-          "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
-          "asOf": "2026-11-25T14:07:50Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "Census: November 25 new residential sales release schedule",
-          "url": "https://www.census.gov/economic-indicators/calendar-listview-2026.html",
-          "asOf": "2026-11-25T14:07:50Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner: November 25 saved green and red windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-25T14:07:50Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
@@ -3297,9 +3257,49 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "BEA: GDP second estimate, third quarter 2026, released November 25",
+          "url": "https://www.bea.gov/sites/default/files/2026-11/gdp3q26-2nd.pdf",
+          "asOf": "2026-11-25T15:16:14Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "BEA: October 2026 personal income and PCE, released November 25",
+          "url": "https://www.bea.gov/sites/default/files/2026-11/pi1026.pdf",
+          "asOf": "2026-11-25T15:16:14Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Census: October 2026 durable goods, released November 25",
+          "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+          "asOf": "2026-11-25T15:16:14Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Census: October 2026 new-home sales, released November 25",
+          "url": "https://www.census.gov/construction/nrs/current/index.html",
+          "asOf": "2026-11-25T15:16:14Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner: November 25 saved calendar windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-25T15:16:14Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-25T15:15:18.604291+00:00"
+  "updatedAt": "2026-11-25T15:16:50.824558+00:00"
 }
