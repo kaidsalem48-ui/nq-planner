@@ -3081,13 +3081,13 @@
       ]
     },
     "2026-11-25": {
-      "recordedAt": "2026-11-25T21:19:58Z",
+      "recordedAt": "2026-11-25T21:37:11.186162+00:00",
       "values": {
-        "mcVix": 27.96,
-        "mcVixChange": 6.0698,
+        "mcVix": 28.29,
+        "mcVixChange": 7.3217,
         "mcVol": "Expanding",
-        "mcDxy": 103.697,
-        "mcDxyChange": -0.117,
+        "mcDxy": 103.709,
+        "mcDxyChange": -0.105,
         "mcDollar": "Falling",
         "mcPriorRange": 511.75,
         "mcOvernight": -424.5,
@@ -3113,9 +3113,57 @@
       },
       "sources": [
         {
+          "title": "BEA: GDP second estimate, third quarter 2026, released November 25",
+          "url": "https://www.bea.gov/sites/default/files/2026-11/gdp3q26-2nd.pdf",
+          "asOf": "2026-11-25T21:19:38Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "BEA: October 2026 personal income and PCE, released November 25",
+          "url": "https://www.bea.gov/sites/default/files/2026-11/pi1026.pdf",
+          "asOf": "2026-11-25T21:19:38Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Census: October 2026 durable goods, released November 25",
+          "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+          "asOf": "2026-11-25T21:19:38Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Census: October 2026 new-home sales, released November 25",
+          "url": "https://www.census.gov/construction/nrs/current/index.html",
+          "asOf": "2026-11-25T21:19:38Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Nasdaq: 2026 Thanksgiving closure and Friday cash-market early close",
+          "url": "https://www.nasdaq.com/holiday-trading-hours",
+          "asOf": "2026-11-25T21:19:38Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner: November 25 and 27 saved trading windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-25T21:19:38Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T21:03:46+00:00",
+          "asOf": "2026-11-25T21:15:01+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -3135,7 +3183,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T21:08:50+00:00",
+          "asOf": "2026-11-25T21:27:07+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -3145,7 +3193,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-24 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T21:08:00+00:00",
+          "asOf": "2026-11-25T21:27:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -3257,57 +3305,9 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
-        },
-        {
-          "title": "BEA: GDP second estimate, third quarter 2026, released November 25",
-          "url": "https://www.bea.gov/sites/default/files/2026-11/gdp3q26-2nd.pdf",
-          "asOf": "2026-11-25T21:19:38Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "BEA: October 2026 personal income and PCE, released November 25",
-          "url": "https://www.bea.gov/sites/default/files/2026-11/pi1026.pdf",
-          "asOf": "2026-11-25T21:19:38Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "Census: October 2026 durable goods, released November 25",
-          "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
-          "asOf": "2026-11-25T21:19:38Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "Census: October 2026 new-home sales, released November 25",
-          "url": "https://www.census.gov/construction/nrs/current/index.html",
-          "asOf": "2026-11-25T21:19:38Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "Nasdaq: 2026 Thanksgiving closure and Friday cash-market early close",
-          "url": "https://www.nasdaq.com/holiday-trading-hours",
-          "asOf": "2026-11-25T21:19:38Z",
-          "fields": [
-            "mcComment"
-          ]
-        },
-        {
-          "title": "NQ Planner: November 25 and 27 saved trading windows",
-          "url": "https://nq-planner.vercel.app/data.json",
-          "asOf": "2026-11-25T21:19:38Z",
-          "fields": [
-            "mcComment"
-          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-25T21:20:22.263520+00:00"
+  "updatedAt": "2026-11-25T21:37:11.545756+00:00"
 }
