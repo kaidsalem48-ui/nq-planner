@@ -3081,32 +3081,32 @@
       ]
     },
     "2026-11-25": {
-      "recordedAt": "2026-11-25T21:07:04.388070+00:00",
+      "recordedAt": "2026-11-25T21:18:54.950954+00:00",
       "values": {
-        "mcVix": 27.94,
-        "mcVixChange": 5.9939,
+        "mcVix": 27.96,
+        "mcVixChange": 6.0698,
         "mcVol": "Expanding",
-        "mcDxy": 103.692,
-        "mcDxyChange": -0.122,
+        "mcDxy": 103.697,
+        "mcDxyChange": -0.117,
         "mcDollar": "Falling",
         "mcPriorRange": 511.75,
         "mcOvernight": -424.5,
         "mcOvernightRangeMin": 520.0,
         "mcDirection": "Down",
-        "mcAAPL": 0.507,
-        "mcMSFT": -1.186,
-        "mcNVDA": -4.025,
-        "mcAMZN": -3.091,
-        "mcGOOGL": -2.079,
-        "mcMETA": 3.468,
-        "mcTSLA": -0.937,
+        "mcAAPL": 0.354,
+        "mcMSFT": -1.354,
+        "mcNVDA": -3.975,
+        "mcAMZN": -3.2,
+        "mcGOOGL": -2.179,
+        "mcMETA": 3.316,
+        "mcTSLA": -1.193,
         "mcYieldLevel": 4.848,
         "mcYieldChangeBp": -5.6,
         "mcYields": "Falling",
         "mcMacro": "Supportive",
         "mcMacroYieldChangeBp": -5.6,
         "mcMacroDxyChange": -0.149,
-        "mcComment": "GDP and PCE remain today's main catalysts: Q3 GDP was revised to 4.3% annualized from 3.4%, while October core PCE rose 0.3% monthly and 3.3% yearly; durable orders rose 0.2%. At 10 AM NY, October new-home sales were estimated at 701,000 annualized versus 614,000 in September. Census reports the 14.2% monthly rise with a Â±22.6% margin, so it does not establish a clear demand surge. Growth and inflation can pull yields and NQ in either direction. Follow your saved windows and wait for clean price action.",
+        "mcComment": "GDP and PCE remain today's main catalysts: Q3 GDP was revised to 4.3% annualized from 3.4%, while October core PCE rose 0.3% monthly and 3.3% yearly; durable orders rose 0.2%. At 10 AM NY, October new-home sales were estimated at 701,000 annualized versus 614,000 in September. Census reports the 14.2% monthly rise with a Ã‚Â±22.6% margin, so it does not establish a clear demand surge. Growth and inflation can pull yields and NQ in either direction. Follow your saved windows and wait for clean price action.",
         "mcRange": 1118.75,
         "marketType": "Trend up",
         "marketGapPoints": -875.0
@@ -3155,7 +3155,7 @@
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:52:01+00:00",
+          "asOf": "2026-11-25T21:03:46+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -3175,7 +3175,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:01+00:00",
+          "asOf": "2026-11-25T21:08:50+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -3185,7 +3185,7 @@
         {
           "title": "NQZ26.CME prior RTH range 2026-11-24 (recomputed at observation time)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T21:08:00+00:00",
           "fields": [
             "mcPriorRange"
           ]
@@ -3209,7 +3209,7 @@
         {
           "title": "NQZ26.CME complete RTH bars; behavior heuristic net/range >=60%; gap versus prior RTH close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T20:59:00+00:00",
           "fields": [
             "mcRange",
             "marketType",
@@ -3219,7 +3219,7 @@
         {
           "title": "NQZ26.CME direction vs prior RTH close; synchronized minute",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NQZ26.CME?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T20:59:00+00:00",
           "fields": [
             "mcDirection"
           ]
@@ -3227,7 +3227,7 @@
         {
           "title": "AAPL synchronized change vs prior RTH close 2026-11-24",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T20:59:00+00:00",
           "fields": [
             "mcAAPL"
           ]
@@ -3235,7 +3235,7 @@
         {
           "title": "MSFT synchronized change vs prior RTH close 2026-11-24",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T20:59:00+00:00",
           "fields": [
             "mcMSFT"
           ]
@@ -3243,7 +3243,7 @@
         {
           "title": "NVDA synchronized change vs prior RTH close 2026-11-24",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/NVDA?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T20:59:00+00:00",
           "fields": [
             "mcNVDA"
           ]
@@ -3251,7 +3251,7 @@
         {
           "title": "AMZN synchronized change vs prior RTH close 2026-11-24",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/AMZN?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T20:59:00+00:00",
           "fields": [
             "mcAMZN"
           ]
@@ -3259,7 +3259,7 @@
         {
           "title": "GOOGL synchronized change vs prior RTH close 2026-11-24",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/GOOGL?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T20:59:00+00:00",
           "fields": [
             "mcGOOGL"
           ]
@@ -3267,7 +3267,7 @@
         {
           "title": "META synchronized change vs prior RTH close 2026-11-24",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/META?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T20:59:00+00:00",
           "fields": [
             "mcMETA"
           ]
@@ -3275,7 +3275,7 @@
         {
           "title": "TSLA synchronized change vs prior RTH close 2026-11-24",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/TSLA?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-25T20:57:00+00:00",
+          "asOf": "2026-11-25T20:59:00+00:00",
           "fields": [
             "mcTSLA"
           ]
@@ -3301,5 +3301,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-25T21:07:04.651005+00:00"
+  "updatedAt": "2026-11-25T21:18:55.851538+00:00"
 }
