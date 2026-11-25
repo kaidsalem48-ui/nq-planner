@@ -3081,7 +3081,7 @@
       ]
     },
     "2026-11-25": {
-      "recordedAt": "2026-11-25T14:07:12.157018+00:00",
+      "recordedAt": "2026-11-25T14:07:59Z",
       "values": {
         "mcVix": 31.44,
         "mcVixChange": 19.2716,
@@ -3105,7 +3105,8 @@
         "mcYields": "Falling",
         "mcMacro": "Mixed",
         "mcMacroYieldChangeBp": -6.6,
-        "mcMacroDxyChange": 0.172
+        "mcMacroDxyChange": 0.172,
+        "mcComment": "Growth and inflation share today's catalyst. At 8:30 AM NY, Q3 GDP was revised up to 4.3% annualized from 3.4%; October core PCE rose 0.3% on month and 3.3% on year (headline 3.8%). Durable goods orders rose 0.2%, or 0.5% excluding transport. Stronger growth alongside these inflation readings can move yields and NQ in either direction. Let the release settle and wait for clean price action in your saved window. New-home sales is scheduled for 10:00 AM NY; its result is not yet available."
       },
       "sources": [
         {
@@ -3243,9 +3244,49 @@
             "mcMacro",
             "mcMacroDxyChange"
           ]
+        },
+        {
+          "title": "BEA: GDP second estimate, third quarter 2026, released November 25",
+          "url": "https://www.bea.gov/sites/default/files/2026-11/gdp3q26-2nd.pdf",
+          "asOf": "2026-11-25T14:07:50Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "BEA: October 2026 personal income and PCE, released November 25",
+          "url": "https://www.bea.gov/sites/default/files/2026-11/pi1026.pdf",
+          "asOf": "2026-11-25T14:07:50Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Census: October 2026 durable goods, released November 25",
+          "url": "https://www.census.gov/manufacturing/m3/adv/pdf/durgd.pdf",
+          "asOf": "2026-11-25T14:07:50Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Census: November 25 new residential sales release schedule",
+          "url": "https://www.census.gov/economic-indicators/calendar-listview-2026.html",
+          "asOf": "2026-11-25T14:07:50Z",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "NQ Planner: November 25 saved green and red windows",
+          "url": "https://nq-planner.vercel.app/data.json",
+          "asOf": "2026-11-25T14:07:50Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-25T14:07:12.515149+00:00"
+  "updatedAt": "2026-11-25T14:08:23.508941+00:00"
 }
