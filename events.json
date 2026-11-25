@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-23",
+  "updated": "2026-11-25",
   "range": ["2026-10-01", "2026-12-31"],
   "sources": [
     "fedratecalc.com US economic calendar (BLS/BEA/Census/Fed dates)",
@@ -11,7 +11,8 @@
     "University of Michigan Surveys of Consumers release schedule: https://www.sca.isr.umich.edu/",
     "Chicago Fed CFNAI release calendar: https://www.chicagofed.org/research/data/data-release-calendar",
     "S&P Global Flash US PMI release calendar: https://www.pmi.spglobal.com/Public/Home/PDF/UK_Rel_Dates",
-    "New York Fed November 23 Williams remarks advisory: https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026"
+    "New York Fed November 23 Williams remarks advisory: https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
+    "U.S. Census 2026 Economic Indicator Calendar: https://www.census.gov/economic-indicators/calendar-listview-2026.html"
   ],
   "holidays": {
     "2026-10-12": {"type": "bank", "name": "Columbus Day"},
@@ -67,6 +68,8 @@
     {"date": "2026-11-23", "time": "16:00", "name": "New York Fed President Williams remarks", "short": "Williams", "impact": "orange", "kind": "speech"},
     {"date": "2026-11-24", "time": "10:00", "name": "Consumer Confidence", "short": "Conf.", "impact": "red", "kind": "data", "est": true},
     {"date": "2026-11-25", "time": "8:30", "name": "GDP (2nd) + Core PCE + Durables", "short": "GDP·PCE", "impact": "red", "kind": "data"},
+    {"date": "2026-11-25", "time": "10:00", "name": "New Home Sales", "short": "Home sales", "impact": "orange", "kind": "data"},
+    {"date": "2026-11-27", "time": "8:30", "name": "Advance Economic Indicators (trade + inventories)", "short": "Adv indicators", "impact": "orange", "kind": "data"},
     {"date": "2026-11-30", "time": "9:45", "name": "Chicago PMI", "short": "Chi PMI", "impact": "orange", "kind": "data"},
 
     {"date": "2026-12-01", "time": "10:00", "name": "ISM Manufacturing + JOLTS", "short": "ISM", "impact": "red", "kind": "data"},

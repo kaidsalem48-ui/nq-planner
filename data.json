@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23",
+ "updated": "2026-11-25",
  "sources": [
   "fedratecalc.com US economic calendar (BLS/BEA/Census/Fed dates)",
   "BLS CPI release schedule",
@@ -10,7 +10,8 @@
   "University of Michigan Surveys of Consumers release schedule: https://www.sca.isr.umich.edu/",
   "Chicago Fed CFNAI release calendar: https://www.chicagofed.org/research/data/data-release-calendar",
   "S&P Global Flash US PMI release calendar: https://www.pmi.spglobal.com/Public/Home/PDF/UK_Rel_Dates",
-  "New York Fed November 23 Williams remarks advisory: https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026"
+  "New York Fed November 23 Williams remarks advisory: https://www.newyorkfed.org/newsevents/mediaadvisory/2026/1113-2026",
+  "U.S. Census 2026 Economic Indicator Calendar: https://www.census.gov/economic-indicators/calendar-listview-2026.html"
  ],
  "days": [
   {
@@ -3413,6 +3414,11 @@
      "time": "8:30",
      "name": "GDP (2nd) + Core PCE + Durables",
      "impact": "red"
+    },
+    {
+     "time": "10:00",
+     "name": "New Home Sales",
+     "impact": "orange"
     }
    ],
    "marks": [
@@ -3420,6 +3426,11 @@
      "8:30",
      "GDP\u00b7PCE",
      "news"
+    ],
+    [
+     "10:00",
+     "Home sales",
+     "minor"
     ]
    ],
    "holiday": null,
@@ -3520,8 +3531,20 @@
   },
   {
    "date": "2026-11-27",
-   "news": [],
-   "marks": [],
+   "news": [
+    {
+     "time": "8:30",
+     "name": "Advance Economic Indicators (trade + inventories)",
+     "impact": "orange"
+    }
+   ],
+   "marks": [
+    [
+     "8:30",
+     "Adv indicators",
+     "minor"
+    ]
+   ],
    "holiday": "Day after Thanksgiving (half day)",
    "holidayType": "half",
    "asia": [
