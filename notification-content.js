@@ -79,8 +79,10 @@
       title='Election Day tomorrow · sit out';message='Your rule: no trading after 9:30 AM NY. Pre-open restrictions remain.';severity='danger';
     }else if(day.holidayType==='half'){
       const close=(day.segs||[]).find(seg=>/closed early/i.test(seg[3]||''));
+      const release=(day.news||[]).slice().sort((a,b)=>toMinute(a.time)-toMinute(b.time))[0];
+      const releaseText=release?`${release.name} at ${timeLabel(release.time)} NY (${release.impact==='red'?'red folder':'medium impact'}). `:'';
       title=`Light day tomorrow · ${day.holiday||'half day'}`;
-      message=`Early-close session${close?` at ${timeLabel(close[0])} NY`:''}. Size light if trading; wait for clean price action.`;severity='caution';
+      message=`${releaseText}Half-day schedule. Size light if trading.${close?` Your saved sit-out starts at ${timeLabel(close[0])} NY.`:''}`;severity='caution';
     }else if(day.holidayType==='bank'){
       title=`Light day tomorrow · ${day.holiday||'bank holiday'}`;
       message='Futures may be open, but the holiday can thin trading. Size light and keep your red windows.';severity='caution';

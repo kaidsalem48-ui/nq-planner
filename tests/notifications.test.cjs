@@ -40,6 +40,8 @@ assert.equal(afterThanksgiving.day, '2026-11-27');
 assert.equal(afterThanksgiving.severity, 'caution');
 assert.match(afterThanksgiving.title, /Light day tomorrow.*Day after Thanksgiving/);
 assert.match(afterThanksgiving.message, /Size light/);
+assert.match(afterThanksgiving.message, /Advance Economic Indicators.*8:30 AM NY \(medium impact\)/);
+assert.match(afterThanksgiving.message, /saved sit-out starts at 1:15 PM NY/);
 
 // A rate-decision day is blocked; FOMC Minutes with an OK grade is a distinct event.
 assert.equal(fomcAtNine[0].severity, 'danger');
