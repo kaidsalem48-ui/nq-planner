@@ -15,6 +15,10 @@ HERE = Path(__file__).resolve().parent
 NY = ZoneInfo("America/New_York")
 TECH = ["AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA"]
 
+
+class MarketClosed(Exception):
+    """A scheduled closure has no regular-session conditions to publish."""
+
 def fetch(symbol, interval="1m"):
     url = "https://query1.finance.yahoo.com/v8/finance/chart/" + quote(symbol, safe="") + "?interval=" + interval + "&range=5d&includePrePost=true"
     data = json.load(urlopen(Request(url, headers={"User-Agent": "Mozilla/5.0 NQPlanner/1.0"}), timeout=25))
@@ -63,9 +67,17 @@ def observed_range_floor(bars, start, end, step):
 def direction(change, tolerance):
     return "Rising" if change > tolerance else "Falling" if change < -tolerance else "Flat"
 
+
+def market_closed(day, calendar):
+    return day.weekday() > 4 or calendar.get(day.isoformat(), {}).get("holidayType") == "closed"
+
 def build(results, now, calendar):
     today = now.astimezone(NY).date()
     day = today.isoformat()
+    if market_closed(today, calendar):
+        return {"date": day, "recordedAt": now.isoformat(), "values": {}, "sources": []}, [
+            "Market closed; no market-condition quotes collected"
+        ]
     cutoff = int(now.timestamp()) // 60 * 60 - 60
     values, sources, diagnostics = {}, [], []
     def add(data, fields, timestamp, title):
@@ -95,10 +107,8 @@ def build(results, now, calendar):
     nq_symbols = [s for s in results if s.startswith("NQ") and s.endswith(".CME")]
     nq = results.get(nq_symbols[0]) if nq_symbols else None
     session = calendar.get(day)
-    closed = today.weekday() > 4 or session and session.get("holidayType") == "closed"
-    # No regular session measurements on known exchange closures.
     close_hour = 13 if session and session.get("holidayType") == "half" else 16
-    if nq and not closed:
+    if nq:
         bars = {k: v for k, v in nq["bars"].items() if k <= cutoff}
         previous = today - timedelta(days=1)
         while previous.weekday() > 4 or calendar.get(previous.isoformat(), {}).get("holidayType") == "closed":
@@ -218,6 +228,10 @@ def build(results, now, calendar):
 def collect():
     now = datetime.now(timezone.utc)
     local = now.astimezone(NY)
+    calendar = {d["date"]: d for d in json.loads((HERE / "data.json").read_text(encoding="utf-8"))["days"]}
+    if market_closed(local.date(), calendar):
+        raise MarketClosed("Market closed on " + local.date().isoformat() +
+                           " NY; previous recordings preserved, no quotes collected or published")
     # Discover the provider's actual front contract, then request explicit-contract bars only.
     discovery = fetch("NQ=F")
     import re
@@ -243,7 +257,6 @@ def collect():
         results[contract + ":5m"] = fetch(contract, "5m")
     except Exception:
         failures.append("NQ 5-minute fallback unavailable")
-    calendar = {d["date"]: d for d in json.loads((HERE / "data.json").read_text(encoding="utf-8"))["days"]}
     snapshot, diagnostics = build(results, datetime.now(timezone.utc), calendar)
     # Use post-fetch timestamp so every included observation precedes recording.
     snapshot["recordedAt"] = datetime.now(timezone.utc).isoformat()
@@ -255,7 +268,11 @@ if __name__ == "__main__":
     parser.add_argument("--deploy", action="store_true")
     parser.add_argument("--output", type=Path, default=HERE / "work" / "automatic-snapshot.json")
     args = parser.parse_args()
-    snapshot, diagnostics = collect()
+    try:
+        snapshot, diagnostics = collect()
+    except MarketClosed as closed:
+        print(closed)
+        raise SystemExit(0)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(snapshot, indent=2), encoding="utf-8")
     print("Collected", len(snapshot["values"]), "fields for", snapshot["date"])

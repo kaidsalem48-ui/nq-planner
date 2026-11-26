@@ -7,6 +7,17 @@ from record_market_conditions import validate
 
 
 class OvernightWindowTest(unittest.TestCase):
+    def test_closed_day_rejects_even_same_day_macro_quotes(self):
+        now = datetime(2026, 11, 26, 8, 15, tzinfo=NY)
+        stamp = int(now.timestamp()) - 60
+        quote = {"meta": {"regularMarketTime": stamp, "regularMarketPrice": 26.85,
+                          "previousClose": 28.29}, "bars": {}, "url": "https://example.com/quote"}
+        snapshot, diagnostics = build({"^VIX": quote, "DX-Y.NYB": quote}, now,
+                                      {"2026-11-26": {"holidayType": "closed"}})
+        self.assertEqual(snapshot["values"], {})
+        self.assertEqual(snapshot["sources"], [])
+        self.assertIn("Market closed", diagnostics[0])
+
     def test_final_uses_last_completed_minute_before_two(self):
         day = datetime(2026, 11, 4, tzinfo=NY).date()
         start = instant(day - timedelta(days=1), 18)
