@@ -7,7 +7,20 @@ module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).end();
   if (req.headers.origin !== 'https://nq-planner.vercel.app') return res.status(403).json({ error: 'Same-origin requests only' });
   const endpoint = req.body?.endpoint, requested = req.body?.plans;
-  if (typeof endpoint !== 'string' || endpoint.length > 2048 || !requested || typeof requested !== 'object' || Array.isArray(requested) || Object.keys(requested).length > 40) return res.status(400).json({ error: 'Invalid alert windows' });
+  let validEndpoint = false;
+  try { validEndpoint = typeof endpoint === 'string' && endpoint.length <= 2048 && new URL(endpoint).protocol === 'https:'; } catch {}
+  if (!validEndpoint) return res.status(400).json({ error: 'Invalid device subscription' });
+  if (req.body?.action === 'read') {
+    try {
+      const row = await store.get(endpoint);
+      if (row.value?.subscription?.endpoint !== endpoint) return res.status(404).json({ error: 'Enable device alerts first' });
+      return res.status(200).json({ ok: true, plans: row.value.plans || {} });
+    } catch (error) {
+      console.error('Push window settings read failed:', error.message);
+      return res.status(503).json({ error: 'Could not load alert windows' });
+    }
+  }
+  if (req.body?.action !== undefined || !requested || typeof requested !== 'object' || Array.isArray(requested) || Object.keys(requested).length > 40) return res.status(400).json({ error: 'Invalid alert windows' });
   try {
     const byDate = new Map((calendar.days || []).map(day => [day.date, day]));
     const updates = {};

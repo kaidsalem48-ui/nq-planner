@@ -561,20 +561,33 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   const PLAN_KEY = "nq-phone-plan-v1";
   let PLAN = (() => { try { return JSON.parse(localStorage.getItem(PLAN_KEY)) || {}; } catch { return {}; } })();
   if (!PLAN.days || typeof PLAN.days !== "object") PLAN.days = {};
-  let planSync = "";
+  let planSync = "", planRetryDay = null, planRetryBlocks = null, planPendingDay = null;
+  let planHydrated = false, planLoadError = "", planEndpoint = null;
   const planSave = () => { try { localStorage.setItem(PLAN_KEY, JSON.stringify(PLAN)); } catch {} };
   if ("topic" in PLAN) { delete PLAN.topic; planSave(); }
   const planBlocks = d => (PLAN.days[d] && PLAN.days[d].blocks) || [];
   const planStart = k => toMin(k.split("-")[0]);
   function segKey(d, B){ const day=BY[d]; const seg = [...(day?.segs||[]),...(day?.asia||[])].find(x => toMin(x[1]) === +B); return seg ? seg[0] + "-" + seg[1] : null; }
-  async function publishPlan(d){
-    planSync = "Saving…"; renderPlan();
+  async function publishPlan(d, blocks){
+    if(planPendingDay)return false;
+    const next=[...(blocks||planBlocks(d))];
+    planPendingDay=d;planRetryDay=null;planRetryBlocks=null;
+    planSync = "Saving alert window…"; renderPlan();
     try {
-      await syncNativePlans({[d]:planBlocks(d)});
+      await syncNativePlans({[d]:next});
+      PLAN.days[d]={blocks:next,at:Date.now()};
+      planSave();markPicks(document);
       planSync="Saved · device alerts follow these windows";
+      return true;
     }
-    catch { planSync = "Could not save, tap again"; }
-    renderPlan();
+    catch {
+      // The server may have saved the choice even if its response was lost.
+      // Hide On/Off until a read confirms what this device will receive.
+      planRetryDay=d;planRetryBlocks=next;planHydrated=false;
+      await hydrateNativePlans(planEndpoint);
+      return planHydrated&&!planRetryDay;
+    }
+    finally { planPendingDay=null; renderPlan(); }
   }
   async function syncNativePlans(plans){
     const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();
@@ -582,41 +595,60 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const response=await fetch('/api/push-plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:subscription.endpoint,plans})});
     if(!response.ok)throw new Error((await response.json().catch(()=>({}))).error||'Could not save alert windows');
   }
-  function localNativePlans(){
-    const plans={};
-    for(const [date,entry] of Object.entries(PLAN.days).sort(([a],[b])=>a.localeCompare(b))){
-      if(Object.keys(plans).length>=40)break;
-      if(date<addDays(NOW.date,-3)||date>addDays(NOW.date,40)||!BY[date]||!Array.isArray(entry?.blocks))continue;
-      const allowed=new Set([...(BY[date].segs||[]),...(BY[date].asia||[])].map(seg=>seg[0]+'-'+seg[1]));
-      plans[date]=entry.blocks.filter(key=>allowed.has(key));
-    }
-    return plans;
+  async function hydrateNativePlans(endpoint){
+    planEndpoint=endpoint;planHydrated=false;planLoadError="";renderPlan();
+    try{
+      const response=await fetch('/api/push-plan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint,action:'read'})});
+      const result=await response.json().catch(()=>({}));
+      if(!response.ok||!result.plans||typeof result.plans!=='object'||Array.isArray(result.plans))throw new Error(result.error||'Could not load alert windows');
+      const restored={};
+      for(const [date,blocks] of Object.entries(result.plans)){
+        if(!BY[date]||!Array.isArray(blocks))continue;
+        const allowed=new Set([...(BY[date].segs||[]),...(BY[date].asia||[])].map(seg=>seg[0]+'-'+seg[1]));
+        restored[date]={blocks:blocks.filter(key=>allowed.has(key)),at:Date.now()};
+      }
+      PLAN.days=restored;planSave();planHydrated=true;planSync="";
+      if(planRetryDay&&planRetryBlocks){
+        const confirmed=new Set(planBlocks(planRetryDay)),wanted=new Set(planRetryBlocks);
+        if(confirmed.size===wanted.size&&[...wanted].every(key=>confirmed.has(key))){planRetryDay=null;planRetryBlocks=null;planSync="Saved · device alerts follow these windows";}
+        else planSync="Alert choice not saved. Retry to apply it.";
+      }
+      markPicks(document);
+    }catch(error){planLoadError='Could not load saved alert windows. Previously enabled alerts may still arrive. Retry loading.';}
+    renderPlan();renderNotifications();refreshSheetPlanButton();
   }
-  function togglePlan(d, k){
+  async function togglePlan(d, k){
     if (!pushEnabled) { $("sheet").hidden = true; if (view !== "day" || cursor !== d || listMode || outlookMode || conditionsMode) { cursor = d; view = "day"; listMode = outlookMode = conditionsMode = false; render(); } const h = $("plan-host"); if (h) { h.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => $("plan-enable-device")?.focus(), 300); } return; }
+    if(!planHydrated||planPendingDay)return;
     const set = new Set(planBlocks(d)); set.has(k) ? set.delete(k) : set.add(k);
-    PLAN.days[d] = { blocks: [...set].sort((a, b) => planStart(a) - planStart(b)), at: Date.now() };
-    planSave(); markPicks(document); publishPlan(d);
+    return publishPlan(d,[...set].sort((a, b) => planStart(a) - planStart(b)));
   }
   function markPicks(root){
-    (root || document).querySelectorAll("[data-seg]").forEach(el => { const [d, , B] = el.dataset.seg.split("|"); const k = segKey(d, B); el.classList.toggle("picked", !!k && planBlocks(d).includes(k)); });
+    (root || document).querySelectorAll("[data-seg]").forEach(el => { const [d, , B] = el.dataset.seg.split("|"); const k = segKey(d, B); el.classList.toggle("picked", pushEnabled&&planHydrated&&!!k&&planBlocks(d).includes(k)); });
+  }
+  function refreshSheetPlanButton(){
+    const button=$("sh-plan");if(!button)return;
+    button.disabled=pushEnabled&&!planHydrated;
+    button.textContent=pushEnabled&&!planHydrated?'Loading phone alerts…':pushEnabled&&planBlocks(button.dataset.planDay).includes(button.dataset.planKey)?'🔔 Phone alerts on':'Phone alerts off';
   }
   function renderPlan(){
     const host = $("plan-host"); if (!host) return;
     host.innerHTML = planHTML();
     host.querySelectorAll("[data-plan-key]").forEach(b => b.onclick = () => togglePlan(b.dataset.planDay || cursor, b.dataset.planKey));
     const enable=host.querySelector('#plan-enable-device');if(enable)enable.onclick=enableNativePush;
-    const retry=host.querySelector('#plan-retry');if(retry)retry.onclick=()=>publishPlan(cursor);
+    const retry=host.querySelector('#plan-retry');if(retry)retry.onclick=()=>publishPlan(planRetryDay||cursor,planRetryBlocks);
+    const loadRetry=host.querySelector('#plan-load-retry');if(loadRetry)loadRetry.onclick=()=>hydrateNativePlans(planEndpoint);
   }
   function planHTML(){
     const d = cursor, dd = BY[d];
     const head = `<div class="plan-h"><span class="plan-k">PHONE ALERTS · ${esc(dow(d).slice(0,3).toUpperCase())} ${esc(short(d).toUpperCase())}</span></div>`;
     if (!pushEnabled) return `${head}<p class="plan-note">Enable NQ Planner device alerts, then pick the time windows you want to follow.</p><button class="btn" id="plan-enable-device" type="button">Enable device alerts</button>`;
+    if(!planHydrated)return `${head}<p class="plan-note">${esc(planLoadError||'Loading saved alert windows…')}</p>${planLoadError?'<button class="btn" id="plan-load-retry" type="button">Retry loading alerts</button>':''}`;
     if (!dd) return `${head}<p class="plan-note">No schedule for this day yet.</p>`;
     let overnightDate=addDays(d,1);
     for(let i=0;i<4&&!BY[overnightDate];i++)overnightDate=addDays(overnightDate,1);
     const overnight=BY[overnightDate];
-    const row = owner => ([a, b, k, n]) => { const key = a + "-" + b, on = planBlocks(owner).includes(key); return `<button class="plan-seg${on ? " on" : ""}" data-plan-day="${esc(owner)}" data-plan-key="${esc(key)}" aria-pressed="${on}"><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span><span class="pb">${on ? "🔔 On" : "Off"}</span></button>`; };
+    const row = owner => ([a, b, k, n]) => { const key = a + "-" + b, on = planBlocks(owner).includes(key); return `<button class="plan-seg${on ? " on" : ""}" data-plan-day="${esc(owner)}" data-plan-key="${esc(key)}" aria-pressed="${on}"${planPendingDay?' disabled':''}><span class="t ${k}">${fmtR(toMin(a), toMin(b))}</span><span>${esc(n)}</span><span class="pb">${on ? "🔔 On" : "Off"}</span></button>`; };
     const evening = (overnight?.asia||[]).filter(seg => toMin(seg[0]) < 1440);
     const early = (overnight?.asia||[]).filter(seg => toMin(seg[0]) >= 1440);
     const day = dd.segs.filter(seg => !(seg[2] === "r" && toMin(seg[1]) <= T8));
@@ -627,7 +659,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const selectedDay=day.filter(seg=>planBlocks(d).includes(seg[0]+'-'+seg[1])).length;
     const selectedOvernight=[...evening,...early].filter(seg=>planBlocks(overnightDate).includes(seg[0]+'-'+seg[1])).length;
     const status = selectedDay||selectedOvernight ? `Selected: ${selectedDay} New York, ${selectedOvernight} overnight.` : `No time windows selected here.`;
-    return `${head}<p class="plan-note">Pick a window for alerts five minutes before it starts and when it begins, plus live market updates around it. The 9 PM next-day plan, 8 AM overnight summary and news alerts arrive independently.</p>${rows}<p class="plan-status">${esc(status)}${planSync ? " · " + esc(planSync) : ""}</p>${planSync.startsWith('Could not save')?'<button class="btn" id="plan-retry" type="button">Retry saving alerts</button>':''}`;
+    return `${head}<p class="plan-note">Pick a window for alerts five minutes before it starts and when it begins, plus live market updates around it. The 9 PM next-day plan, 8 AM overnight summary and news alerts arrive independently.</p>${rows}<p class="plan-status">${esc(status)}${planSync ? " · " + esc(planSync) : ""}</p>${planRetryDay?'<button class="btn" id="plan-retry" type="button">Retry saving alerts</button>':''}`;
   }
   const D = iso => new Date(iso + "T12:00:00Z");
   const iso = d => d.toISOString().slice(0,10);
@@ -815,7 +847,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
   $('test-device-alert').onclick=chooseTestNotification;
   $('disable-device-alert').onclick=disableNativePush;
   async function disableNativePush(){
-    try{const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();if(subscription){const response=await fetch('/api/push',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON()})});if(!response.ok)throw new Error('Could not remove this device');await subscription.unsubscribe();}pushEnabled=false;pushStatus='Device alerts are off.';deviceTestStatus='';}catch(error){deviceTestStatus=error.message||'Could not turn off alerts.';}renderNotifications();renderPlan();
+    try{const reg=await navigator.serviceWorker.getRegistration('/sw.js'),subscription=await reg?.pushManager.getSubscription();if(subscription){const response=await fetch('/api/push',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON()})});if(!response.ok)throw new Error('Could not remove this device');await subscription.unsubscribe();}pushEnabled=false;pushStatus='Device alerts are off.';deviceTestStatus='';planHydrated=false;planEndpoint=null;PLAN.days={};planSave();markPicks(document);refreshSheetPlanButton();}catch(error){deviceTestStatus=error.message||'Could not turn off alerts.';}renderNotifications();renderPlan();
   }
   async function enableNativePush(){
     if(pushEnabled)return disableNativePush();
@@ -835,7 +867,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
       const response=await fetch('/api/push',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({subscription:subscription.toJSON(),currentIds:conditionUpdates().map(item=>item.id)})});
       if(!response.ok)throw new Error('Could not save this device');
       pushEnabled=true;pushStatus='Native alerts are on for this device.';
-      const plans=localNativePlans();if(Object.keys(plans).length){try{await syncNativePlans(plans);}catch{planSync='Could not save alert windows';}}
+      await hydrateNativePlans(subscription.endpoint);
     }catch(error){pushStatus=error.message||'Could not enable alerts.';}
     renderNotifications();renderPlan();
   }
@@ -859,7 +891,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     }
     const selectedWindow=(day,group,seg,start,end)=>{
       const key=seg[0]+'-'+seg[1];
-      if(!pushEnabled||!planBlocks(day).includes(key)||NOW.min<start-5||NOW.min>=end)return;
+      if(!pushEnabled||!planHydrated||!planBlocks(day).includes(key)||NOW.min<start-5||NOW.min>=end)return;
       const name=NQNotifications.windowName(seg,group);
       const grade=seg[2]==='r'?'Sit out':seg[2]==='y'?'Light':'Good';
       const severity=seg[2]==='r'?'danger':seg[2]==='y'?'caution':'info';
@@ -1094,9 +1126,9 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     const cls = k === "g" ? "s2" : k === "y" ? "s-1" : "s-2";
     sh.innerHTML = `<div class="shc ${cls}"><div class="shh"><b>${st}</b><span>${rangeLong(A, B).replace(/<\/?small>/g, "")}</span></div>
       <p><b>${esc(reason)}</b></p><p>${esc(segWhy(reason, dd))}</p>
-      <div class="shb">${segKey(s, B) ? `<button class="btn" id="sh-plan">${planBlocks(s).includes(segKey(s, B)) ? "🔔 Phone alerts on" : "Phone alerts off"}</button>` : ""}<button class="btn" id="sh-close">Close</button></div></div>`;
+      <div class="shb">${segKey(s, B) ? `<button class="btn" id="sh-plan" data-plan-day="${esc(s)}" data-plan-key="${esc(segKey(s,B))}"${pushEnabled&&!planHydrated?' disabled':''}>${pushEnabled&&!planHydrated?'Loading phone alerts…':planBlocks(s).includes(segKey(s, B))&&pushEnabled?"🔔 Phone alerts on":"Phone alerts off"}</button>` : ""}<button class="btn" id="sh-close">Close</button></div></div>`;
     sh.hidden = false;
-    if ($("sh-plan")) $("sh-plan").onclick = e => { e.stopPropagation(); togglePlan(s, segKey(s, B)); if (pushEnabled) $("sh-plan").textContent = planBlocks(s).includes(segKey(s, B)) ? "🔔 Phone alerts on" : "Phone alerts off"; };
+    if ($("sh-plan")) $("sh-plan").onclick = async e => { e.stopPropagation(); const button=e.currentTarget;button.disabled=true;await togglePlan(s,segKey(s,B));if(button.isConnected)refreshSheetPlanButton(); };
     $("sh-close").onclick = () => sh.hidden = true;
     sh.onclick = e => { if (e.target === sh) sh.hidden = true; };
   }
@@ -1732,7 +1764,7 @@ details.condition-notice[open]>summary:after{transform:rotate(-135deg);margin-to
     $("upd").textContent = "Updated " + short(d.updated);
     $("foot").innerHTML = `<p>All times New York. Green = good to trade · yellow = risky / light size · red = don't trade.</p><p>Calendar sources: ${d.sources.map(esc).join(", ")}. Dates marked "est." are confirmed each Sunday.</p><p>Add to Apple Calendar (tap each, so each gets its own colour): <a href="webcal://nq-planner.vercel.app/api/calendar?show=green" style="color:#34C759;font-weight:700">Good</a> · <a href="webcal://nq-planner.vercel.app/api/calendar?show=yellow" style="color:#e7ac36;font-weight:700">Light / risky</a> · <a href="webcal://nq-planner.vercel.app/api/calendar?show=red" style="color:#ef5b61;font-weight:700">Sit out</a> · <a href="webcal://nq-planner.vercel.app/api/calendar?show=news" style="color:#AF52DE;font-weight:700">News</a>. Updates on its own.</p>`;
     marketBase=Object.fromEntries(d.days.map(x=>[x.date,JSON.parse(JSON.stringify(x))]));readHash(); render();
-    if(pushAvailable())navigator.serviceWorker.getRegistration('/sw.js').then(reg=>reg?.pushManager.getSubscription()).then(sub=>{if(sub){pushEnabled=true;pushStatus='Native alerts are on for this device.';renderNotifications();renderPlan();const plans=localNativePlans();if(Object.keys(plans).length)syncNativePlans(plans).catch(()=>{planSync='Could not save alert windows';renderPlan();});}}).catch(()=>{});
+    if(pushAvailable())navigator.serviceWorker.getRegistration('/sw.js').then(reg=>reg?.pushManager.getSubscription()).then(sub=>{if(sub){pushEnabled=true;pushStatus='Native alerts are on for this device.';renderNotifications();hydrateNativePlans(sub.endpoint);}}).catch(()=>{});
     const pushed=new URLSearchParams(location.search).get('push');if(pushed){history.replaceState(null,'',location.pathname+location.hash);openPushedUpdate(pushed);}
     setInterval(() => { const before=new Set(conditionUpdates().map(item=>item.id));NOW = nyNow(); renderNow(); refreshConditionArchive(before); }, 60000);
     window.addEventListener("focus",()=>{refreshConditionArchive();});
