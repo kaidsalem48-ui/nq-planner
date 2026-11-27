@@ -3309,16 +3309,16 @@
       ]
     },
     "2026-11-27": {
-      "recordedAt": "2026-11-27T18:07:03.871358+00:00",
+      "recordedAt": "2026-11-27T18:37:12.389760+00:00",
       "values": {
-        "mcVix": 24.74,
-        "mcVixChange": -7.6866,
+        "mcVix": 23.81,
+        "mcVixChange": -11.1567,
         "mcVol": "Contracting",
-        "mcDxy": 104.016,
-        "mcDxyChange": 0.351,
+        "mcDxy": 104.029,
+        "mcDxyChange": 0.364,
         "mcDollar": "Rising",
-        "mcYieldLevel": 4.928,
-        "mcYieldChangeBp": 8.0,
+        "mcYieldLevel": 4.936,
+        "mcYieldChangeBp": 8.8,
         "mcYields": "Rising",
         "mcComment": "Holiday-shortened Friday. Census reported October's goods deficit widened to $149.5B from $135.1B, while wholesale and retail inventories rose 0.9% and 0.8%. That is growth context, not an NQ direction call. Nasdaq cash trading ends at 1 PM NY; keep the saved Light-size and early-close plan.",
         "mcPriorRange": 1118.75,
@@ -3334,8 +3334,8 @@
         "mcMETA": 3.313,
         "mcTSLA": 5.316,
         "mcMacro": "Headwinds",
-        "mcMacroYieldChangeBp": 8.0,
-        "mcMacroDxyChange": 0.363
+        "mcMacroYieldChangeBp": 8.1,
+        "mcMacroDxyChange": 0.35
       },
       "sources": [
         {
@@ -3357,7 +3357,7 @@
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T17:52:01+00:00",
+          "asOf": "2026-11-27T18:15:00+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -3367,7 +3367,7 @@
         {
           "title": "^TNX quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T17:51:54+00:00",
+          "asOf": "2026-11-27T18:22:04+00:00",
           "fields": [
             "mcYieldLevel",
             "mcYieldChangeBp",
@@ -3377,7 +3377,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T17:57:00+00:00",
+          "asOf": "2026-11-27T18:27:10+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -3469,7 +3469,7 @@
         {
           "title": "Macro heuristic at synchronized minute: yield rising, dollar rising; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T17:50:00+00:00",
+          "asOf": "2026-11-27T18:00:00+00:00",
           "fields": [
             "mcMacro",
             "mcMacroYieldChangeBp"
@@ -3478,7 +3478,7 @@
         {
           "title": "Macro heuristic at synchronized minute: yield rising, dollar rising; both rising=headwinds, both falling=supportive, otherwise mixed (not a forecast)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T17:50:00+00:00",
+          "asOf": "2026-11-27T18:00:00+00:00",
           "fields": [
             "mcMacro",
             "mcMacroDxyChange"
@@ -3487,5 +3487,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-27T18:07:03.990617+00:00"
+  "updatedAt": "2026-11-27T18:37:12.450741+00:00"
 }
