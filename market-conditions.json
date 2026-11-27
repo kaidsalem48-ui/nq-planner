@@ -3309,20 +3309,20 @@
       ]
     },
     "2026-11-27": {
-      "recordedAt": "2026-11-27T12:37:13.004953+00:00",
+      "recordedAt": "2026-11-27T13:07:12.388569+00:00",
       "values": {
-        "mcVix": 25.18,
-        "mcVixChange": -6.0448,
+        "mcVix": 25.4,
+        "mcVixChange": -5.2239,
         "mcVol": "Contracting",
-        "mcDxy": 103.794,
-        "mcDxyChange": 0.129,
+        "mcDxy": 103.799,
+        "mcDxyChange": 0.134,
         "mcDollar": "Rising"
       },
       "sources": [
         {
           "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T12:22:01+00:00",
+          "asOf": "2026-11-27T12:52:01+00:00",
           "fields": [
             "mcVix",
             "mcVixChange",
@@ -3332,7 +3332,7 @@
         {
           "title": "DX-Y.NYB quote; direction versus prior close",
           "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T12:27:10+00:00",
+          "asOf": "2026-11-27T12:57:10+00:00",
           "fields": [
             "mcDxy",
             "mcDxyChange",
@@ -3342,5 +3342,5 @@
       ]
     }
   },
-  "updatedAt": "2026-11-27T12:37:13.146209+00:00"
+  "updatedAt": "2026-11-27T13:07:12.522640+00:00"
 }
