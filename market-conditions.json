@@ -3309,7 +3309,7 @@
       ]
     },
     "2026-11-27": {
-      "recordedAt": "2026-11-27T14:24:45.180838+00:00",
+      "recordedAt": "2026-11-27T14:27:02Z",
       "values": {
         "mcVix": 25.64,
         "mcVixChange": -4.3284,
@@ -3319,7 +3319,8 @@
         "mcDollar": "Rising",
         "mcYieldLevel": 4.9040003,
         "mcYieldChangeBp": 0.0,
-        "mcYields": "Flat"
+        "mcYields": "Flat",
+        "mcComment": "Holiday-shortened Friday. Census reported October's goods deficit widened to $149.5B from $135.1B, while wholesale and retail inventories rose 0.9% and 0.8%. That is growth context, not an NQ direction call. Nasdaq cash trading ends at 1 PM NY; keep the saved Light-size and early-close plan."
       },
       "sources": [
         {
@@ -3351,9 +3352,25 @@
             "mcDxyChange",
             "mcDollar"
           ]
+        },
+        {
+          "title": "Census Advance Economic Indicators Report, released 8:30 AM EST November 27",
+          "url": "https://www.census.gov/econ/indicators/2026/advance_report2610.pdf",
+          "asOf": "2026-11-27T08:30:00-05:00",
+          "fields": [
+            "mcComment"
+          ]
+        },
+        {
+          "title": "Nasdaq 2026 holiday and early-close schedule, checked 9:26 AM NY",
+          "url": "https://www.nasdaq.com/holiday-trading-hours",
+          "asOf": "2026-11-27T14:26:16Z",
+          "fields": [
+            "mcComment"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-27T14:24:46.322669+00:00"
+  "updatedAt": "2026-11-27T14:27:25.849742+00:00"
 }
