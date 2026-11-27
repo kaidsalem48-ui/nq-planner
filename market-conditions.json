@@ -3309,50 +3309,20 @@
       ]
     },
     "2026-11-27": {
-      "recordedAt": "2026-11-27T14:27:02Z",
+      "recordedAt": "2026-11-27T14:37:05.278316+00:00",
       "values": {
-        "mcVix": 25.64,
-        "mcVixChange": -4.3284,
+        "mcVix": 25.93,
+        "mcVixChange": -3.2463,
         "mcVol": "Contracting",
-        "mcDxy": 103.939,
-        "mcDxyChange": 0.274,
+        "mcDxy": 103.932,
+        "mcDxyChange": 0.267,
         "mcDollar": "Rising",
-        "mcYieldLevel": 4.9040003,
-        "mcYieldChangeBp": 0.0,
+        "mcYieldLevel": 4.902,
+        "mcYieldChangeBp": -0.2,
         "mcYields": "Flat",
         "mcComment": "Holiday-shortened Friday. Census reported October's goods deficit widened to $149.5B from $135.1B, while wholesale and retail inventories rose 0.9% and 0.8%. That is growth context, not an NQ direction call. Nasdaq cash trading ends at 1 PM NY; keep the saved Light-size and early-close plan."
       },
       "sources": [
-        {
-          "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
-          "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T14:09:31+00:00",
-          "fields": [
-            "mcVix",
-            "mcVixChange",
-            "mcVol"
-          ]
-        },
-        {
-          "title": "^TNX quote; direction versus prior close",
-          "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T14:09:34+00:00",
-          "fields": [
-            "mcYieldLevel",
-            "mcYieldChangeBp",
-            "mcYields"
-          ]
-        },
-        {
-          "title": "DX-Y.NYB quote; direction versus prior close",
-          "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
-          "asOf": "2026-11-27T14:14:42+00:00",
-          "fields": [
-            "mcDxy",
-            "mcDxyChange",
-            "mcDollar"
-          ]
-        },
         {
           "title": "Census Advance Economic Indicators Report, released 8:30 AM EST November 27",
           "url": "https://www.census.gov/econ/indicators/2026/advance_report2610.pdf",
@@ -3368,9 +3338,39 @@
           "fields": [
             "mcComment"
           ]
+        },
+        {
+          "title": "^VIX quote; direction versus prior close (VIX +/-2%)",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1m&range=5d&includePrePost=true",
+          "asOf": "2026-11-27T14:22:01+00:00",
+          "fields": [
+            "mcVix",
+            "mcVixChange",
+            "mcVol"
+          ]
+        },
+        {
+          "title": "^TNX quote; direction versus prior close",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1m&range=5d&includePrePost=true",
+          "asOf": "2026-11-27T14:21:54+00:00",
+          "fields": [
+            "mcYieldLevel",
+            "mcYieldChangeBp",
+            "mcYields"
+          ]
+        },
+        {
+          "title": "DX-Y.NYB quote; direction versus prior close",
+          "url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1m&range=5d&includePrePost=true",
+          "asOf": "2026-11-27T14:27:02+00:00",
+          "fields": [
+            "mcDxy",
+            "mcDxyChange",
+            "mcDollar"
+          ]
         }
       ]
     }
   },
-  "updatedAt": "2026-11-27T14:27:25.849742+00:00"
+  "updatedAt": "2026-11-27T14:37:05.382495+00:00"
 }
